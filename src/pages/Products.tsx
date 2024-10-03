@@ -4,7 +4,7 @@ import TableTwo from '../components/Tables/TableTwo';
 const Products = () => {
   return (
     <>
-      <Breadcrumb pageName="Products" />
+      <Breadcrumb pageName="Product Management" />
       <div className="flex flex-col gap-10">
         <TableTwo />
       </div>
