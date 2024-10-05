@@ -3,6 +3,7 @@ import { Package } from '../../types/package';
 import CategoryDropdown from '../ProductCategoryDropdown/CategoryDropdown';
 import SubCategoryDropdown from '../ProductCategoryDropdown/SubCategoryDropdown';
 import { NavLink } from 'react-router-dom';
+import IconViewEye from '../../images/icon/icon-view-eye.svg';
 
 const packageData: Package[] = [
   {
@@ -23,7 +24,7 @@ const packageData: Package[] = [
   },
 ];
 
-const TableTwo = () => {
+const TableTwo: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'bulk' | 'single'>('bulk');
 
   const handleTabClick = (tab: 'bulk' | 'single') => {

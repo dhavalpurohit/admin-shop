@@ -90,7 +90,7 @@ function App() {
           }
         />
         <Route
-          path="/single-product"
+          path="/single-product/"
           element={
             <>
               <PageTitle title="Single Products | Store Panel" />
