@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import Loader from './common/Loader';
-import RoutesView from './routes'
+import RoutesView from './routes';
 import DefaultLayout from './layout/DefaultLayout';
+import { Provider } from 'react-redux';
+import store from './redux/store';
 
 function App() {
   const [loading, setLoading] = useState<boolean>(true);
@@ -20,9 +22,11 @@ function App() {
   return loading ? (
     <Loader />
   ) : (
-    <DefaultLayout>
-      <RoutesView />
-    </DefaultLayout>
+    <Provider store={store}>
+      <DefaultLayout>
+        <RoutesView />
+      </DefaultLayout>
+    </Provider>
   );
 }
 
