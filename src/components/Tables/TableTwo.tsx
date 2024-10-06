@@ -56,12 +56,12 @@ const TableTwo: React.FC = () => {
         <div className="flex justify-end gap-4.5">
           <NavLink
             className="flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:bg-opacity-90"
-            type="submit" to={''}          >
+            to={'/bulk-products'}>
             Bulk products
           </NavLink>
           <NavLink
             className="flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:bg-opacity-90"
-            to={'/single-product'}          >
+            to={'/single-product'}>
             Single product
           </NavLink>
         </div>
