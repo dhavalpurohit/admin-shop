@@ -1,13 +1,65 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import BasicDetails from './stepperData/BasicDetails';
 import Varianst from './stepperData/Variants';
 import Additional from './stepperData/Additional';
+// import { useDispatch } from 'react-redux';
+// import { createSingleProduct } from '../../redux/slices/ProductSlice';
+// import { AppDispatch } from '../../redux/store';
+// import { Product } from '../../types/product';
 
 const steps = ['Basic Details', 'Variants', 'Additional'];
+export interface Option {
+  id: number;
+  value: string;
+}
+
+export interface BasicDetails {
+  category: string;
+  subCategory: string;
+  productId: string;
+  productName: string;
+  brand: string;
+  keywords: string;
+  productDescription: string;
+  regularPrice: string;
+  salePrice: string;
+  quantity: string;
+  taxCodeType: string;
+  taxValue: string;
+  manufactureInfo: string;
+  importerDetails: string;
+  options: Option[];
+  selectedImages: string[]; // or string[] if images are URLs
+}
+
+// Type for updateBasicDetails function
+export type UpdateBasicDetails = (
+  field: keyof BasicDetails,
+  value: any,
+) => void;
 
 const SingleProduct = () => {
+  // const dispatch = useDispatch<AppDispatch>();
   const [activeStep, setActiveStep] = useState(0);
+  const [basicDetails, setBasicDetails] = useState<BasicDetails>({
+    category: '',
+    subCategory: '',
+    productId: '',
+    productName: '',
+    brand: '',
+    keywords: '',
+    productDescription: '',
+    regularPrice: '',
+    salePrice: '',
+    quantity: '',
+    taxCodeType: '',
+    taxValue: '',
+    manufactureInfo: '',
+    importerDetails: '',
+    options: [{ id: 1, value: '' }],
+    selectedImages: [],
+  });
 
   const handleStepClick = (index: number) => {
     setActiveStep(index);
@@ -22,6 +74,48 @@ const SingleProduct = () => {
       setActiveStep((prev) => prev - 1);
     }
   };
+  const updateBasicDetails: UpdateBasicDetails = (field, value) => {
+    setBasicDetails((prevDetails) => ({
+      ...prevDetails,
+      [field]: value,
+    }));
+  };
+
+  // useEffect(() => {
+  //   const product: Product = {
+  //     name: 'dsfsdf',
+  //     brand_id: '1',
+  //     category_id: '1',
+  //     description: 'sdfsdf',
+  //     do_not_display: '1',
+  //     GST: '1',
+  //     HSNCode: '1',
+  //     image: 'sdfsdf',
+  //     keywords: 'sdfsdf',
+  //     product_url: 'sdfsdf',
+  //     quantity: '1',
+  //     regular_price: '1',
+  //     sale_price: '1',
+  //     skuid: '1',
+  //     status: '1',
+  //     stock: '1',
+  //     StyleID: '1',
+  //     user_id: '1',
+  //     vendor_id: '1',
+  //     vendor_product_id: '1',
+  //     weight: '1',
+  //     CountryOfOrigin: '1',
+  //     id: '1',
+
+  //     // Add other properties as needed
+  //   };
+
+  //   dispatch(createSingleProduct(product));
+  // }, []);
+
+  useEffect(() => {
+    console.log('basicDetails', basicDetails);
+  }, [basicDetails]);
 
   return (
     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -75,7 +169,12 @@ const SingleProduct = () => {
 
         {/* Step Content */}
         <form className="p-7" action="#">
-          {activeStep === 0 && <BasicDetails />}
+          {activeStep === 0 && (
+            <BasicDetails
+              basicDetails={basicDetails}
+              updateBasicDetails={updateBasicDetails}
+            />
+          )}
           {activeStep === 1 && <Varianst />}
           {activeStep === 2 && <Additional />}
         </form>

@@ -3,7 +3,7 @@ import { Package } from '../../types/package';
 import CategoryDropdown from '../ProductCategoryDropdown/CategoryDropdown';
 import SubCategoryDropdown from '../ProductCategoryDropdown/SubCategoryDropdown';
 import { NavLink } from 'react-router-dom';
-import IconViewEye from '../../images/icon/icon-view-eye.svg';
+// import IconViewEye from '../../images/icon/icon-view-eye.svg';
 
 const packageData: Package[] = [
   {
