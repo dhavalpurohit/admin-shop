@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 
 import BasicDetails from './stepperData/BasicDetails';
-import Varianst from './stepperData/Variants';
+import Variants from './stepperData/Variants';
 import Additional from './stepperData/Additional';
-// import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 // import { createSingleProduct } from '../../redux/slices/ProductSlice';
-// import { AppDispatch } from '../../redux/store';
+import { AppDispatch, RootState } from '../../redux/store';
 // import { Product } from '../../types/product';
+import { vendorFetchAllCategories } from '../../redux/slices/ProductSlice';
 
 const steps = ['Basic Details', 'Variants', 'Additional'];
 export interface Option {
@@ -33,14 +34,50 @@ export interface BasicDetails {
   selectedImages: string[]; // or string[] if images are URLs
 }
 
+export interface Variant {
+  color?: string;
+  size?: string;
+  colormap?: string;
+  name?: string;
+  stock?: string;
+  lengthSize?: string;
+  waistSize?: string;
+  hipSize?: string;
+  bustSize?: string;
+  variantImages: string[];
+}
+
+export interface AdditionalDetails {
+  offerName?: string;
+  offerDescription?: string;
+  dangerousGoodsRegulations?: string;
+  complianceCertification?: string;
+}
+
 // Type for updateBasicDetails function
 export type UpdateBasicDetails = (
   field: keyof BasicDetails,
   value: any,
 ) => void;
 
+export type UpdateAdditionalDetails = (
+  field: keyof AdditionalDetails,
+  value: any,
+) => void;
+
+export type UpdateVariantsFunction = (
+  index: number,
+  field: keyof Variant,
+  value: Variant[keyof Variant],
+) => void;
+
+// export type UpdateVariantDetails = (field: keyof Variant, value: any) => void;
+
 const SingleProduct = () => {
-  // const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useDispatch<AppDispatch>();
+  const categories = useSelector(
+    (state: RootState) => state.product.categories,
+  );
   const [activeStep, setActiveStep] = useState(0);
   const [basicDetails, setBasicDetails] = useState<BasicDetails>({
     category: '',
@@ -61,6 +98,45 @@ const SingleProduct = () => {
     selectedImages: [],
   });
 
+  const [additionalDetails, setAdditionalDetails] = useState<AdditionalDetails>(
+    {
+      offerName: '',
+      offerDescription: '',
+      dangerousGoodsRegulations: '',
+      complianceCertification: '',
+    },
+  );
+  const [variants, setVariants] = useState<Variant[]>([
+    {
+      color: '',
+      size: '',
+      colormap: '',
+      name: '',
+      stock: '',
+      lengthSize: '',
+      waistSize: '',
+      hipSize: '',
+      bustSize: '',
+      variantImages: [],
+    },
+  ]);
+  const updateAdditionalDetails: UpdateAdditionalDetails = (field, value) => {
+    setAdditionalDetails((prevDetails) => ({ ...prevDetails, [field]: value }));
+  };
+
+  const updateVariants: UpdateVariantsFunction = (index, field, value) => {
+    setVariants((prevVariants) => {
+      const updatedVariants = [...prevVariants];
+      updatedVariants[index] = { ...updatedVariants[index], [field]: value };
+      return updatedVariants;
+    });
+  };
+
+  const deleteVariant = (index : number) => {
+    setVariants((prevVariants) => prevVariants.filter((_, i) => i !== index));
+  };
+  
+
   const handleStepClick = (index: number) => {
     setActiveStep(index);
   };
@@ -80,43 +156,14 @@ const SingleProduct = () => {
       [field]: value,
     }));
   };
+  console.log(basicDetails);
 
-  // useEffect(() => {
-  //   const product: Product = {
-  //     name: 'dsfsdf',
-  //     brand_id: '1',
-  //     category_id: '1',
-  //     description: 'sdfsdf',
-  //     do_not_display: '1',
-  //     GST: '1',
-  //     HSNCode: '1',
-  //     image: 'sdfsdf',
-  //     keywords: 'sdfsdf',
-  //     product_url: 'sdfsdf',
-  //     quantity: '1',
-  //     regular_price: '1',
-  //     sale_price: '1',
-  //     skuid: '1',
-  //     status: '1',
-  //     stock: '1',
-  //     StyleID: '1',
-  //     user_id: '1',
-  //     vendor_id: '1',
-  //     vendor_product_id: '1',
-  //     weight: '1',
-  //     CountryOfOrigin: '1',
-  //     id: '1',
-
-  //     // Add other properties as needed
-  //   };
-
-  //   dispatch(createSingleProduct(product));
-  // }, []);
+  console.log('variants', variants);
+  console.log('additionalDetails', additionalDetails);
 
   useEffect(() => {
-    console.log('basicDetails', basicDetails);
-  }, [basicDetails]);
-
+    !categories && dispatch(vendorFetchAllCategories({ id: '0' }));
+  }, []);
   return (
     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="flex items-center justify-between border-b border-stroke py-4 px-7 dark:border-strokedark">
@@ -175,8 +222,16 @@ const SingleProduct = () => {
               updateBasicDetails={updateBasicDetails}
             />
           )}
-          {activeStep === 1 && <Varianst />}
-          {activeStep === 2 && <Additional />}
+          {activeStep === 1 && (
+            <Variants variants={variants} updateVariants={updateVariants}   deleteVariant={deleteVariant}
+            />
+          )}
+          {activeStep === 2 && (
+            <Additional
+              additionalDetails={additionalDetails}
+              updateAdditionalDetails={updateAdditionalDetails}
+            />
+          )}
         </form>
         <div className="flex items-center gap-2.5 p-7 justify-end">
           {activeStep > 0 && (

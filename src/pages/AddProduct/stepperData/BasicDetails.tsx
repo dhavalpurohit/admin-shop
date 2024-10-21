@@ -3,6 +3,8 @@ import CategoryDropdown from '../../../components/ProductCategoryDropdown/Catego
 import SubCategoryDropdown from '../../../components/ProductCategoryDropdown/SubCategoryDropdown';
 import DropDownCommon from '../../../components/DropDownCommon';
 import { BasicDetails, UpdateBasicDetails } from '../SingleProduct';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
 
 const codeType = [
   {
@@ -35,7 +37,9 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
   updateBasicDetails,
 }) => {
   const maxImages = 6;
-
+  const categories = useSelector(
+    (state: RootState) => state.product.categories,
+  );
   const handleCategoryChange = (category: string) => {
     updateBasicDetails('category', category);
   };
@@ -110,6 +114,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
     updateBasicDetails('selectedImages', newImages);
   };
 
+console.log("categories :::",categories)
   return (
     <div className="grid grid-cols-2 gap-5">
       <div className="flex flex-col gap-5">

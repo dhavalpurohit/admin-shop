@@ -12,7 +12,35 @@ export const createSingleProduct = createAsyncThunk(
   '/product/createSingleProduct',
   async (productDetails: Product) => {
     try {
-      const response = await ProductServices.createSingleProduct(productDetails);
+      const response = await ProductServices.createSingleProduct(
+        productDetails,
+      );
+      return response;
+    } catch (error) {
+      return error;
+    }
+  },
+);
+
+export const vendorFetchAllCategories = createAsyncThunk(
+  '/product/vendorFetchAllCategories',
+  async (productIds: object) => {
+    try {
+      const response = await ProductServices.vendorFetchAllCategories(
+        productIds,
+      );
+      return response;
+    } catch (error) {
+      return error;
+    }
+  },
+);
+
+export const fetchColorCodeMain = createAsyncThunk(
+  '/fetchColorCodeMain',
+  async () => {
+    try {
+      const response = await ProductServices.fetchColorCodeMain();
       return response;
     } catch (error) {
       return error;
@@ -23,6 +51,8 @@ export const createSingleProduct = createAsyncThunk(
 export const initialState = {
   isLoading: false,
   error: null as string | null,
+  categories: null,
+  fetchColorCodeMain: null,
 };
 
 const contactSlice = createSlice({
@@ -36,6 +66,16 @@ const contactSlice = createSlice({
     builder
       .addCase(createSingleProduct.fulfilled, (state, action) => {
         console.log(action);
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(vendorFetchAllCategories.fulfilled, (state, action) => {
+        state.categories = action.payload;
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(fetchColorCodeMain.fulfilled, (state, action) => {
+        state.fetchColorCodeMain = action.payload;
         state.isLoading = false;
         state.error = null;
       })
