@@ -1,34 +1,41 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import * as XLSX from 'xlsx';
 
 import DropDownCommon from '../../components/DropDownCommon';
-
-const category = [
-  {
-    name: 'cate 1',
-    value: 'cate 1',
-  },
-  {
-    name: 'cate 2',
-    value: 'cate 2',
-  },
-];
-
-const subcategory = [
-  {
-    name: 'sub cate 1',
-    value: 'sub cate 1',
-  },
-  {
-    name: 'sub cate 2',
-    value: 'sub cate 2',
-  },
-];
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../redux/store';
+import { vendorFetchAllCategories } from '../../redux/slices/ProductSlice';
 
 const BulkUpload = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const [error, setError] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<Category>();
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+
+  const categories = useSelector(
+    (state: RootState) => state.product.categories?.categories,
+  );
+
+  useEffect(() => {
+    if (!categories) {
+      dispatch(
+        vendorFetchAllCategories({
+          id: '',
+        }),
+      );
+    }
+  }, [categories]);
+
+  console.log('categories', categories);
+
+  const handleCategoryChange = (value: Category) => {
+    setSelectedCategory(value);
+  };
+
+  const newOption = { id: null, name: 'category' };
+  const lists = [newOption, ...(categories ?? [])]; // Safely combine the new option with categories
+
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setError(null); // Reset error message
     setUploadedFile(null); // Reset uploaded file
@@ -40,30 +47,26 @@ const BulkUpload = () => {
         setUploadedFile(file); // Set the uploaded file in state
 
         reader.onload = (event) => {
-          const data = new Uint8Array(event.target?.result as ArrayBuffer);
+          const data = event.target?.result;
+
           let workbook;
-
           if (fileType === 'csv') {
-            // Parse CSV file
-            const csvText = event.target?.result as string;
-            const parsedData = XLSX.utils.sheet_to_json(
-              XLSX?.utils?.csv_to_sheet(csvText),
-            );
-
-            console.log(parsedData);
+            // Read CSV data as binary
+            workbook = XLSX.read(data, { type: 'binary' });
           } else {
             // Parse Excel file
             workbook = XLSX.read(data, { type: 'array' });
-            const sheetName = workbook.SheetNames[0];
-            const sheet = workbook.Sheets[sheetName];
-            const jsonData = XLSX.utils.sheet_to_json(sheet);
-
-            console.log(jsonData); // Handle the parsed data
           }
+
+          const sheetName = workbook.SheetNames[0];
+          const sheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+          console.log(jsonData); // Handle the parsed data
         };
 
         if (fileType === 'csv') {
-          reader.readAsText(file); // For CSV
+          reader.readAsBinaryString(file); // For CSV
         } else {
           reader.readAsArrayBuffer(file); // For Excel
         }
@@ -89,7 +92,7 @@ const BulkUpload = () => {
     },
     maxFiles: 1, // Only allow one file at a time (optional)
   });
-
+  console.log('selectedCategory', selectedCategory);
   return (
     <div className="p-7 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="flex items-center justify-between border-b border-stroke py-4 px-7 dark:border-strokedark">
@@ -120,9 +123,12 @@ const BulkUpload = () => {
             </label>
             <div className="relative">
               <DropDownCommon
-                lists={category}
+                // lists={[newOption, ...categories] ?? [newOption]}
+                lists={lists}
                 labelKey="name"
-                valueKey="value"
+                // valueKey="id"
+                onOptionChange={handleCategoryChange}
+                selectedOption={selectedCategory}
               />
             </div>
           </div>
@@ -134,11 +140,11 @@ const BulkUpload = () => {
               Sub Category
             </label>
             <div className="relative">
-              <DropDownCommon
+              {/* <DropDownCommon
                 lists={subcategory}
                 labelKey="name"
                 valueKey="value"
-              />
+              /> */}
             </div>
           </div>
         </div>

@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface Props {
   lists: any[]; // Array of items for the dropdown
   labelKey: string; // The key to use for the display label
-  valueKey: string; // The key to use for the option value
-  selectedOption?: string; // The current selected value
-  onOptionChange?: (value: string) => void; // Function to call when the option changes
+  valueKey?: string; // The key to use for the option value
+  selectedOption?: any; // The current selected value
+  onOptionChange?: (value: any) => void; // Function to call when the option changes
 }
 
 const DropDownCommon: React.FC<Props> = ({
@@ -18,6 +18,11 @@ const DropDownCommon: React.FC<Props> = ({
   const [isOptionSelected, setIsOptionSelected] = useState<boolean>(
     !!selectedOption,
   );
+
+  useEffect(() => {
+    // Update internal state when selectedOption changes from props
+    setIsOptionSelected(!!selectedOption);
+  }, [selectedOption]);
 
   const changeTextColor = () => {
     setIsOptionSelected(true);
@@ -35,10 +40,11 @@ const DropDownCommon: React.FC<Props> = ({
           isOptionSelected ? 'text-black dark:text-white' : ''
         }`}
       >
-        {lists.map((item, index) => (
+        {lists?.map?.((item, index) => (
           <option
             key={index}
-            value={item[valueKey]}
+            // value={item[valueKey]}
+            value={valueKey ? item[valueKey] : item}
             className="text-body dark:text-bodydark"
           >
             {item[labelKey]}{' '}
