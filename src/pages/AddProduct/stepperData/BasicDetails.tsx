@@ -17,16 +17,6 @@ const codeType = [
   },
 ];
 
-const brands = [
-  {
-    brand: 'abc',
-    value: 'abc',
-  },
-  {
-    brand: 'xyz',
-    value: 'xyz',
-  },
-];
 interface BasicDetailsProps {
   basicDetails: BasicDetails;
   updateBasicDetails: UpdateBasicDetails;
@@ -40,6 +30,11 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
   const categories = useSelector(
     (state: RootState) => state.product.categories,
   );
+
+  const productBrands = useSelector(
+    (state: RootState) => state.product.productBrands?.brands,
+  );
+
   const handleCategoryChange = (category: string) => {
     updateBasicDetails('category', category);
   };
@@ -114,7 +109,9 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
     updateBasicDetails('selectedImages', newImages);
   };
 
-console.log("categories :::",categories)
+  console.log('productBrands ::::::', productBrands);
+
+  console.log('categories :::', categories);
   return (
     <div className="grid grid-cols-2 gap-5">
       <div className="flex flex-col gap-5">
@@ -188,11 +185,12 @@ console.log("categories :::",categories)
               </label>
               <div className="relative">
                 <DropDownCommon
-                  lists={brands}
-                  labelKey="brand"
-                  valueKey="value"
+                  lists={productBrands}
+                  labelKey="brand_name"
+                  valueKey="id"
                   selectedOption={basicDetails.brand}
                   onOptionChange={(value) => updateBasicDetails('brand', value)}
+                  defaultOption='brands'
                 />
               </div>
             </div>

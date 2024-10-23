@@ -1,6 +1,10 @@
 import { initialState as productIntialState } from './slices/ProductSlice';
+import { initialState as userInitialState } from './slices/ProductSlice';
+
 
 import productReducer from './slices/ProductSlice';
+import userReducer from './slices/userSlice';
+
 
 // Add AnyAction import
 import {
@@ -18,10 +22,12 @@ export const resetAction = () => ({
 
 const combinedInitialState = {
   product: productIntialState,
+  user: userInitialState,
 };
 
 const appReducer = combineReducers({
   product: productReducer,
+  user: userReducer,
 });
 
 const rootReducer: Reducer = (

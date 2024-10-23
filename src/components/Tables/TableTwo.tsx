@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Package } from '../../types/package';
 import CategoryDropdown from '../ProductCategoryDropdown/CategoryDropdown';
 import SubCategoryDropdown from '../ProductCategoryDropdown/SubCategoryDropdown';
 import { NavLink } from 'react-router-dom';
+import { vendorFetchAllCategories } from '../../redux/slices/ProductSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../redux/store';
 // import IconViewEye from '../../images/icon/icon-view-eye.svg';
 
 const packageData: Package[] = [
@@ -36,11 +39,37 @@ const singleUploadData = [
 ];
 
 const TableTwo: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const [activeTab, setActiveTab] = useState<'bulk' | 'single'>('bulk');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedSubCategory, setSelectedSubCategory] = useState('');
+  const categories = useSelector(
+    (state: RootState) => state.product.categories?.categories,
+  );
+
+  const handleCategoryChange = (newCategory: string) => {
+    setSelectedCategory(newCategory);
+    setSelectedSubCategory(''); // Reset subcategory when category changes
+  };
+
+  const handleSubCategoryChange = (newSubCategory: string) => {
+    setSelectedSubCategory(newSubCategory);
+  };
 
   const handleTabClick = (tab: 'bulk' | 'single') => {
     setActiveTab(tab);
   };
+
+  useEffect(() => {
+    if (!categories) {
+      dispatch(
+        vendorFetchAllCategories({
+          id: '0',
+        }),
+      );
+    }
+  }, [categories]);
+
   return (
     <div className="">
       <div className="flex items-center bg-white justify-between p-4 rounded-xl border border-stroke  shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -104,8 +133,15 @@ const TableTwo: React.FC = () => {
           </li>
         </ul>
         <div className="flex items-center gap-2.5">
-          <CategoryDropdown />
-          <SubCategoryDropdown />
+          <CategoryDropdown
+            selectedCategory={selectedCategory}
+            onCategoryChange={handleCategoryChange}
+          />
+          <SubCategoryDropdown
+            selectedSubCategory={selectedSubCategory}
+            onSubCategoryChange={handleSubCategoryChange}
+            category={selectedCategory}
+          />
         </div>
       </div>
       <div className="bg-white">

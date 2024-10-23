@@ -1,16 +1,6 @@
 import { useState } from 'react';
 import DropDownCommon from '../../../components/DropDownCommon';
 
-const colors = [
-  {
-    color: 'Dark Black',
-    value: 'dark_black',
-  },
-  {
-    color: 'Gray',
-    value: 'gray',
-  },
-];
 const sizes = [
   {
     size: 'xl',
@@ -24,6 +14,8 @@ const sizes = [
 
 import React from 'react';
 import { UpdateVariantsFunction, Variant } from '../SingleProduct';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
 
 interface VariantsProps {
   variants: Variant[];
@@ -31,10 +23,18 @@ interface VariantsProps {
   deleteVariant: (index: number) => void;
 }
 
-const Variants: React.FC<VariantsProps> = ({ variants, updateVariants , deleteVariant }) => {
+const Variants: React.FC<VariantsProps> = ({
+  variants,
+  updateVariants,
+  deleteVariant,
+}) => {
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0); // Start with the first variant
   //   const maxImages : 6;
+  const colourCodes = useSelector(
+    (state: RootState) => state.product.ColorCodeMain,
+  );
 
+  console.log('colourCodes ::', colourCodes);
   // Function to create a new variant with default values
   const addVariant = () => {
     const newVariant = {
@@ -91,7 +91,6 @@ const Variants: React.FC<VariantsProps> = ({ variants, updateVariants , deleteVa
     setSelectedVariantIndex(index);
   };
 
-
   return (
     <div className="flex flex-col gap-5">
       <div className="p-8 shadow border rounded">
@@ -117,14 +116,15 @@ const Variants: React.FC<VariantsProps> = ({ variants, updateVariants , deleteVa
                 </label>
                 <div className="relative">
                   <DropDownCommon
-                    lists={colors}
-                    labelKey="color"
-                    valueKey="value"
+                    lists={colourCodes?.color_codes} // Pass the color_codes directly
+                    labelKey="color_name" // Use "color_name" as the label
+                    valueKey="color_code" // Use "color_code" as the value
                     selectedOption={variants[selectedVariantIndex].color} // Pass the selected variant's color
                     onOptionChange={
                       (value) =>
-                        updateVariants(selectedVariantIndex, 'color', value) // Correctly pass value to updateVariants
+                        updateVariants(selectedVariantIndex, 'color', value) // Update the selected variant's color
                     }
+                    defaultOption={'colour'}
                   />
                 </div>
               </div>
@@ -146,6 +146,7 @@ const Variants: React.FC<VariantsProps> = ({ variants, updateVariants , deleteVa
                       (value) =>
                         updateVariants(selectedVariantIndex, 'size', value) // Correctly pass value to updateVariants
                     }
+                    defaultOption='size'
                   />
                 </div>
               </div>
@@ -500,7 +501,7 @@ const Variants: React.FC<VariantsProps> = ({ variants, updateVariants , deleteVa
                         className="hover:text-primary"
                         type="button"
                         onClick={() => deleteVariant(index)}
-                        >
+                      >
                         <svg
                           className="fill-current"
                           width="18"

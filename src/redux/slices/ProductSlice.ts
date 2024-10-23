@@ -48,11 +48,24 @@ export const fetchColorCodeMain = createAsyncThunk(
   },
 );
 
+export const fetchProductBrands = createAsyncThunk(
+  '/fetchProductBrands',
+  async () => {
+    try {
+      const response = await ProductServices.fetchProductBrands();
+      return response;
+    } catch (error) {
+      return error;
+    }
+  },
+);
+
 export const initialState = {
   isLoading: false,
   error: null as string | null,
   categories: null,
-  fetchColorCodeMain: null,
+  ColorCodeMain: null,
+  productBrands: null,
 };
 
 const contactSlice = createSlice({
@@ -75,7 +88,12 @@ const contactSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchColorCodeMain.fulfilled, (state, action) => {
-        state.fetchColorCodeMain = action.payload;
+        state.ColorCodeMain = action.payload;
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(fetchProductBrands.fulfilled, (state, action) => {
+        state.productBrands = action.payload;
         state.isLoading = false;
         state.error = null;
       })
