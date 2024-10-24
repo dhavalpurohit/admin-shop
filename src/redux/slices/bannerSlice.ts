@@ -5,13 +5,13 @@ import {
   isRejected,
   //   PayloadAction,
 } from '@reduxjs/toolkit';
-import { UserServices } from '../../services/api/userApi';
+import { BannerServices } from '../../services/api/BannerApi';
 
-export const loginVendor = createAsyncThunk(
-  '/user/vendorLogin',
+export const allBannerList = createAsyncThunk(
+  '/banner/allBannerList',
   async (data: object) => {
     try {
-      const response = await UserServices.loginVendor(data);
+      const response = await BannerServices.allBannerList(data);
       return response;
     } catch (error) {
       return error;
@@ -22,11 +22,11 @@ export const loginVendor = createAsyncThunk(
 export const initialState = {
   isLoading: false,
   error: null as string | null,
-  vendorDetails: null as any,
+  allBannerList: null as any,
 };
 
-const userSlice = createSlice({
-  name: 'user',
+const bannerSlice = createSlice({
+  name: 'banner',
   initialState,
 
   reducers: {
@@ -34,8 +34,8 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(loginVendor.fulfilled, (state, action) => {
-        state.vendorDetails = action.payload;
+      .addCase(allBannerList.fulfilled, (state, action) => {
+        state.allBannerList = action.payload;
         state.isLoading = false;
         state.error = null;
       })
@@ -49,5 +49,5 @@ const userSlice = createSlice({
   },
 });
 
-export const {} = userSlice.actions;
-export default userSlice.reducer;
+export const {} = bannerSlice.actions;
+export default bannerSlice.reducer;

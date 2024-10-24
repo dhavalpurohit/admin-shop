@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Banner } from '../../types/banner';
 import DropDownCommon from '../../components/DropDownCommon';
 import { NavLink } from 'react-router-dom';
 import search from '../../../src/images/common/search.svg';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../redux/store';
+import { allBannerList } from '../../redux/slices/bannerSlice';
 
 const bannerData: Banner[] = [
   {
@@ -60,6 +63,10 @@ const type = [
 ];
 
 const BannerTable: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const bannerList = useSelector(
+    (state: RootState) => state.banner.allBannerList,
+  );
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
@@ -74,6 +81,17 @@ const BannerTable: React.FC = () => {
   const handleBlur = () => {
     setIsFocused(false);
   };
+  useEffect(() => {
+    if (!bannerList) {
+      dispatch(
+        allBannerList({
+          status: '1',
+        }),
+      );
+    }
+  }, [allBannerList]);
+
+  console.log('bannerList ::::', bannerList);
 
   return (
     <div className="">
