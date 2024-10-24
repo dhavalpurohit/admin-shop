@@ -9,6 +9,7 @@ import ECommerce from '../pages/Dashboard/ECommerce';
 import Profile from '../pages/Profile';
 import Settings from '../pages/Settings';
 import Products from '../pages/Products';
+import Banner from '../pages/Banner';
 
 const RoutesView = () => {
   return (
@@ -96,6 +97,17 @@ const RoutesView = () => {
             <>
               <PageTitle title="Chart | Store Panel" />
               <Chart />
+            </>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/banners"
+        element={
+          <ProtectedRoute>
+            <>
+              <PageTitle title="Chart | Store Panel" />
+              <Banner />
             </>
           </ProtectedRoute>
         }

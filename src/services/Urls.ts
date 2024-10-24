@@ -10,6 +10,9 @@ export const urls = {
   brands:
     'fetch_product_brand?search=&product_brand_id=&page_number=&page_size=100&orderBy=z-a',
   user: {
-    loginVendor: 'login vendor',
+    loginVendor: 'admin-vendor-login',
+  },
+  banner: {
+    allBannerList: 'banner-list-all',
   },
 };

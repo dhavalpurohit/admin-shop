@@ -1,9 +1,8 @@
 import { urls } from '../Urls.ts';
-import { UserService } from '../http/userService.ts';
-// import { ProductService } from '../http/ProductService';
+import { CommonService } from '../http/commonService.ts';
 
-export class ProductServices {
-  static loginVendor() {
-    return UserService.post(urls.user.loginVendor);
+export class UserServices {
+  static loginVendor(data: object) {
+    return CommonService.post(urls.user.loginVendor, data);
   }
 }

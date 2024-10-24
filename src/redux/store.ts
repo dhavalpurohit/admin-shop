@@ -1,10 +1,10 @@
 import { initialState as productIntialState } from './slices/ProductSlice';
-import { initialState as userInitialState } from './slices/ProductSlice';
-
+import { initialState as userInitialState } from './slices/userSlice';
+import { initialState as bannerInitialState } from './slices/bannerSlice';
 
 import productReducer from './slices/ProductSlice';
 import userReducer from './slices/userSlice';
-
+import bannerReducer from './slices/bannerSlice';
 
 // Add AnyAction import
 import {
@@ -23,11 +23,13 @@ export const resetAction = () => ({
 const combinedInitialState = {
   product: productIntialState,
   user: userInitialState,
+  banner: bannerInitialState,
 };
 
 const appReducer = combineReducers({
   product: productReducer,
   user: userReducer,
+  banner: bannerReducer,
 });
 
 const rootReducer: Reducer = (

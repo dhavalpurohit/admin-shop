@@ -1,26 +1,23 @@
 import { Product } from '../../types/product.ts';
 import { urls } from '../Urls.ts';
-import { ProductService } from '../http/ProductService';
+import { CommonService } from '../http/commonService.ts';
 
 export class ProductServices {
   static createSingleProduct(productDetails: Product) {
-    return ProductService.post(
-      urls.product.createSingleProduct,
-      productDetails,
-    );
+    return CommonService.post(urls.product.createSingleProduct, productDetails);
   }
   static vendorFetchAllCategories(productIds: object) {
-    return ProductService.post(
+    return CommonService.post(
       urls.product.vendorFetchAllCategories,
       productIds,
     );
   }
 
   static fetchColorCodeMain() {
-    return ProductService.get(urls.colour.fetchColorCodeMain);
+    return CommonService.get(urls.colour.fetchColorCodeMain);
   }
 
   static fetchProductBrands() {
-    return ProductService.get(urls.brands);
+    return CommonService.get(urls.brands);
   }
 }

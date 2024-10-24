@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../../redux/store';
+import { loginVendor } from '../../redux/slices/userSlice';
 
 const SignIn: React.FC = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -15,24 +18,18 @@ const SignIn: React.FC = () => {
 
     try {
       // Replace with your API endpoint
-      const response = await axios.post(
-        'https://bt09kmb8yb.execute-api.us-east-1.amazonaws.com/shopnowee/admin-vendor-login',
-        {
-          email,
-          password,
-        },
-      );
+      const response = await dispatch(loginVendor({ email, password }));
 
       console.log('response', response);
       // Assuming the response has a token
-      if (response.data.token) {
-        // Save the token in localStorage or cookies
-        localStorage.setItem('token', response.data.token);
+      if (response.payload.access_token) {
+        //   // Save the token in localStorage or cookies
+        localStorage.setItem('token', response.payload.access_token);
 
-        // Redirect to the home/dashboard page
+        //   // Redirect to the home/dashboard page
         navigate('/');
       } else {
-        // Handle unexpected response
+        //   // Handle unexpected response
         setErrorMessage('Login failed, please try again.');
       }
     } catch (error) {
