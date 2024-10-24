@@ -6,6 +6,7 @@ interface Props {
   valueKey?: string; // The key to use for the option value
   selectedOption?: any; // The current selected value
   onOptionChange?: (value: any) => void; // Function to call when the option changes
+  defaultOption?: string; // Placeholder text for the dropdown
 }
 
 const DropDownCommon: React.FC<Props> = ({
@@ -14,6 +15,7 @@ const DropDownCommon: React.FC<Props> = ({
   valueKey,
   selectedOption,
   onOptionChange,
+  defaultOption,
 }) => {
   const [isOptionSelected, setIsOptionSelected] = useState<boolean>(
     !!selectedOption,
@@ -40,6 +42,9 @@ const DropDownCommon: React.FC<Props> = ({
           isOptionSelected ? 'text-black dark:text-white' : ''
         }`}
       >
+        <option value="" className="text-body dark:text-bodydark">
+          {defaultOption}
+        </option>
         {lists?.map?.((item, index) => (
           <option
             key={index}

@@ -7,7 +7,11 @@ import { useDispatch, useSelector } from 'react-redux';
 // import { createSingleProduct } from '../../redux/slices/ProductSlice';
 import { AppDispatch, RootState } from '../../redux/store';
 // import { Product } from '../../types/product';
-import { vendorFetchAllCategories } from '../../redux/slices/ProductSlice';
+import {
+  fetchColorCodeMain,
+  fetchProductBrands,
+  vendorFetchAllCategories,
+} from '../../redux/slices/ProductSlice';
 
 const steps = ['Basic Details', 'Variants', 'Additional'];
 export interface Option {
@@ -78,6 +82,12 @@ const SingleProduct = () => {
   const categories = useSelector(
     (state: RootState) => state.product.categories,
   );
+  const colourCodes = useSelector(
+    (state: RootState) => state.product.ColorCodeMain,
+  );
+  const productBrands = useSelector(
+    (state: RootState) => state.product.productBrands,
+  );
   const [activeStep, setActiveStep] = useState(0);
   const [basicDetails, setBasicDetails] = useState<BasicDetails>({
     category: '',
@@ -132,10 +142,9 @@ const SingleProduct = () => {
     });
   };
 
-  const deleteVariant = (index : number) => {
+  const deleteVariant = (index: number) => {
     setVariants((prevVariants) => prevVariants.filter((_, i) => i !== index));
   };
-  
 
   const handleStepClick = (index: number) => {
     setActiveStep(index);
@@ -156,14 +165,23 @@ const SingleProduct = () => {
       [field]: value,
     }));
   };
-  console.log(basicDetails);
+  // console.log(basicDetails);
 
-  console.log('variants', variants);
-  console.log('additionalDetails', additionalDetails);
+  // console.log('variants', variants);
+  // console.log('additionalDetails', additionalDetails);
+  useEffect(() => {
+    !categories?.length && dispatch(vendorFetchAllCategories({ id: '0' }));
+  }, []);
+  useEffect(() => {
+    if (!colourCodes) dispatch(fetchColorCodeMain());
+  }, [colourCodes]);
 
   useEffect(() => {
-    !categories && dispatch(vendorFetchAllCategories({ id: '0' }));
-  }, []);
+    if (!productBrands) {
+      dispatch(fetchProductBrands());
+    }
+  }, [productBrands]);
+
   return (
     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="flex items-center justify-between border-b border-stroke py-4 px-7 dark:border-strokedark">
@@ -223,7 +241,10 @@ const SingleProduct = () => {
             />
           )}
           {activeStep === 1 && (
-            <Variants variants={variants} updateVariants={updateVariants}   deleteVariant={deleteVariant}
+            <Variants
+              variants={variants}
+              updateVariants={updateVariants}
+              deleteVariant={deleteVariant}
             />
           )}
           {activeStep === 2 && (

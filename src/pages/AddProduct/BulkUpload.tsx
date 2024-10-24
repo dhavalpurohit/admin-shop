@@ -2,16 +2,29 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import * as XLSX from 'xlsx';
 
-import DropDownCommon from '../../components/DropDownCommon';
+// import DropDownCommon from '../../components/DropDownCommon';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { vendorFetchAllCategories } from '../../redux/slices/ProductSlice';
+import CategoryDropdown from '../../components/ProductCategoryDropdown/CategoryDropdown';
+import SubCategoryDropdown from '../../components/ProductCategoryDropdown/SubCategoryDropdown';
 
 const BulkUpload = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [error, setError] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<Category>();
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedSubCategory, setSelectedSubCategory] = useState('');
+
+  const handleCategoryChange = (newCategory: string) => {
+    setSelectedCategory(newCategory);
+    setSelectedSubCategory(''); // Reset subcategory when category changes
+  };
+
+  const handleSubCategoryChange = (newSubCategory: string) => {
+    setSelectedSubCategory(newSubCategory);
+  };
 
   const categories = useSelector(
     (state: RootState) => state.product.categories?.categories,
@@ -21,20 +34,11 @@ const BulkUpload = () => {
     if (!categories) {
       dispatch(
         vendorFetchAllCategories({
-          id: '',
+          id: '0',
         }),
       );
     }
   }, [categories]);
-
-  console.log('categories', categories);
-
-  const handleCategoryChange = (value: Category) => {
-    setSelectedCategory(value);
-  };
-
-  const newOption = { id: null, name: 'category' };
-  const lists = [newOption, ...(categories ?? [])]; // Safely combine the new option with categories
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setError(null); // Reset error message
@@ -92,7 +96,7 @@ const BulkUpload = () => {
     },
     maxFiles: 1, // Only allow one file at a time (optional)
   });
-  console.log('selectedCategory', selectedCategory);
+  // console.log('selectedCategory', selectedCategory);
   return (
     <div className="p-7 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="flex items-center justify-between border-b border-stroke py-4 px-7 dark:border-strokedark">
@@ -114,39 +118,15 @@ const BulkUpload = () => {
           Step 1 : Select the category to continue the bulk upload process
         </h2>
         <div className="grid grid-cols-2 py-2 gap-2.5 mt-3">
-          <div className="w-full">
-            <label
-              className="mb-3 block text-sm font-medium text-black dark:text-white"
-              htmlFor="category"
-            >
-              Category
-            </label>
-            <div className="relative">
-              <DropDownCommon
-                // lists={[newOption, ...categories] ?? [newOption]}
-                lists={lists}
-                labelKey="name"
-                // valueKey="id"
-                onOptionChange={handleCategoryChange}
-                selectedOption={selectedCategory}
-              />
-            </div>
-          </div>
-          <div className="w-full">
-            <label
-              className="mb-3 block text-sm font-medium text-black dark:text-white"
-              htmlFor="subcategory"
-            >
-              Sub Category
-            </label>
-            <div className="relative">
-              {/* <DropDownCommon
-                lists={subcategory}
-                labelKey="name"
-                valueKey="value"
-              /> */}
-            </div>
-          </div>
+          <CategoryDropdown
+            selectedCategory={selectedCategory}
+            onCategoryChange={handleCategoryChange}
+          />
+          <SubCategoryDropdown
+            selectedSubCategory={selectedSubCategory}
+            onSubCategoryChange={handleSubCategoryChange}
+            category={selectedCategory}
+          />
         </div>
       </div>
       <div className="grid grid-cols-2 gap-2.5 mt-3">
