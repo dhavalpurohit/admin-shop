@@ -6,27 +6,35 @@ import RoutesView from './routes';
 import DefaultLayout from './layout/DefaultLayout';
 import { Provider } from 'react-redux';
 import store from './redux/store';
+import { AuthProvider } from './context/AuthContext';
 
 function App() {
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState(true); // no need to explicitly define boolean for useState
   const { pathname } = useLocation();
 
+  // Scroll to top when route changes
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
+  // Simulate loading (this could be API call or authentication check)
   useEffect(() => {
-    setTimeout(() => setLoading(false), 1000);
+    const timeout = setTimeout(() => setLoading(false), 1000); // Clear timeout on unmount
+    return () => clearTimeout(timeout);
   }, []);
 
-  return loading ? (
-    <Loader />
-  ) : (
-    <Provider store={store}>
-      <DefaultLayout>
-        <RoutesView />
-      </DefaultLayout>
-    </Provider>
+  if (loading) {
+    return <Loader />; // Show loader while loading is true
+  }
+
+  return (
+    <AuthProvider>
+      <Provider store={store}>
+        <DefaultLayout>
+          <RoutesView />
+        </DefaultLayout>
+      </Provider>
+    </AuthProvider>
   );
 }
 
