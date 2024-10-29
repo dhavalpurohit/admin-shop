@@ -9,9 +9,9 @@ import ECommerce from '../pages/Dashboard/ECommerce';
 import Profile from '../pages/Profile';
 import Settings from '../pages/Settings';
 import Products from '../pages/Products';
-import SingleProduct from '../pages/AddProduct/SingleProduct';
 import BulkUpload from '../pages/AddProduct/BulkUpload';
 import Banner from '../pages/Banner';
+import SingleProduct from '../pages/AddProduct/SingleProduct';
 
 const RoutesView = () => {
   return (

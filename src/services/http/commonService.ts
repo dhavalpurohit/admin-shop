@@ -5,9 +5,9 @@ import { ErrorResponse } from '../../types/http';
 export class CommonService {
   private static axios = _axios.create({
     // baseURL: process.env.BASE_URL,
-    baseURL: "https://bt09kmb8yb.execute-api.us-east-1.amazonaws.com/shopnowee/",
+    baseURL:
+      'https://bt09kmb8yb.execute-api.us-east-1.amazonaws.com/shopnowee/',
 
-    
     // headers: {
     //   "Content-Type": "application/json",
     // },
@@ -48,7 +48,7 @@ export class CommonService {
     config: AxiosRequestConfig = {},
   ) {
     try {
-      const token = localStorage.getItem('userToken');
+      const token = localStorage.getItem('access_token');
 
       const headers = config.headers || {};
 
@@ -67,11 +67,7 @@ export class CommonService {
         headers,
       };
 
-      const response = await CommonService.axios.post(
-        url,
-        body,
-        updatedConfig,
-      );
+      const response = await CommonService.axios.post(url, body, updatedConfig);
       return response.data;
     } catch (e) {
       CommonService.handleErrors(e as ErrorResponse);
