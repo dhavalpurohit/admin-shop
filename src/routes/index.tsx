@@ -12,6 +12,7 @@ import Products from '../pages/Products';
 import BulkUpload from '../pages/AddProduct/BulkUpload';
 import Banner from '../pages/Banner';
 import SingleProduct from '../pages/AddProduct/SingleProduct';
+import Order from '../pages/Order';
 
 const RoutesView = () => {
   return (
@@ -126,8 +127,19 @@ const RoutesView = () => {
         element={
           <ProtectedRoute>
             <>
-              <PageTitle title="Chart | Store Panel" />
+              <PageTitle title="Banner | Store Panel" />
               <Banner />
+            </>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/order"
+        element={
+          <ProtectedRoute>
+            <>
+              <PageTitle title="Order | Store Panel" />
+              <Order />
             </>
           </ProtectedRoute>
         }
