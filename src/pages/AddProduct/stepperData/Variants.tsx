@@ -1,5 +1,10 @@
+import React from 'react';
 import { useState } from 'react';
 import DropDownCommon from '../../../components/DropDownCommon';
+
+import { UpdateVariantsFunction, Variant } from '../SingleProduct';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
 
 const sizes = [
   {
@@ -11,12 +16,6 @@ const sizes = [
     value: '2xl',
   },
 ];
-
-import React from 'react';
-import { UpdateVariantsFunction, Variant } from '../SingleProduct';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
-
 interface VariantsProps {
   variants: Variant[];
   updateVariants: UpdateVariantsFunction;
@@ -33,6 +32,9 @@ const Variants: React.FC<VariantsProps> = ({
   const colourCodes = useSelector(
     (state: RootState) => state.product.ColorCodeMain,
   );
+
+  const [isStockChecked, setIsStockChecked] = useState<boolean>(true);
+  const [isStatusChecked, setIsStatusChecked] = useState<boolean>(true);
 
   console.log('colourCodes ::', colourCodes);
   // Function to create a new variant with default values
@@ -146,7 +148,7 @@ const Variants: React.FC<VariantsProps> = ({
                       (value) =>
                         updateVariants(selectedVariantIndex, 'size', value) // Correctly pass value to updateVariants
                     }
-                    defaultOption='size'
+                    defaultOption="size"
                   />
                 </div>
               </div>
@@ -203,31 +205,6 @@ const Variants: React.FC<VariantsProps> = ({
               <div className="w-full">
                 <label
                   className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="stock"
-                >
-                  Stock
-                </label>
-                <div className="relative">
-                  <input
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    type="text"
-                    name="stock"
-                    id="stock"
-                    placeholder="stock"
-                    value={variants[selectedVariantIndex]?.stock || ''}
-                    onChange={(e) =>
-                      updateVariants(
-                        selectedVariantIndex,
-                        'stock',
-                        e.target.value,
-                      )
-                    }
-                  />
-                </div>
-              </div>
-              <div className="w-full">
-                <label
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
                   htmlFor="bust"
                 >
                   Bust Size
@@ -249,6 +226,117 @@ const Variants: React.FC<VariantsProps> = ({
                     }
                   />
                 </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 py-2 gap-2.5 mt-3">
+              <div className="w-full">
+                <label
+                  htmlFor="checkboxLabelTwo"
+                  className="flex cursor-pointer select-none items-center"
+                >
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      id="checkboxLabelTwo"
+                      className="sr-only"
+                      onChange={() => {
+                        setIsStockChecked(!isStockChecked);
+                      }}
+                    />
+                    <div
+                      className={`mr-4 flex h-5 w-5 items-center justify-center rounded border ${
+                        isStockChecked &&
+                        'border-primary bg-gray dark:bg-transparent'
+                      }`}
+                    >
+                      <span
+                        className={`opacity-0 ${
+                          isStockChecked && '!opacity-100'
+                        }`}
+                      >
+                        <svg
+                          width="11"
+                          height="8"
+                          viewBox="0 0 11 8"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M10.0915 0.951972L10.0867 0.946075L10.0813 0.940568C9.90076 0.753564 9.61034 0.753146 9.42927 0.939309L4.16201 6.22962L1.58507 3.63469C1.40401 3.44841 1.11351 3.44879 0.932892 3.63584C0.755703 3.81933 0.755703 4.10875 0.932892 4.29224L0.932878 4.29225L0.934851 4.29424L3.58046 6.95832C3.73676 7.11955 3.94983 7.2 4.1473 7.2C4.36196 7.2 4.55963 7.11773 4.71406 6.9584L10.0468 1.60234C10.2436 1.4199 10.2421 1.1339 10.0915 0.951972ZM4.2327 6.30081L4.2317 6.2998C4.23206 6.30015 4.23237 6.30049 4.23269 6.30082L4.2327 6.30081Z"
+                            fill="#3056D3"
+                            stroke="#3056D3"
+                            strokeWidth="0.4"
+                          ></path>
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                  Stock
+                </label>
+
+                {/* input stock field */}
+                <div className="relative hidden">
+                  <input
+                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    type="text"
+                    name="stock"
+                    id="stock"
+                    placeholder="stock"
+                    value={variants[selectedVariantIndex]?.stock || ''}
+                    onChange={(e) =>
+                      updateVariants(
+                        selectedVariantIndex,
+                        'stock',
+                        e.target.value,
+                      )
+                    }
+                  />
+                </div>
+              </div>
+              <div className="w-full">
+                <label
+                  htmlFor="status"
+                  className="flex cursor-pointer select-none items-center pt-2.5"
+                >
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      id="status"
+                      className="sr-only"
+                      onChange={() => {
+                        setIsStatusChecked(!isStatusChecked);
+                      }}
+                    />
+                    <div
+                      className={`mr-4 flex h-5 w-5 items-center justify-center rounded border ${
+                        isStatusChecked &&
+                        'border-primary bg-gray dark:bg-transparent'
+                      }`}
+                    >
+                      <span
+                        className={`opacity-0 ${
+                          isStatusChecked && '!opacity-100'
+                        }`}
+                      >
+                        <svg
+                          width="11"
+                          height="8"
+                          viewBox="0 0 11 8"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M10.0915 0.951972L10.0867 0.946075L10.0813 0.940568C9.90076 0.753564 9.61034 0.753146 9.42927 0.939309L4.16201 6.22962L1.58507 3.63469C1.40401 3.44841 1.11351 3.44879 0.932892 3.63584C0.755703 3.81933 0.755703 4.10875 0.932892 4.29224L0.932878 4.29225L0.934851 4.29424L3.58046 6.95832C3.73676 7.11955 3.94983 7.2 4.1473 7.2C4.36196 7.2 4.55963 7.11773 4.71406 6.9584L10.0468 1.60234C10.2436 1.4199 10.2421 1.1339 10.0915 0.951972ZM4.2327 6.30081L4.2317 6.2998C4.23206 6.30015 4.23237 6.30049 4.23269 6.30082L4.2327 6.30081Z"
+                            fill="#3056D3"
+                            stroke="#3056D3"
+                            strokeWidth="0.4"
+                          ></path>
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                  Status
+                </label>
               </div>
             </div>
             <div className="mt-3">
