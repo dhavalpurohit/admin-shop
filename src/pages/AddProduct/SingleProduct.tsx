@@ -198,7 +198,7 @@ const SingleProduct = () => {
       setIsSavingProduct(true); // Set loading to true when starting the API call
       const productDetails = {
         user_id: '-1',
-        id: basicDetails.productId || '',
+        id: '',
         name: basicDetails.productName || '',
         sale_price: basicDetails.salePrice || '',
         regular_price: basicDetails.regularPrice || '0',

@@ -143,7 +143,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
             General Information
           </h2>
           <div className="grid grid-cols-2 py-2 gap-2.5 mt-3">
-            <div className="w-full">
+            <div className="w-full hidden">
               <label
                 className="mb-3 block text-sm font-medium text-black dark:text-white"
                 htmlFor="productId"
