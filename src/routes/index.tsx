@@ -9,6 +9,8 @@ import ECommerce from '../pages/Dashboard/ECommerce';
 import Profile from '../pages/Profile';
 import Settings from '../pages/Settings';
 import Products from '../pages/Products';
+import SingleProduct from '../pages/AddProduct/SingleProduct';
+import BulkUpload from '../pages/AddProduct/BulkUpload';
 import Banner from '../pages/Banner';
 
 const RoutesView = () => {
@@ -88,6 +90,24 @@ const RoutesView = () => {
               <Products />
             </>
           </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/single-product/"
+        element={
+          <>
+            <PageTitle title="Single Products | Store Panel" />
+            <SingleProduct />
+          </>
+        }
+      />
+      <Route
+        path="/bulk-products/"
+        element={
+          <>
+            <PageTitle title="Bulk-Upload Products | Store Panel" />
+            <BulkUpload />
+          </>
         }
       />
       <Route
