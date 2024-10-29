@@ -5,7 +5,6 @@ import DropDownCommon from '../../../components/DropDownCommon';
 import { BasicDetails, UpdateBasicDetails } from '../SingleProduct';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
-import { useState } from 'react';
 
 const codeType = [
   {
@@ -21,14 +20,14 @@ const codeType = [
 interface BasicDetailsProps {
   basicDetails: BasicDetails;
   updateBasicDetails: UpdateBasicDetails;
+  errors: Record<string, string>; // Add errors prop to BasicDetails
 }
 
 const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
   basicDetails,
   updateBasicDetails,
+  // errors,
 }) => {
-  const [isStockChecked, setIsStockChecked] = useState<boolean>(true);
-  const [isStatusChecked, setIsStatusChecked] = useState<boolean>(true);
   const maxImages = 6;
   const categories = useSelector(
     (state: RootState) => state.product.categories,
@@ -125,11 +124,18 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
               selectedCategory={basicDetails.category}
               onCategoryChange={handleCategoryChange}
             />
+            {/* {errors.category && (
+              <p className="text-red-500">{errors.category}</p>
+            )} */}
+
             <SubCategoryDropdown
               selectedSubCategory={basicDetails.subCategory}
               onSubCategoryChange={handleSubCategoryChange}
               category={basicDetails.category}
             />
+            {/* {errors.subCategory && (
+              <p className="text-red-500">{errors.subCategory}</p>
+            )} */}
           </div>
         </div>
         <div className="p-8 shadow border rounded">
@@ -177,6 +183,9 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
                     updateBasicDetails('productName', e.target.value)
                   }
                 />
+                {/* {errors.productName && (
+                  <p className="text-red-500">{errors.productName}</p>
+                )} */}
               </div>
             </div>
             <div className="w-full">
@@ -231,6 +240,9 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
                 placeholder="Default textarea"
                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
               ></textarea>
+              {/* {errors.productDescription && (
+                <p className="text-red-500">{errors.productDescription}</p>
+              )} */}
             </div>
 
             <div className="w-full">
@@ -252,6 +264,9 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
                     updateBasicDetails('regularPrice', e.target.value)
                   }
                 />
+                {/* {errors.regularPrice && (
+                  <p className="text-red-500">{errors.regularPrice}</p>
+                )} */}
               </div>
             </div>
             <div className="w-full">
@@ -285,19 +300,23 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
                     type="checkbox"
                     id="stock"
                     className="sr-only"
+                    checked={basicDetails.stockChecked}
                     onChange={() => {
-                      setIsStockChecked(!isStockChecked);
+                      updateBasicDetails(
+                        'stockChecked',
+                        !basicDetails.stockChecked,
+                      );
                     }}
                   />
                   <div
                     className={`mr-4 flex h-5 w-5 items-center justify-center rounded border ${
-                      isStockChecked &&
+                      basicDetails.stockChecked &&
                       'border-primary bg-gray dark:bg-transparent'
                     }`}
                   >
                     <span
                       className={`opacity-0 ${
-                        isStockChecked && '!opacity-100'
+                        basicDetails.stockChecked && '!opacity-100'
                       }`}
                     >
                       <svg
@@ -330,19 +349,23 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
                     type="checkbox"
                     id="status"
                     className="sr-only"
+                    checked={basicDetails.statusChecked}
                     onChange={() => {
-                      setIsStatusChecked(!isStatusChecked);
+                      updateBasicDetails(
+                        'statusChecked',
+                        !basicDetails.statusChecked,
+                      );
                     }}
                   />
                   <div
                     className={`mr-4 flex h-5 w-5 items-center justify-center rounded border ${
-                      isStatusChecked &&
+                      basicDetails.statusChecked &&
                       'border-primary bg-gray dark:bg-transparent'
                     }`}
                   >
                     <span
                       className={`opacity-0 ${
-                        isStatusChecked && '!opacity-100'
+                        basicDetails.statusChecked && '!opacity-100'
                       }`}
                     >
                       <svg

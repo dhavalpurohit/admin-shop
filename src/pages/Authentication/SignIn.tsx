@@ -24,7 +24,15 @@ const SignIn: React.FC = () => {
       // Assuming the response has a token
       if (response.payload.access_token) {
         //   // Save the token in localStorage or cookies
-        localStorage.setItem('token', response.payload.access_token);
+        localStorage.setItem('access_token', response.payload.access_token);
+        localStorage.setItem('refresh_token', response.payload.refresh_token);
+        localStorage.setItem('user_type', response.payload.user_type);
+        localStorage.setItem('user_id', response.payload.user_id.toString());
+        localStorage.setItem('vendor_id', response.payload.vendor_id);
+        localStorage.setItem('id_token', response.payload.id_token);
+        localStorage.setItem('currency', response.payload.currency);
+        localStorage.setItem('message', response.payload.message);
+        localStorage.setItem('status', response.payload.status);
 
         //   // Redirect to the home/dashboard page
         navigate('/');

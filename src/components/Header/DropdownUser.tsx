@@ -10,6 +10,7 @@ const DropdownUser = () => {
   const handleLogout = () => {
     // Clear the token from localStorage or sessionStorage
     localStorage.removeItem('token');
+    localStorage.clear();
 
     // Redirect to the login page
     navigate('/auth/signin');
