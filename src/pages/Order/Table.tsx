@@ -1,22 +1,22 @@
 import { useEffect, useState } from 'react';
-import { Order } from '../../types/order';
+// import { Order } from '../../types/order';
 import DropDownCommon from '../../components/DropDownCommon';
 
 import search from '../../../src/images/common/search.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
-import { allBannerList } from '../../redux/slices/bannerSlice';
+import { orderList } from '../../redux/slices/orderSlice';
 
-const orderData: Order[] = [
-  {
-    order_date: '3/5/20204',
-    order_id: 'FCRN73FNH',
-    product_name: 'Dove shampoo',
-    address: 'samvaad flat navrangpura ahmeadbad',
-    status: 'Pending ',
-    schedule_pickup: 'Schedule',
-  },
-];
+// const orderData: Order[] = [
+//   {
+//     order_date: '3/5/20204',
+//     order_id: 'FCRN73FNH',
+//     product_name: 'Dove shampoo',
+//     address: 'samvaad flat navrangpura ahmeadbad',
+//     status: 'Pending ',
+//     schedule_pickup: 'Schedule',
+//   },
+// ];
 
 const status = [
   {
@@ -39,9 +39,11 @@ const status = [
 
 const OrderTable: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const bannerList = useSelector(
-    (state: RootState) => state.banner.allBannerList,
-  );
+  const orderData = useSelector((state: RootState) => {
+    return state.order.orderList;
+  });
+
+  console.log('Full state:', orderData);
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
@@ -57,16 +59,21 @@ const OrderTable: React.FC = () => {
     setIsFocused(false);
   };
   useEffect(() => {
-    if (!bannerList) {
+    if (!orderData)
       dispatch(
-        allBannerList({
-          status: '1',
+        orderList({
+          orderBy: '',
+          page_number: '1',
+          search: '',
+          order_status: '',
+          vendor_id: '4',
+          order_to_date: '',
+          order_from_date: '',
         }),
       );
-    }
-  }, [allBannerList]);
+  }, [orderData]);
 
-  console.log('bannerList ::::', bannerList);
+  console.log('state.orderList', orderData);
 
   return (
     <div className="">
@@ -175,33 +182,31 @@ const OrderTable: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {orderData.map((item, key) => (
+              {orderData?.orders?.map((item: any, key: number) => (
                 <tr key={key}>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     <p className="text-black dark:text-white">
-                      {item.order_date}
+                      {item.Order_Date}
                     </p>
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     <p className="text-black dark:text-white">
-                      {item.order_id}
+                      {item.Order_Id}
                     </p>
+                  </td>
+                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                    <p className="text-black dark:text-white">-</p>
+                  </td>
+                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                    <p className="text-black dark:text-white">-</p>
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     <p className="text-black dark:text-white">
-                      {item.product_name}
+                      {item.Order_Status}
                     </p>
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    <p className="text-black dark:text-white">{item.address}</p>
-                  </td>
-                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    <p className="text-black dark:text-white">{item.status}</p>
-                  </td>
-                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    <p className="text-black dark:text-white">
-                      {item.schedule_pickup}
-                    </p>
+                    <p className="text-black dark:text-white">-</p>
                   </td>
                 </tr>
               ))}

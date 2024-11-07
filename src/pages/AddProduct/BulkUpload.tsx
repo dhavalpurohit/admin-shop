@@ -5,7 +5,10 @@ import * as XLSX from 'xlsx';
 // import DropDownCommon from '../../components/DropDownCommon';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
-import { vendorFetchAllCategories } from '../../redux/slices/ProductSlice';
+import {
+  vendorFetchAllCategories,
+  fetchProductSampleFile,
+} from '../../redux/slices/ProductSlice';
 import CategoryDropdown from '../../components/ProductCategoryDropdown/CategoryDropdown';
 import SubCategoryDropdown from '../../components/ProductCategoryDropdown/SubCategoryDropdown';
 
@@ -39,6 +42,10 @@ const BulkUpload = () => {
       );
     }
   }, [categories]);
+
+  useEffect(() => {
+    dispatch(fetchProductSampleFile());
+  }, []);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setError(null); // Reset error message
