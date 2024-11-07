@@ -32,3 +32,31 @@ export interface Product {
   CountryOfOrigin: string;
   StyleID: string;
 }
+
+interface Vendor {
+  vendor_image: string;
+  vendor_id: number;
+  vendor_name: string;
+  is_external: number;
+}
+
+interface ExtraImage {
+  image: string;
+}
+
+export interface SingleProduct {
+  image: string;
+  category_name: string;
+  wishlist: string;
+  description: string;
+  sale_price: number;
+  regular_price: number;
+  vendor: Vendor[];
+  Currency: string;
+  name: string;
+  id: string;
+  created_date: string;
+  updated_date: string;
+  stock: string;
+  image_extra: ExtraImage[];
+}

@@ -2,6 +2,7 @@ export const urls = {
   product: {
     createSingleProduct: 'product-add-update',
     vendorFetchAllCategories: 'admin-vendor-fetch-all-categories',
+    productsList: '/product-search-list',
   },
   colour: {
     fetchColorCodeMain:

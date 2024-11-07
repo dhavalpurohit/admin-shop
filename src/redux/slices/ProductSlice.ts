@@ -60,12 +60,25 @@ export const fetchProductBrands = createAsyncThunk(
   },
 );
 
+export const productSearchList = createAsyncThunk(
+  '/productSearchList',
+  async (data: object) => {
+    try {
+      const response = await ProductServices.productSearchList(data);
+      return response;
+    } catch (error) {
+      return error;
+    }
+  },
+);
+
 export const initialState = {
   isLoading: false,
   error: null as string | null,
   categories: null,
   ColorCodeMain: null,
   productBrands: null,
+  productList: null,
 };
 
 const contactSlice = createSlice({
@@ -94,6 +107,11 @@ const contactSlice = createSlice({
       })
       .addCase(fetchProductBrands.fulfilled, (state, action) => {
         state.productBrands = action.payload;
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(productSearchList.fulfilled, (state, action) => {
+        state.productList = action.payload;
         state.isLoading = false;
         state.error = null;
       })
