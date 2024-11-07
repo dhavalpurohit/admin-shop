@@ -16,4 +16,8 @@ export const urls = {
   banner: {
     allBannerList: 'banner-list-all',
   },
+  samplefile: 'extract-excel-validation-data',
+
+  orderList: "vendor-order-display"
+  
 };

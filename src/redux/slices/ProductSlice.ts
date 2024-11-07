@@ -72,6 +72,18 @@ export const productSearchList = createAsyncThunk(
   },
 );
 
+export const fetchProductSampleFile = createAsyncThunk(
+  '/fetchProductSampleFile',
+  async () => {
+    try {
+      const response = await ProductServices.fetchProductSampleFile();
+      return response;
+    } catch (error) {
+      return error;
+    }
+  },
+);
+
 export const initialState = {
   isLoading: false,
   error: null as string | null,
@@ -79,6 +91,7 @@ export const initialState = {
   ColorCodeMain: null,
   productBrands: null,
   productList: null,
+  productSampleFile: null,
 };
 
 const contactSlice = createSlice({
@@ -112,6 +125,11 @@ const contactSlice = createSlice({
       })
       .addCase(productSearchList.fulfilled, (state, action) => {
         state.productList = action.payload;
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(fetchProductSampleFile.fulfilled, (state, action) => {
+        state.productSampleFile = action.payload;
         state.isLoading = false;
         state.error = null;
       })
