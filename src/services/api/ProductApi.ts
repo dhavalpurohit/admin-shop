@@ -20,4 +20,7 @@ export class ProductServices {
   static fetchProductBrands() {
     return CommonService.get(urls.brands);
   }
+  static productSearchList(data: object) {
+    return CommonService.post(urls.product.productsList, data);
+  }
 }
