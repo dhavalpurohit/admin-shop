@@ -33,6 +33,10 @@ const BulkUpload = () => {
     (state: RootState) => state.product.categories?.categories,
   );
 
+  const productSampleFile = useSelector(
+    (state: RootState) => state.product.productSampleFile,
+  );
+
   useEffect(() => {
     if (!categories) {
       dispatch(
@@ -103,7 +107,19 @@ const BulkUpload = () => {
     },
     maxFiles: 1, // Only allow one file at a time (optional)
   });
-  // console.log('selectedCategory', selectedCategory);
+
+  const handleDownloadSampleFile = () => {
+    if (productSampleFile) {
+      const a = document.createElement('a');
+      (a.href = productSampleFile?.link_to_download_excel_file)(
+        (a.download = 'product_sample_file.xlsx'),
+      );
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  };
+
   return (
     <div className="p-7 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="flex items-center justify-between border-b border-stroke py-4 px-7 dark:border-strokedark">
@@ -142,7 +158,10 @@ const BulkUpload = () => {
             Step 2 : Download Template
           </h2>
           <div className="max-w-md text-center mx-auto py-15">
-            <button className="flex justify-center mx-auto rounded bg-primary py-2 px-6 font-medium text-gray hover:bg-opacity-90">
+            <button
+              className="flex justify-center mx-auto rounded bg-primary py-2 px-6 font-medium text-gray hover:bg-opacity-90"
+              onClick={handleDownloadSampleFile}
+            >
               Download template
             </button>
             <p className="mt-2">
