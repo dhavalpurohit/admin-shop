@@ -109,14 +109,16 @@ const BulkUpload = () => {
   });
 
   const handleDownloadSampleFile = () => {
-    if (productSampleFile) {
+    // Ensure `productSampleFile` and its `link_to_download_excel_file` property are defined
+    if (productSampleFile?.link_to_download_excel_file) {
       const a = document.createElement('a');
-      (a.href = productSampleFile?.link_to_download_excel_file)(
-        (a.download = 'product_sample_file.xlsx'),
-      );
+      a.href = productSampleFile.link_to_download_excel_file; // Correctly set the URL
+      a.download = 'product_sample_file.xlsx'; // Set the file name for download
       document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      a.click(); // Trigger the download
+      document.body.removeChild(a); // Clean up
+    } else {
+      console.error('No download link available');
     }
   };
 
