@@ -84,6 +84,20 @@ export const fetchProductSampleFile = createAsyncThunk(
   },
 );
 
+export const createBulkProduct = createAsyncThunk(
+  '/product/createBulkProduct',
+  async (data: object) => {
+    try {
+      const response = await ProductServices.createBulkProduct(
+        data,
+      );
+      return response;
+    } catch (error) {
+      return error;
+    }
+  },
+);
+
 export const initialState = {
   isLoading: false,
   error: null as string | null,
@@ -130,6 +144,11 @@ const contactSlice = createSlice({
       })
       .addCase(fetchProductSampleFile.fulfilled, (state, action) => {
         state.productSampleFile = action.payload;
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(createBulkProduct.fulfilled, (state, action) => {
+        console.log(action);
         state.isLoading = false;
         state.error = null;
       })

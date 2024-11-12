@@ -8,6 +8,7 @@ import { AppDispatch, RootState } from '../../redux/store';
 import {
   vendorFetchAllCategories,
   fetchProductSampleFile,
+  createBulkProduct,
 } from '../../redux/slices/ProductSlice';
 import CategoryDropdown from '../../components/ProductCategoryDropdown/CategoryDropdown';
 import SubCategoryDropdown from '../../components/ProductCategoryDropdown/SubCategoryDropdown';
@@ -122,6 +123,20 @@ const BulkUpload = () => {
     }
   };
 
+  const handleSave = () => {
+    if (uploadedFile) {
+      dispatch(
+        createBulkProduct({
+          filename: uploadedFile,
+          vendor_id: localStorage.getItem('vendor_id'),
+          bucket_name: 'shopnow-codes',
+        }),
+      );
+    } else {
+      alert('Please upload a file.');
+    }
+  };
+
   return (
     <div className="p-7 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="flex items-center justify-between border-b border-stroke py-4 px-7 dark:border-strokedark">
@@ -130,6 +145,7 @@ const BulkUpload = () => {
           <button
             className="flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:bg-opacity-90"
             type="submit"
+            onClick={handleSave}
           >
             Save
           </button>

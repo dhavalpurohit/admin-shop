@@ -3,6 +3,7 @@ export const urls = {
     createSingleProduct: 'product-add-update',
     vendorFetchAllCategories: 'admin-vendor-fetch-all-categories',
     productsList: '/product-search-list',
+    createBulkProduct: 'insert-product-details-from-excel'
   },
   colour: {
     fetchColorCodeMain:
