@@ -26,4 +26,12 @@ export class ProductServices {
   static fetchProductSampleFile() {
     return CommonService.get(urls.samplefile);
   }
+
+  static createBulkProduct(data: object) {
+    return CommonService.post(urls.product.createBulkProduct, data);
+  }
+
+  static bulkProductXlsList() {
+    return CommonService.post(urls.product.bulkProductXlsList);
+  }
 }
