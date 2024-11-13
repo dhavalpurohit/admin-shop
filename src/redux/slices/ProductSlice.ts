@@ -98,6 +98,19 @@ export const createBulkProduct = createAsyncThunk(
   },
 );
 
+
+export const bulkProductXlsList = createAsyncThunk(
+  '/bulkProductXlsList',
+  async () => {
+    try {
+      const response = await ProductServices.bulkProductXlsList();
+      return response;
+    } catch (error) {
+      return error;
+    }
+  },
+);
+
 export const initialState = {
   isLoading: false,
   error: null as string | null,
@@ -106,6 +119,7 @@ export const initialState = {
   productBrands: null,
   productList: null,
   productSampleFile: null,
+  bulkProductXlsList: null,
 };
 
 const contactSlice = createSlice({
@@ -149,6 +163,11 @@ const contactSlice = createSlice({
       })
       .addCase(createBulkProduct.fulfilled, (state, action) => {
         console.log(action);
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(bulkProductXlsList.fulfilled, (state, action) => {
+        state.bulkProductXlsList = action.payload;
         state.isLoading = false;
         state.error = null;
       })

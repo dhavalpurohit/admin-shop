@@ -16,7 +16,7 @@ import SubCategoryDropdown from '../../components/ProductCategoryDropdown/SubCat
 const BulkUpload = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [error, setError] = useState<string | null>(null);
-  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [uploadedFile, setUploadedFile] = useState<File | any>(null);
 
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubCategory, setSelectedSubCategory] = useState('');
@@ -127,7 +127,7 @@ const BulkUpload = () => {
     if (uploadedFile) {
       dispatch(
         createBulkProduct({
-          filename: uploadedFile,
+          filename: uploadedFile.path,
           vendor_id: localStorage.getItem('vendor_id'),
           bucket_name: 'shopnow-codes',
         }),

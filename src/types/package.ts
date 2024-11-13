@@ -1,8 +1,8 @@
 export type Package = {
-  no: number;
+  "No.": number;
   category: string;
-  filename: string;
-  date: string;
-  status: string;
-  total_products: number
+  Filename: string;
+  Uploaded_Date: string;
+  Status: string;
+  Products: number
 };
