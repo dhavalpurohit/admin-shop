@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import * as XLSX from 'xlsx';
+import ButtonLoader from '../../common/ButtonLoader';
 
 // import DropDownCommon from '../../components/DropDownCommon';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,6 +21,7 @@ const BulkUpload = () => {
 
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubCategory, setSelectedSubCategory] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleCategoryChange = (newCategory: string) => {
     setSelectedCategory(newCategory);
@@ -49,8 +51,19 @@ const BulkUpload = () => {
   }, [categories]);
 
   useEffect(() => {
-    dispatch(fetchProductSampleFile());
-  }, []);
+    const fetchSampleFile = async () => {
+      try {
+        setIsLoading(true); // Start loading
+        await dispatch(fetchProductSampleFile()).unwrap(); // Wait for the API to resolve
+      } catch (error) {
+        console.error('Error fetching product sample file:', error);
+      } finally {
+        setIsLoading(false); // Stop loading
+      }
+    };
+
+    fetchSampleFile();
+  }, [dispatch]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setError(null); // Reset error message
@@ -177,10 +190,10 @@ const BulkUpload = () => {
           </h2>
           <div className="max-w-md text-center mx-auto py-15">
             <button
-              className="flex justify-center mx-auto rounded bg-primary py-2 px-6 font-medium text-gray hover:bg-opacity-90"
+              className="flex justify-center w-[188.45px] mx-auto rounded bg-primary py-2 px-6 font-medium text-gray hover:bg-opacity-90"
               onClick={handleDownloadSampleFile}
             >
-              Download template
+              {isLoading ? <ButtonLoader /> : ' Download template'}
             </button>
             <p className="mt-2">
               File will be downloaded in excel format which needs to be filled
