@@ -6,35 +6,12 @@ import search from '../../../src/images/common/search.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { orderList } from '../../redux/slices/orderSlice';
-
-// const orderData: Order[] = [
-//   {
-//     order_date: '3/5/20204',
-//     order_id: 'FCRN73FNH',
-//     product_name: 'Dove shampoo',
-//     address: 'samvaad flat navrangpura ahmeadbad',
-//     status: 'Pending ',
-//     schedule_pickup: 'Schedule',
-//   },
-// ];
+import ButtonLoader from '../../common/ButtonLoader';
 
 const status = [
-  {
-    name: 'Pending',
-    value: 'pending ',
-  },
-  {
-    name: 'Unshipped ',
-    value: 'unshipped ',
-  },
-  {
-    name: 'Cancelled  ',
-    value: 'cancelled  ',
-  },
-  {
-    name: 'Sent',
-    value: 'sent',
-  },
+  { name: 'Return Initiated', value: 'Return Initiated' },
+  { name: 'Cancel', value: 'cancel' },
+  { name: 'Placed', value: 'Placed' },
 ];
 
 const OrderTable: React.FC = () => {
@@ -43,13 +20,22 @@ const OrderTable: React.FC = () => {
     return state.order.orderList;
   });
 
-  console.log('Full state:', orderData);
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value);
-  };
+  // Debouncing effect for search query
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 300); // Delay for 300ms
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [query]);
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -58,22 +44,39 @@ const OrderTable: React.FC = () => {
   const handleBlur = () => {
     setIsFocused(false);
   };
-  useEffect(() => {
-    if (!orderData)
-      dispatch(
-        orderList({
-          orderBy: '',
-          page_number: '1',
-          search: '',
-          order_status: '',
-          vendor_id: '4',
-          order_to_date: '',
-          order_from_date: '',
-        }),
-      );
-  }, [orderData]);
 
-  console.log('state.orderList', orderData);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        await dispatch(
+          orderList({
+            orderBy: '',
+            page_number: '1',
+            search: debouncedQuery, // Default to empty string if no query
+            order_status: selectedStatus || '', // Default to empty string if no status
+            vendor_id: '4',
+            order_to_date: '',
+            order_from_date: '',
+          }),
+        );
+      } catch (error) {
+        console.error('Error fetching order data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData(); // Always call this on page load
+  }, [debouncedQuery, selectedStatus, dispatch]); // Dependencies remain the same
+
+  const handleStatusChange = (status: string) => {
+    setSelectedStatus(status);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+  };
 
   return (
     <div className="">
@@ -125,7 +128,13 @@ const OrderTable: React.FC = () => {
               Status
             </label>
             <div className="relative">
-              <DropDownCommon lists={status} labelKey="name" valueKey="value" />
+              <DropDownCommon
+                lists={status}
+                labelKey="name"
+                valueKey="value"
+                defaultOption="All Status"
+                onOptionChange={(value: string) => handleStatusChange(value)}
+              />
             </div>
           </div>
         </div>
@@ -154,64 +163,79 @@ const OrderTable: React.FC = () => {
             placeholder="Search..."
             className="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500 transition-all duration-300 ease-in-out"
           />
+          {isLoading && <p>Loading...</p>}
         </div>
       </div>
       <div className="bg-white">
         <div className="max-w-full overflow-x-auto">
-          <table className="w-full table-auto">
-            <thead>
-              <tr className="bg-gray-2 text-left dark:bg-meta-4">
-                <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white">
-                  Order Date
-                </th>
-                <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                  Order id
-                </th>
-                <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                  Product name
-                </th>
-                <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                  Adddress
-                </th>
-                <th className="py-4 px-4 font-medium text-black dark:text-white">
-                  Status
-                </th>
-                <th className="py-4 px-4 font-medium text-black dark:text-white">
-                  Schedule pickup
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {orderData?.orders?.map((item: any, key: number) => (
-                <tr key={key}>
-                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    <p className="text-black dark:text-white">
-                      {item.Order_Date}
-                    </p>
-                  </td>
-                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    <p className="text-black dark:text-white">
-                      {item.Order_Id}
-                    </p>
-                  </td>
-                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    <p className="text-black dark:text-white">-</p>
-                  </td>
-                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    <p className="text-black dark:text-white">-</p>
-                  </td>
-                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    <p className="text-black dark:text-white">
-                      {item.Order_Status}
-                    </p>
-                  </td>
-                  <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                    <p className="text-black dark:text-white">-</p>
-                  </td>
+          {isLoading ? (
+            <ButtonLoader bgColor="bg-white" borderColor="border-primary" />
+          ) : (
+            <table className="w-full table-auto">
+              <thead>
+                <tr className="bg-gray-2 text-left dark:bg-meta-4">
+                  <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white">
+                    Order Date
+                  </th>
+                  <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+                    Order id
+                  </th>
+                  <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                    Product name
+                  </th>
+                  <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
+                    Adddress
+                  </th>
+                  <th className="py-4 px-4 font-medium text-black dark:text-white">
+                    Status
+                  </th>
+                  <th className="py-4 px-4 font-medium text-black dark:text-white">
+                    Schedule pickup
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {orderData?.orders?.length > 0 ? (
+                  <>
+                    {orderData?.orders?.map((item: any, key: number) => (
+                      <tr key={key}>
+                        <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                          <p className="text-black dark:text-white">
+                            {item.Order_Date}
+                          </p>
+                        </td>
+                        <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                          <p className="text-black dark:text-white">
+                            {item.Order_Id}
+                          </p>
+                        </td>
+                        <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                          <p className="text-black dark:text-white">-</p>
+                        </td>
+                        <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                          <p className="text-black dark:text-white">-</p>
+                        </td>
+                        <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                          <p className="text-black dark:text-white">
+                            {item.Order_Status}
+                          </p>
+                        </td>
+                        <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                          <p className="text-black dark:text-white">-</p>
+                        </td>
+                      </tr>
+                    ))}
+                  </>
+                ) : (
+                  <tr>
+                    <td colSpan={6}>
+                      <div className="text-center p-2">No Data Found</div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>

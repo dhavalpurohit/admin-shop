@@ -13,6 +13,7 @@ import BulkUpload from '../pages/AddProduct/BulkUpload';
 import Banner from '../pages/Banner';
 import SingleProduct from '../pages/AddProduct/SingleProduct';
 import Order from '../pages/Order';
+import AddBanner from '../pages/Banner/AddBanner';
 
 const RoutesView = () => {
   return (
@@ -140,6 +141,17 @@ const RoutesView = () => {
             <>
               <PageTitle title="Order | Store Panel" />
               <Order />
+            </>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/add-banner"
+        element={
+          <ProtectedRoute>
+            <>
+              <PageTitle title="Add Banner | Store Panel" />
+              <AddBanner />
             </>
           </ProtectedRoute>
         }
