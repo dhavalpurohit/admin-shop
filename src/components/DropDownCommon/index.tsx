@@ -52,7 +52,7 @@ const DropDownCommon: React.FC<Props> = ({
             value={valueKey ? item[valueKey] : item}
             className="text-body dark:text-bodydark"
           >
-            {item[labelKey]}{' '}
+            {item[labelKey]}
             {/* Use the labelKey to dynamically display the correct field */}
           </option>
         ))}

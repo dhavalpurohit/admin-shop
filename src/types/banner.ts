@@ -1,6 +1,6 @@
 export type Banner = {
-    title: string;
-    subtitle: string;
+    name: string;
+    sub_title: string;
     brand: string;
     category: string;
     status: string;
