@@ -1,16 +1,53 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DropDownCommon from '../../components/DropDownCommon';
+import { useDispatch, useSelector } from 'react-redux';
+import { vendorFetchAllCategories } from '../../redux/slices/ProductSlice';
+import { createBanner } from '../../redux/slices/bannerSlice';
+import { AppDispatch, RootState } from '../../redux/store';
 
 const type = [
   {
-    name: 'type 1',
-    value: 'type 1',
+    name: 'Banner',
+    value: 'banner',
   },
   {
-    name: 'type 2',
-    value: 'type 2',
+    name: 'Offer Banner',
+    value: 'offer_banner',
+  },
+  {
+    name: 'Home Category',
+    value: 'home_category',
+  },
+  {
+    name: 'Mood',
+    value: 'mood',
+  },
+  {
+    name: 'Sub Category Men',
+    value: 'sub_category_men',
+  },
+  {
+    name: 'Sub Category Women',
+    value: 'sub_category_women',
+  },
+  {
+    name: 'Sub Category Boys',
+    value: 'sub_category_boys',
+  },
+  {
+    name: 'Banners',
+    value: 'banners',
+  },
+  {
+    name: 'Spotlight',
+    value: 'spotlight',
+  },
+  {
+    name: 'Sub Category Girls',
+    value: 'sub_category_girls',
   },
 ];
+
 const parents = [
   {
     name: 'parent 1',
@@ -22,37 +59,74 @@ const parents = [
   },
 ];
 
-const category = [
-  {
-    name: 'category 1',
-    value: 'category 1',
-  },
-  {
-    name: 'category 2',
-    value: 'category 2',
-  },
-];
-
-const brand = [
-  {
-    name: 'brand 1',
-    value: 'brand 1',
-  },
-  {
-    name: 'brand 2',
-    value: 'brand 2',
-  },
-];
-
+interface bannerDetails {
+  banner_id: string | null;
+  banner_name: string | null;
+  image: string | null;
+  status: string | null;
+  show_homepage: string | null;
+  product_ids: string | null;
+  products: string | null;
+  deal: string | null;
+  type: string | null;
+  parent_id: string | null;
+  sub_title: string | null;
+  user_id: string | null;
+  sorting: string | null;
+}
 const AddBanner = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const [isSavingBanner, setIsSavingBanner] = useState(false);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [selectedBrand, setselectedBrand] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedType, setSelectedType] = useState('');
   const maxImages = 2;
+
+  const initialBasicDetails: bannerDetails = {
+    banner_id: '',
+    banner_name: '',
+    image: '',
+    status: '1',
+    show_homepage: '1',
+    product_ids: '23566',
+    products: 'category:70',
+    deal: '',
+    type: selectedType,
+    parent_id: '0',
+    sub_title: '',
+    user_id: '-1',
+    // user_id: localStorage.getItem('user_id'),
+    sorting: '',
+  };
+  const [basicDetails, setBasicDetails] =
+    useState<bannerDetails>(initialBasicDetails);
 
   const handleSave = async () => {
     setIsSavingBanner(true);
+    dispatch(createBanner(basicDetails));
   };
+
+  const handleInputChange = (key: keyof bannerDetails, value: string) => {
+    setBasicDetails((prevState) => ({
+      ...prevState,
+      [key]: value,
+    }));
+  };
+
   const handleReset = async () => {};
+
+  const productBrands = useSelector(
+    (state: RootState) => state.product.productBrands?.brands,
+  );
+
+  const categories = useSelector(
+    (state: RootState) => state.product.categories?.categories,
+  );
+
+  const handleBrand = (brand: string) => {
+    setselectedBrand(brand);
+  };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
@@ -67,6 +141,24 @@ const AddBanner = () => {
     const newImages = [...selectedImages];
     newImages.splice(index, 1);
     setSelectedImages(newImages);
+  };
+
+  useEffect(() => {
+    if (!categories) {
+      dispatch(
+        vendorFetchAllCategories({
+          id: '0',
+        }),
+      );
+    }
+  }, [categories]);
+
+  const handleCategoryChange = (newCategory: string) => {
+    setSelectedCategory(newCategory);
+  };
+
+  const handleTypeChange = (type: string) => {
+    setSelectedType(type);
   };
 
   return (
@@ -116,9 +208,11 @@ const AddBanner = () => {
                         type="text"
                         name="title"
                         id="title"
-                        value={''}
+                        value={basicDetails.banner_name || ''}
                         placeholder="Banner Title"
-                        onChange={() => {}}
+                        onChange={(e) =>
+                          handleInputChange('banner_name', e.target.value)
+                        }
                       />
                       {/* {errors.title && (
                   <p className="text-red-500">{errors.title}</p>
@@ -138,9 +232,11 @@ const AddBanner = () => {
                         type="text"
                         name="subtitle"
                         id="subtitle"
-                        value={''}
+                        value={basicDetails.sub_title || ''}
                         placeholder="Banner Sub Title"
-                        onChange={() => {}}
+                        onChange={(e) =>
+                          handleInputChange('sub_title', e.target.value)
+                        }
                       />
                       {/* {errors.subtitle && (
                   <p className="text-red-500">{errors.subtitle}</p>
@@ -160,6 +256,8 @@ const AddBanner = () => {
                         labelKey="name"
                         valueKey="value"
                         defaultOption="Select Type"
+                        onOptionChange={handleTypeChange}
+                        selectedOption={selectedType}
                       />
                     </div>
                   </div>
@@ -185,8 +283,10 @@ const AddBanner = () => {
                     </label>
                     <textarea
                       rows={6}
-                      value={''}
-                      onChange={() => {}}
+                      value={basicDetails.deal || ''}
+                      onChange={(e) =>
+                        handleInputChange('deal', e.target.value)
+                      }
                       placeholder="Default textarea"
                       className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     ></textarea>
@@ -210,10 +310,12 @@ const AddBanner = () => {
                     </label>
                     <div className="relative">
                       <DropDownCommon
-                        lists={category}
+                        lists={categories}
                         labelKey="name"
                         valueKey="value"
                         defaultOption="Select Category"
+                        onOptionChange={handleCategoryChange}
+                        selectedOption={selectedCategory}
                       />
                     </div>
                   </div>
@@ -226,10 +328,12 @@ const AddBanner = () => {
                     </label>
                     <div className="relative">
                       <DropDownCommon
-                        lists={brand}
-                        labelKey="name"
-                        valueKey="value"
-                        defaultOption="Select Category"
+                        lists={productBrands}
+                        labelKey="brand_name"
+                        valueKey="id"
+                        selectedOption={selectedBrand}
+                        onOptionChange={(value: string) => handleBrand(value)}
+                        defaultOption="Select Brand"
                       />
                     </div>
                   </div>

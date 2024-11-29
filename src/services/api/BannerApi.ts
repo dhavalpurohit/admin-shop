@@ -5,4 +5,7 @@ export class BannerServices {
   static allBannerList(data: object) {
     return CommonService.post(urls.banner.allBannerList, data);
   }
+  static createBanner(data: object) {
+    return CommonService.post(urls.banner.createBanner, data);
+  }
 }
