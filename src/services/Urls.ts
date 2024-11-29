@@ -17,6 +17,7 @@ export const urls = {
   },
   banner: {
     allBannerList: 'banner-list-all',
+    createBanner: 'banner-add-update'
   },
   samplefile: 'extract-excel-validation-data',
 

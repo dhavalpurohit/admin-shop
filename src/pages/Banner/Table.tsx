@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { allBannerList } from '../../redux/slices/bannerSlice';
 import ButtonLoader from '../../common/ButtonLoader';
+import { vendorFetchAllCategories } from '../../redux/slices/ProductSlice';
 
 const category = [
   {
@@ -30,12 +31,44 @@ const status = [
 ];
 const type = [
   {
-    name: 'type 1',
-    value: 'type 1',
+    name: 'Banner',
+    value: 'banner',
   },
   {
-    name: 'type 2',
-    value: 'type 2',
+    name: 'Offer Banner',
+    value: 'offer_banner',
+  },
+  {
+    name: 'Home Category',
+    value: 'home_category',
+  },
+  {
+    name: 'Mood',
+    value: 'mood',
+  },
+  {
+    name: 'Sub Category Men',
+    value: 'sub_category_men',
+  },
+  {
+    name: 'Sub Category Women',
+    value: 'sub_category_women',
+  },
+  {
+    name: 'Sub Category Boys',
+    value: 'sub_category_boys',
+  },
+  {
+    name: 'Banners',
+    value: 'banners',
+  },
+  {
+    name: 'Spotlight',
+    value: 'spotlight',
+  },
+  {
+    name: 'Sub Category Girls',
+    value: 'sub_category_girls',
   },
 ];
 
@@ -48,6 +81,7 @@ const BannerTable: React.FC = () => {
   const [isFocused, setIsFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
@@ -93,6 +127,24 @@ const BannerTable: React.FC = () => {
     setSelectedStatus(status);
   };
 
+  const categories = useSelector(
+    (state: RootState) => state.product.categories?.categories,
+  );
+
+  useEffect(() => {
+    if (!categories) {
+      dispatch(
+        vendorFetchAllCategories({
+          id: '0',
+        }),
+      );
+    }
+  }, [categories]);
+
+  const handleCategoryChange = (newCategory: string) => {
+    setSelectedCategory(newCategory);
+  };
+
   return (
     <div className="">
       <div className="flex items-center bg-white justify-between p-4 rounded-xl border border-stroke  shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -106,9 +158,12 @@ const BannerTable: React.FC = () => {
             </label>
             <div className="relative">
               <DropDownCommon
-                lists={category}
+                lists={categories}
                 labelKey="name"
                 valueKey="value"
+                defaultOption="Select Category"
+                onOptionChange={handleCategoryChange}
+                selectedOption={selectedCategory}
               />
             </div>
           </div>
@@ -137,7 +192,12 @@ const BannerTable: React.FC = () => {
               Type
             </label>
             <div className="relative">
-              <DropDownCommon lists={type} labelKey="name" valueKey="value" />
+              <DropDownCommon
+                lists={type}
+                labelKey="name"
+                valueKey="value"
+                defaultOption="Select Type"
+              />
             </div>
           </div>
         </div>

@@ -6,7 +6,7 @@ interface props {
 const ButtonLoader: React.FC<props> = ({ bgColor, borderColor, className }) => {
   return (
     <div
-      className={`flex h-5 w-5 m-auto items-center justify-center  ${
+      className={`flex h-5 w-5 m-auto items-center justify-center overflow-hidden  ${
         bgColor ? bgColor : 'bg-primary'
       }`}
     >

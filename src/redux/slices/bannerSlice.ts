@@ -19,6 +19,20 @@ export const allBannerList = createAsyncThunk(
   },
 );
 
+export const createBanner = createAsyncThunk(
+  '/banner/createBanner',
+  async (data: object) => {
+    try {
+      const response = await BannerServices.createBanner(
+        data,
+      );
+      return response;
+    } catch (error) {
+      return error;
+    }
+  },
+);
+
 export const initialState = {
   isLoading: false,
   error: null as string | null,
@@ -36,6 +50,11 @@ const bannerSlice = createSlice({
     builder
       .addCase(allBannerList.fulfilled, (state, action) => {
         state.allBannerList = action.payload;
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(createBanner.fulfilled, (state, action) => {
+        console.log(action);
         state.isLoading = false;
         state.error = null;
       })
