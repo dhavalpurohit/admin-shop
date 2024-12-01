@@ -110,8 +110,15 @@ const AddBanner = () => {
     useState<bannerDetails>(initialBasicDetails);
 
   const handleSave = async () => {
-    setIsSavingBanner(true);
-    dispatch(createBanner(basicDetails));
+    try {
+      setIsSavingBanner(true);
+      await dispatch(createBanner(basicDetails));
+      toast.success(`Add Banner successfully!`);
+      setIsSavingBanner(false);
+      navigate('/banners');
+    } catch (error) {
+      toast.error('Failed to add Banner. Please try again.');
+    }
   };
 
   const handleInputChange = (key: keyof bannerDetails, value: string) => {
