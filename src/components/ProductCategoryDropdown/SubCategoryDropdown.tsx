@@ -41,13 +41,11 @@ const SubCategoryDropdown: React.FC<SubCategoryDropdownProps> = ({
   onSubCategoryChange,
   category,
 }) => {
-
-  console.log("selected category " , category);
   const categories = useSelector(
     (state: RootState) => state.product?.categories?.categories,
   );
   const subCategories = categories?.filter(
-    (categorymap : Category) => categorymap.parent_id === category
+    (categorymap: Category) => categorymap.parent_id === category,
   );
   return (
     <div className="relative">
@@ -60,12 +58,14 @@ const SubCategoryDropdown: React.FC<SubCategoryDropdownProps> = ({
       <select
         id="subCategory"
         value={selectedSubCategory}
-        onChange={(e) => onSubCategoryChange && onSubCategoryChange(e.target.value)}
+        onChange={(e) =>
+          onSubCategoryChange && onSubCategoryChange(e.target.value)
+        }
         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
         disabled={!category} // Disable if no category is selected
       >
         <option value="">sub-category</option>
-        {subCategories?.map((subCategory : Category) => (
+        {subCategories?.map((subCategory: Category) => (
           <option key={subCategory.id} value={subCategory.id}>
             {subCategory.name}
           </option>

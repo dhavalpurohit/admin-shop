@@ -104,7 +104,7 @@ const OrderTable: React.FC = () => {
             <h4 className="text-sm font-semibold text-black dark:text-white">
               SHIPPED
             </h4>
-            <span>13</span>
+            <span>{orderData?.order_summary?.[0]?.Placed}</span>
           </div>
           <div className="rounded-xl border border-stroke bg-white py-4 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
             <h4 className="text-sm font-semibold text-black dark:text-white">
@@ -116,7 +116,7 @@ const OrderTable: React.FC = () => {
             <h4 className="text-sm font-semibold text-black dark:text-white">
               CANCELLED
             </h4>
-            <span>13</span>
+            <span>{orderData?.order_summary?.[1]?.cancel}</span>
           </div>
         </div>
         <div className="flex items-center gap-2.5">

@@ -139,19 +139,22 @@ const TableTwo: React.FC = () => {
             <h4 className="text-sm font-semibold text-black dark:text-white">
               Total Uploads
             </h4>
-            <span>13</span>
+            <span>
+              {bulkProductXlsData?.uploads?.length +
+                singleProductList?.products?.length}
+            </span>
           </div>
           <div className="rounded-xl border border-stroke bg-white py-4 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
             <h4 className="text-sm font-semibold text-black dark:text-white">
               Bulk Uploads
             </h4>
-            <span>13</span>
+            <span>{bulkProductXlsData?.uploads?.length}</span>
           </div>
           <div className="rounded-xl border border-stroke bg-white py-4 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
             <h4 className="text-sm font-semibold text-black dark:text-white">
               Single Uploads
             </h4>
-            <span>13</span>
+            <span>{singleProductList?.products?.length}</span>
           </div>
         </div>
         <div className="flex justify-end gap-4.5">

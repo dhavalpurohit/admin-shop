@@ -20,7 +20,6 @@ const SignIn: React.FC = () => {
       // Replace with your API endpoint
       const response = await dispatch(loginVendor({ email, password }));
 
-      console.log('response', response);
       // Assuming the response has a token
       if (response.payload.access_token) {
         //   // Save the token in localStorage or cookies

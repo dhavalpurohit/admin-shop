@@ -2,12 +2,14 @@ import { initialState as productIntialState } from './slices/ProductSlice';
 import { initialState as userInitialState } from './slices/userSlice';
 import { initialState as bannerInitialState } from './slices/bannerSlice';
 import { initialState as orderInitialState } from './slices/orderSlice';
+import { initialState as selectedProductInitialState } from './slices/selectedProductSlice';
 
 
 import productReducer from './slices/ProductSlice';
 import userReducer from './slices/userSlice';
 import bannerReducer from './slices/bannerSlice';
 import orderReducer from './slices/orderSlice';
+import selectedProductsReducer from "./slices/selectedProductSlice";
 
 
 // Add AnyAction import
@@ -29,6 +31,7 @@ const combinedInitialState = {
   user: userInitialState,
   banner: bannerInitialState,
   order: orderInitialState,
+  selectedProducts: selectedProductInitialState,
 };
 
 const appReducer = combineReducers({
@@ -36,6 +39,7 @@ const appReducer = combineReducers({
   user: userReducer,
   banner: bannerReducer,
   order: orderReducer,
+  selectedProducts: selectedProductsReducer,
 });
 
 const rootReducer: Reducer = (
