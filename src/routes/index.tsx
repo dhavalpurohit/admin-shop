@@ -14,6 +14,7 @@ import Banner from '../pages/Banner';
 import SingleProduct from '../pages/AddProduct/SingleProduct';
 import Order from '../pages/Order';
 import AddBanner from '../pages/Banner/AddBanner';
+import AddProductBanner from '../pages/Banner/AddProductBanner';
 
 const RoutesView = () => {
   return (
@@ -152,6 +153,17 @@ const RoutesView = () => {
             <>
               <PageTitle title="Add Banner | Store Panel" />
               <AddBanner />
+            </>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/banner/add-product-banner"
+        element={
+          <ProtectedRoute>
+            <>
+              <PageTitle title="Add Banner | Store Panel" />
+              <AddProductBanner />
             </>
           </ProtectedRoute>
         }

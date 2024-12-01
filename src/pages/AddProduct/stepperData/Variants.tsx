@@ -36,7 +36,6 @@ const Variants: React.FC<VariantsProps> = ({
   const [isStockChecked, setIsStockChecked] = useState<boolean>(true);
   const [isStatusChecked, setIsStatusChecked] = useState<boolean>(true);
 
-  console.log('colourCodes ::', colourCodes);
   // Function to create a new variant with default values
   const addVariant = () => {
     const newVariant = {

@@ -13,6 +13,7 @@ import {
 } from '../../redux/slices/ProductSlice';
 import CategoryDropdown from '../../components/ProductCategoryDropdown/CategoryDropdown';
 import SubCategoryDropdown from '../../components/ProductCategoryDropdown/SubCategoryDropdown';
+import toast from 'react-hot-toast';
 
 const BulkUpload = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -22,6 +23,9 @@ const BulkUpload = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedSubCategory, setSelectedSubCategory] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isSampleFileLoading, setSampleFileLoading] = useState(false);
+  const [presignedUrl, setPresignedUrl] = useState('');
+  const [isUpload, setisUpload] = useState(false);
 
   const handleCategoryChange = (newCategory: string) => {
     setSelectedCategory(newCategory);
@@ -53,12 +57,12 @@ const BulkUpload = () => {
   useEffect(() => {
     const fetchSampleFile = async () => {
       try {
-        setIsLoading(true); // Start loading
+        setSampleFileLoading(true); // Start loading
         await dispatch(fetchProductSampleFile()).unwrap(); // Wait for the API to resolve
       } catch (error) {
         console.error('Error fetching product sample file:', error);
       } finally {
-        setIsLoading(false); // Stop loading
+        setSampleFileLoading(false); // Stop loading
       }
     };
 
@@ -90,8 +94,6 @@ const BulkUpload = () => {
           const sheetName = workbook.SheetNames[0];
           const sheet = workbook.Sheets[sheetName];
           const jsonData = XLSX.utils.sheet_to_json(sheet);
-
-          console.log(jsonData); // Handle the parsed data
         };
 
         if (fileType === 'csv') {
@@ -136,31 +138,83 @@ const BulkUpload = () => {
     }
   };
 
-  const handleSave = () => {
+  const handleUpload = async () => {
     if (uploadedFile) {
-      dispatch(
-        createBulkProduct({
-          filename: uploadedFile.path,
-          vendor_id: localStorage.getItem('vendor_id'),
-          bucket_name: 'shopnow-codes',
-        }),
-      );
+      try {
+        setisUpload(true);
+        // Prepare the URL with query parameters
+        const presignedUrlRequest = `https://bt09kmb8yb.execute-api.us-east-1.amazonaws.com/shopnowee//get-presigned-url?bucket_name=shopnow-codes&field_labels=${uploadedFile.path}&object_keys=${uploadedFile.name}`;
+
+        // Fetch the presigned URL from the backend
+        const response = await fetch(presignedUrlRequest, {
+          method: 'GET', // or 'POST' depending on your backend setup
+        });
+
+        const data = await response.json();
+
+        setPresignedUrl(data[uploadedFile.name]);
+
+        if (data) {
+          // Upload the file to the presigned URL
+          const uploadResponse = await fetch(presignedUrl, {
+            method: 'PUT',
+            body: uploadedFile,
+            headers: {
+              'Content-Type': uploadedFile.type,
+            },
+          });
+
+          if (uploadResponse) {
+            toast.success('File uploaded successfully!');
+            setisUpload(false);
+            // Optionally, dispatch an action to process the uploaded file here
+          } else {
+            toast.error('Error uploading file.');
+          }
+        } else {
+          toast.error('Error generating presigned URL.');
+        }
+      } catch (error) {
+        toast.error(`Error uploading file. ${error}`);
+      } finally {
+        setisUpload(false);
+      }
     } else {
-      alert('Please upload a file.');
+      toast.error(`Please upload a file.`);
     }
   };
 
+  const handleSave = async () => {
+    if (uploadedFile) {
+      try {
+        setIsLoading(true);
+        await dispatch(
+          createBulkProduct({
+            filename: uploadedFile.name,
+            vendor_id: localStorage.getItem('vendor_id'),
+            bucket_name: 'shopnow-codes',
+          }),
+        );
+      } catch (error) {
+        toast.error(`Please upload a file. ${error}`);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
   return (
     <div className="p-7 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="flex items-center justify-between border-b border-stroke py-4 px-7 dark:border-strokedark">
         <h3 className="font-medium text-black dark:text-white">BULK UPLOAD</h3>
         <div className="flex justify-end gap-4.5">
           <button
-            className="flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:bg-opacity-90"
+            className={`flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:bg-opacity-90 ${
+              isUpload ? 'cursor-not-allowed opacity-75' : 'opacity-100'
+            }`}
             type="submit"
             onClick={handleSave}
           >
-            Save
+            {isLoading ? <ButtonLoader /> : ' Save'}
           </button>
           <button className="flex justify-center rounded border border-stroke py-2 px-6 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white">
             Reset
@@ -193,7 +247,7 @@ const BulkUpload = () => {
               className="flex justify-center w-[188.45px] mx-auto rounded bg-primary py-2 px-6 font-medium text-gray hover:bg-opacity-90"
               onClick={handleDownloadSampleFile}
             >
-              {isLoading ? <ButtonLoader /> : ' Download template'}
+              {isSampleFileLoading ? <ButtonLoader /> : ' Download template'}
             </button>
             <p className="mt-2">
               File will be downloaded in excel format which needs to be filled
@@ -247,6 +301,13 @@ const BulkUpload = () => {
                   <p>{error}</p>
                 </div>
               )}
+              <button
+                className="flex mt-4  justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:bg-opacity-90"
+                type="submit"
+                onClick={handleUpload}
+              >
+                {isUpload ? <ButtonLoader /> : ' Upload'}
+              </button>
             </div>
           </div>
         </div>

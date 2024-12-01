@@ -111,9 +111,6 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
     updateBasicDetails('selectedImages', newImages);
   };
 
-  console.log('productBrands ::::::', productBrands);
-
-  console.log('categories :::', categories);
   return (
     <div className="grid grid-cols-2 gap-5">
       <div className="flex flex-col gap-5">
