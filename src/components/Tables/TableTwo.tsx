@@ -514,7 +514,7 @@ const TableTwo: React.FC = () => {
                   <div className="p-6">
                     <Pagination
                       totalItems={totalItems}
-                      initialPageSize={10}
+                      initialPageSize={pageSize}
                       pageSizeOptions={[5, 10, 20, 50]}
                       onPageChange={(newPage) => setPage(newPage)}
                       onPageSizeChange={(newSize) => setPageSize(newSize)}

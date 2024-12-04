@@ -244,7 +244,7 @@ const BannerTable: React.FC = () => {
             <table className="w-full table-auto">
               <thead>
                 <tr className="bg-gray-2 text-left dark:bg-meta-4">
-                  <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                  <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white">
                     Title
                   </th>
                   <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">

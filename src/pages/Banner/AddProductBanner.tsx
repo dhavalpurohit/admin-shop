@@ -14,10 +14,7 @@ import {
   productSearchList,
   vendorFetchAllCategories,
 } from '../../redux/slices/ProductSlice';
-import {
-  addToSelectedProducts,
-  removeFromSelectedProducts,
-} from '../../redux/slices/selectedProductSlice';
+import { addToSelectedProducts } from '../../redux/slices/selectedProductSlice';
 import ButtonLoader from '../../common/ButtonLoader';
 
 const AddProductBanner = () => {
