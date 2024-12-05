@@ -25,6 +25,7 @@ const OrderTable: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
+  const vendor_id = localStorage.getItem('vendor_id');
 
   // Debouncing effect for search query
   useEffect(() => {
@@ -55,7 +56,7 @@ const OrderTable: React.FC = () => {
             page_number: '1',
             search: debouncedQuery, // Default to empty string if no query
             order_status: selectedStatus || '', // Default to empty string if no status
-            vendor_id: '4',
+            vendor_id: vendor_id,
             order_to_date: '',
             order_from_date: '',
           }),

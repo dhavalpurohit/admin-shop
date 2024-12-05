@@ -25,6 +25,7 @@ const TableTwo: React.FC = () => {
   const [isBulkLoading, setIsBulkLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [totalProducts, setTotalProducts] = useState(0);
 
   const totalItems = 100;
 
@@ -95,7 +96,7 @@ const TableTwo: React.FC = () => {
           productSearchList({
             id: '2',
             page_number: page,
-            customer_id: '4',
+            customer_id: vendor_id,
             min_price: '',
             max_price: '',
             search: '',
@@ -103,11 +104,11 @@ const TableTwo: React.FC = () => {
             brand: '',
             exclude_vendor: '',
             attribute: '',
-            vendor_id: '1',
+            vendor_id: vendor_id,
             // vendor_id,
             page_size: pageSize,
             trending: '',
-            vendor_product_id: '',
+            vendor_product_id: 'RTDG22BDHS00AZTS4',
           }),
         );
       } catch (error) {
@@ -137,6 +138,18 @@ const TableTwo: React.FC = () => {
     }
   }, [activeTab]);
 
+  useEffect(() => {
+    if (bulkProductXlsData?.uploads?.length) {
+      const total = bulkProductXlsData?.uploads?.reduce(
+        (sum: number, item: { Products: number }) => sum + (item.Products || 0),
+        0,
+      );
+      setTotalProducts(total);
+    } else {
+      setTotalProducts(0);
+    }
+  }, [bulkProductXlsData]);
+
   return (
     <div className="">
       <div className="flex items-center bg-white justify-between p-4 rounded-xl border border-stroke  shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -146,9 +159,8 @@ const TableTwo: React.FC = () => {
               Total Uploads
             </h4>
             <span>
-              {bulkProductXlsData?.uploads && singleProductList?.products
-                ? bulkProductXlsData?.uploads?.length +
-                  singleProductList?.products?.length
+              {totalProducts && singleProductList?.products
+                ? totalProducts + singleProductList?.products?.length
                 : '-'}
             </span>
           </div>
@@ -156,11 +168,7 @@ const TableTwo: React.FC = () => {
             <h4 className="text-sm font-semibold text-black dark:text-white">
               Bulk Uploads
             </h4>
-            <span>
-              {bulkProductXlsData?.uploads
-                ? bulkProductXlsData?.uploads?.length
-                : '-'}
-            </span>
+            <span>{totalProducts ? totalProducts : '-'}</span>
           </div>
           <div className="rounded-xl border border-stroke bg-white py-4 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
             <h4 className="text-sm font-semibold text-black dark:text-white">
@@ -511,7 +519,15 @@ const TableTwo: React.FC = () => {
                       )}
                     </tbody>
                   </table>
-                  <div className="p-6">
+                  <div className="flex items-center justify-between p-6">
+                    <div className="flex items-center w-full gap-2.5">
+                      <span className="flex items-center">
+                        Current Page: {page}
+                      </span>
+                      <span className="flex items-center">
+                        Page Size: {pageSize}
+                      </span>
+                    </div>
                     <Pagination
                       totalItems={totalItems}
                       initialPageSize={pageSize}
@@ -519,8 +535,6 @@ const TableTwo: React.FC = () => {
                       onPageChange={(newPage) => setPage(newPage)}
                       onPageSizeChange={(newSize) => setPageSize(newSize)}
                     />
-                    <p className="mt-4">Current Page: {page}</p>
-                    <p>Page Size: {pageSize}</p>
                   </div>
                 </>
               )}
