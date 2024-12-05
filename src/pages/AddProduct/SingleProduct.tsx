@@ -84,7 +84,7 @@ export type UpdateVariantsFunction = (
 const SingleProduct = () => {
   const dispatch = useDispatch<AppDispatch>();
   const vendor_id = localStorage.getItem('vendor_id');
-  // const user_id = localStorage.getItem('user_id');
+  const user_id = localStorage.getItem('user_id');
 
   const categories = useSelector(
     (state: RootState) => state.product.categories,
@@ -197,27 +197,27 @@ const SingleProduct = () => {
     if (validation.isValid) {
       setIsSavingProduct(true); // Set loading to true when starting the API call
       const productDetails = {
-        user_id: '-1',
+        user_id: user_id,
         id: '',
-        name: basicDetails.productName || '',
-        sale_price: basicDetails.salePrice || '',
-        regular_price: basicDetails.regularPrice || '0',
-        category_id: basicDetails.subCategory || '',
+        name: basicDetails.productName,
+        sale_price: basicDetails.salePrice,
+        regular_price: basicDetails.regularPrice,
+        category_id: basicDetails.subCategory,
         product_url: 'http', // Static value as needed
         vendor_product_id: 'RTDG22BDHS00AZTS4', // Static or derived as needed
-        vendor_id: vendor_id || '', // Static value
-        brand_id: basicDetails.brand || '1',
+        vendor_id: vendor_id, // Static value
+        brand_id: basicDetails.brand,
         status: basicDetails.statusChecked ? '1' : '0', // Static value
-        quantity: basicDetails.quantity || '0',
-        image: basicDetails.selectedImages[0] || '', // Assumes first image as main image
-        description: basicDetails.productDescription || '',
+        quantity: basicDetails.quantity,
+        image: basicDetails.selectedImages[0], // Assumes first image as main image
+        description: basicDetails.productDescription,
         do_not_display: '1', // Static value
         stock: basicDetails.stockChecked ? 'true' : 'false',
-        keywords: basicDetails.keywords || '',
+        keywords: basicDetails.keywords,
         weight: '', // Static or calculated if available
         skuid: '', // Static or generated
-        GST: basicDetails.taxValue || '',
-        HSNCode: basicDetails.taxCodeType || '',
+        GST: basicDetails.taxValue,
+        HSNCode: basicDetails.taxCodeType,
         CountryOfOrigin: 'India', // Static or derived if necessary
         StyleID: '', // Static or generated
         user_allowed: '1', // Static value

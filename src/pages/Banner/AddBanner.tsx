@@ -105,8 +105,7 @@ const AddBanner = () => {
     type: selectedType,
     parent_id: '0',
     sub_title: '',
-    user_id: '-1',
-    // user_id: localStorage.getItem('user_id'),
+    user_id: localStorage.getItem('user_id'),
     sorting: '',
   };
   const [basicDetails, setBasicDetails] =
