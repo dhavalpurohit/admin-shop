@@ -14,6 +14,7 @@ import {
   vendorFetchAllCategories,
 } from '../../redux/slices/ProductSlice';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const steps = ['Basic Details', 'Variants', 'Additional'];
 export interface Option {
@@ -82,6 +83,7 @@ export type UpdateVariantsFunction = (
 // export type UpdateVariantDetails = (field: keyof Variant, value: any) => void;
 
 const SingleProduct = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const vendor_id = localStorage.getItem('vendor_id');
   const user_id = localStorage.getItem('user_id');
@@ -196,8 +198,8 @@ const SingleProduct = () => {
     const validation = validateBasicDetails(basicDetails);
     if (validation.isValid) {
       setIsSavingProduct(true); // Set loading to true when starting the API call
-      const productDetails = {
-        user_id: user_id,
+      const productDetails: any = {
+        user_id: '-1',
         id: '',
         name: basicDetails.productName,
         sale_price: basicDetails.salePrice,
@@ -211,7 +213,7 @@ const SingleProduct = () => {
         quantity: basicDetails.quantity,
         image: basicDetails.selectedImages[0], // Assumes first image as main image
         description: basicDetails.productDescription,
-        do_not_display: '1', // Static value
+        do_not_display: basicDetails.statusChecked ? '0' : '1', // Static value
         stock: basicDetails.stockChecked ? 'true' : 'false',
         keywords: basicDetails.keywords,
         weight: '', // Static or calculated if available
@@ -227,6 +229,7 @@ const SingleProduct = () => {
         await dispatch(createSingleProduct(productDetails)); // Await the dispatch to ensure it's finished
         toast.success('Product saved successfully!'); // Show success message
         setBasicDetails(initialBasicDetails);
+        navigate('/products');
       } catch (error) {
         toast.error('Failed to save product. Please try again.'); // Handle API error
       } finally {

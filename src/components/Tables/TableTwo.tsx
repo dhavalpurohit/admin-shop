@@ -13,8 +13,14 @@ import { AppDispatch, RootState } from '../../redux/store';
 import { SingleProduct } from '../../types/product';
 import ButtonLoader from '../../common/ButtonLoader';
 import Pagination from '../../common/Pagination';
+import DropDownCommon from '../DropDownCommon';
 
 // import IconViewEye from '../../images/icon/icon-view-eye.svg';
+
+const status = [
+  { name: 'Active', value: '0' },
+  { name: 'Inactive', value: '1' },
+];
 
 const TableTwo: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -26,6 +32,7 @@ const TableTwo: React.FC = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalProducts, setTotalProducts] = useState(0);
+  const [selectedStatus, setSelectedStatus] = useState('0');
 
   const totalItems = 100;
 
@@ -53,6 +60,10 @@ const TableTwo: React.FC = () => {
 
   const handleTabClick = (tab: 'bulk' | 'single') => {
     setActiveTab(tab);
+  };
+
+  const handleStatusChange = (status: string) => {
+    setSelectedStatus(status);
   };
 
   useEffect(() => {
@@ -92,23 +103,39 @@ const TableTwo: React.FC = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
+
+        // await dispatch(
+        //   productSearchList({
+        //     id: '2',
+        //     page_number: page,
+        //     customer_id: vendor_id,
+        //     min_price: '',
+        //     max_price: '',
+        //     search: '',
+        //     order: '',
+        //     brand: '',
+        //     exclude_vendor: '',
+        //     attribute: '',
+        //     vendor_id: vendor_id,
+        //     // vendor_id,
+        //     page_size: pageSize,
+        //     trending: '',
+        //     vendor_product_id: 'RTDG22BDHS00AZTS4',
+        //   }),
+        // );
         await dispatch(
           productSearchList({
-            id: '2',
+            id: selectedSubCategory,
             page_number: page,
-            customer_id: vendor_id,
+            customer_id: '',
             min_price: '',
             max_price: '',
             search: '',
             order: '',
             brand: '',
-            exclude_vendor: '',
             attribute: '',
+            status: selectedStatus,
             vendor_id: vendor_id,
-            // vendor_id,
-            page_size: pageSize,
-            trending: '',
-            vendor_product_id: 'RTDG22BDHS00AZTS4',
           }),
         );
       } catch (error) {
@@ -119,7 +146,7 @@ const TableTwo: React.FC = () => {
     };
 
     fetchData();
-  }, [dispatch, page, pageSize]);
+  }, [dispatch, page, pageSize, selectedSubCategory, selectedStatus]);
 
   useEffect(() => {
     if (activeTab === 'bulk') {
@@ -230,6 +257,25 @@ const TableTwo: React.FC = () => {
             onSubCategoryChange={handleSubCategoryChange}
             category={selectedCategory}
           />
+          <div className="flex items-center gap-2.5">
+            <div className="w-full">
+              <label
+                className="mb-3 block text-sm font-medium text-black dark:text-white"
+                htmlFor="category"
+              >
+                Status
+              </label>
+              <div className="relative">
+                <DropDownCommon
+                  lists={status}
+                  labelKey="name"
+                  valueKey={'value'}
+                  defaultOption="All Status"
+                  onOptionChange={(value: string) => handleStatusChange(value)}
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div className="bg-white">
