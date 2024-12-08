@@ -15,6 +15,8 @@ import {
 } from '../../redux/slices/ProductSlice';
 import { addToSelectedProducts } from '../../redux/slices/selectedProductSlice';
 import ButtonLoader from '../../common/ButtonLoader';
+import SubCategoryDropdown from '../../components/ProductCategoryDropdown/SubCategoryDropdown';
+import CategoryDropdown from '../../components/ProductCategoryDropdown/CategoryDropdown';
 
 interface props {
   isOpen: boolean;
@@ -28,6 +30,10 @@ const AddProductBannerModal: React.FC<props> = ({ isOpen, onClose }) => {
   const [selectedBrand, setselectedBrand] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const vendor_id = localStorage.getItem('vendor_id');
+  const [selectedSubCategory, setSelectedSubCategory] = useState('');
+  const [isMinPrice, setIsMinPrice] = useState('');
+  const [isMaxPrice, setIsMaxPrice] = useState('');
 
   const categories = useSelector(
     (state: RootState) => state.product.categories?.categories,
@@ -66,6 +72,11 @@ const AddProductBannerModal: React.FC<props> = ({ isOpen, onClose }) => {
 
   const handleCategoryChange = (newCategory: string) => {
     setSelectedCategory(newCategory);
+    setSelectedSubCategory('');
+  };
+
+  const handleSubCategoryChange = (newSubCategory: string) => {
+    setSelectedSubCategory(newSubCategory);
   };
 
   const handleBrand = (brand: string) => {
@@ -76,27 +87,49 @@ const AddProductBannerModal: React.FC<props> = ({ isOpen, onClose }) => {
     (state: RootState) => state.product.productList,
   );
 
+  const handleMinPrice = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsMinPrice(e.target.value);
+  };
+  const handleMaxPrice = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsMaxPrice(e.target.value);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
+        // await dispatch(
+        //   productSearchList({
+        //     id: '2',
+        //     page_number: '1',
+        //     customer_id: '4',
+        //     min_price: '',
+        //     max_price: '',
+        //     search: query,
+        //     order: '',
+        //     brand: '',
+        //     exclude_vendor: '',
+        //     attribute: '',
+        //     vendor_id: '1',
+        //     // vendor_id,
+        //     page_size: '',
+        //     trending: '',
+        //     vendor_product_id: '',
+        //   }),
+        // );
         await dispatch(
           productSearchList({
-            id: '2',
-            page_number: '1',
-            customer_id: '4',
-            min_price: '',
-            max_price: '',
+            id: selectedSubCategory,
+            page_number: '',
+            customer_id: '',
+            min_price: isMinPrice,
+            max_price: isMaxPrice,
             search: query,
             order: '',
             brand: '',
-            exclude_vendor: '',
             attribute: '',
-            vendor_id: '1',
-            // vendor_id,
-            page_size: '',
-            trending: '',
-            vendor_product_id: '',
+            status: '',
+            vendor_id: vendor_id,
           }),
         );
       } catch (error) {
@@ -107,7 +140,7 @@ const AddProductBannerModal: React.FC<props> = ({ isOpen, onClose }) => {
     };
 
     fetchData();
-  }, [query, dispatch]);
+  }, [query, dispatch, selectedSubCategory, isMinPrice, isMaxPrice]);
 
   const handleAddProduct = async (item: any) => {
     try {
@@ -130,7 +163,7 @@ const AddProductBannerModal: React.FC<props> = ({ isOpen, onClose }) => {
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            stroke-width="1.5"
+            strokeWidth="1.5"
             stroke="currentColor"
             className="h-6 w-6 cursor-pointer"
           >
@@ -141,25 +174,16 @@ const AddProductBannerModal: React.FC<props> = ({ isOpen, onClose }) => {
             />
           </svg>
         </div>
-        <div className="grid grid-cols-3 gap-2.5 p-7">
-          <div className="w-full">
-            <label
-              className="mb-3 block text-sm font-medium text-black dark:text-white"
-              htmlFor="category"
-            >
-              Category
-            </label>
-            <div className="relative">
-              <DropDownCommon
-                lists={categories}
-                labelKey="name"
-                valueKey="value"
-                defaultOption="Select Category"
-                onOptionChange={handleCategoryChange}
-                selectedOption={selectedCategory}
-              />
-            </div>
-          </div>
+        <div className="grid grid-cols-4 gap-2.5 p-7">
+          <CategoryDropdown
+            selectedCategory={selectedCategory}
+            onCategoryChange={handleCategoryChange}
+          />
+          <SubCategoryDropdown
+            selectedSubCategory={selectedSubCategory}
+            onSubCategoryChange={handleSubCategoryChange}
+            category={selectedCategory}
+          />
           <div className="w-full">
             <label
               className="mb-3 block text-sm font-medium text-black dark:text-white"
@@ -191,9 +215,9 @@ const AddProductBannerModal: React.FC<props> = ({ isOpen, onClose }) => {
                 type="number"
                 name="minimum"
                 id="minimum"
-                value={''}
+                value={isMinPrice}
                 placeholder="Minimum"
-                onChange={() => {}}
+                onChange={handleMinPrice}
               />
               <label
                 className="mb-3 block text-sm font-medium text-black dark:text-white"
@@ -206,9 +230,9 @@ const AddProductBannerModal: React.FC<props> = ({ isOpen, onClose }) => {
                 type="number"
                 name="maximum"
                 id="maximum"
-                value={''}
+                value={isMaxPrice}
                 placeholder="Maximum"
-                onChange={() => {}}
+                onChange={handleMaxPrice}
               />
             </div>
           </div>
