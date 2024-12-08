@@ -100,7 +100,7 @@ const AddProductBannerModal: React.FC<props> = ({ isOpen, onClose }) => {
           }),
         );
       } catch (error) {
-        console.error('Error fetching product data:', error);
+        toast.error(`Error fetching product data: ${error}`);
       } finally {
         setIsLoading(false);
       }

@@ -60,7 +60,7 @@ const BulkUpload = () => {
         setSampleFileLoading(true); // Start loading
         await dispatch(fetchProductSampleFile()).unwrap(); // Wait for the API to resolve
       } catch (error) {
-        console.error('Error fetching product sample file:', error);
+        toast.error(`Error fetching product sample file: ${error}`);
       } finally {
         setSampleFileLoading(false); // Stop loading
       }
@@ -134,7 +134,7 @@ const BulkUpload = () => {
       a.click(); // Trigger the download
       document.body.removeChild(a); // Clean up
     } else {
-      console.error('No download link available');
+      toast.error('No download link available');
     }
   };
 
@@ -197,6 +197,7 @@ const BulkUpload = () => {
         );
       } catch (error) {
         toast.error(`Please upload a file. ${error}`);
+        setIsLoading(false);
       } finally {
         setIsLoading(false);
       }

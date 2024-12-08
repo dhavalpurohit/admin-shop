@@ -14,6 +14,8 @@ import { SingleProduct } from '../../types/product';
 import ButtonLoader from '../../common/ButtonLoader';
 import Pagination from '../../common/Pagination';
 import DropDownCommon from '../DropDownCommon';
+import search from '../../../src/images/common/search.svg';
+import toast from 'react-hot-toast';
 
 // import IconViewEye from '../../images/icon/icon-view-eye.svg';
 
@@ -22,7 +24,7 @@ const status = [
   { name: 'Inactive', value: '1' },
 ];
 
-const TableTwo: React.FC = () => {
+const ProductTable: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [activeTab, setActiveTab] = useState<'bulk' | 'single'>('single');
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -32,7 +34,9 @@ const TableTwo: React.FC = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalProducts, setTotalProducts] = useState(0);
-  const [selectedStatus, setSelectedStatus] = useState('0');
+  const [selectedStatus, setSelectedStatus] = useState(1);
+  const [query, setQuery] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
 
   const totalItems = 100;
 
@@ -62,8 +66,20 @@ const TableTwo: React.FC = () => {
     setActiveTab(tab);
   };
 
-  const handleStatusChange = (status: string) => {
+  const handleStatusChange = (status: number) => {
     setSelectedStatus(status);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+  };
+
+  const handleFocus = () => {
+    setIsFocused(true);
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
   };
 
   useEffect(() => {
@@ -130,7 +146,7 @@ const TableTwo: React.FC = () => {
             customer_id: '',
             min_price: '',
             max_price: '',
-            search: '',
+            search: query,
             order: '',
             brand: '',
             attribute: '',
@@ -139,14 +155,15 @@ const TableTwo: React.FC = () => {
           }),
         );
       } catch (error) {
-        console.error('Error fetching product data:', error);
+        toast.error(`Error fetching product data: ${error}`);
+        setIsLoading(false);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [dispatch, page, pageSize, selectedSubCategory, selectedStatus]);
+  }, [dispatch, page, pageSize, selectedSubCategory, selectedStatus, query]);
 
   useEffect(() => {
     if (activeTab === 'bulk') {
@@ -155,7 +172,8 @@ const TableTwo: React.FC = () => {
           setIsBulkLoading(true);
           await dispatch(bulkProductXlsList());
         } catch (error) {
-          console.error('Error fetching product data:', error);
+          toast.error(`Error fetching product data: ${error}`);
+          setIsBulkLoading(false);
         } finally {
           setIsBulkLoading(false);
         }
@@ -271,11 +289,36 @@ const TableTwo: React.FC = () => {
                   labelKey="name"
                   valueKey={'value'}
                   defaultOption="All Status"
-                  onOptionChange={(value: string) => handleStatusChange(value)}
+                  onOptionChange={(value: number) => handleStatusChange(value)}
                 />
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div className="flex items-center bg-white justify-between p-4 rounded-t-xl mt-2">
+        <div className="relative w-72 ml-auto">
+          {/* Search Icon */}
+          <div
+            className={`absolute left-2.5 top-1/2 transform -translate-y-1/2 transition-all duration-300 ease-in-out ${
+              isFocused || query
+                ? '-translate-x-6 opacity-0'
+                : 'translate-x-0 opacity-100'
+            }`}
+          >
+            <img src={search} alt={`image`} />
+          </div>
+
+          {/* Search Input */}
+          <input
+            type="text"
+            value={query}
+            onChange={handleInputChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            placeholder="Search..."
+            className="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500 transition-all duration-300 ease-in-out"
+          />
         </div>
       </div>
       <div className="bg-white">
@@ -449,7 +492,7 @@ const TableTwo: React.FC = () => {
                           Price
                         </th>
                         <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
-                          Quantity
+                          Stock
                         </th>
                         <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
                           Uploaded Date
@@ -592,4 +635,4 @@ const TableTwo: React.FC = () => {
   );
 };
 
-export default TableTwo;
+export default ProductTable;

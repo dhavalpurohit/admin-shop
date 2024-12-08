@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
-import TableTwo from '../components/Tables/TableTwo';
+import ProductTable from '../components/Tables/ProductTable';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import {
@@ -26,7 +26,7 @@ const Products = () => {
     <>
       <Breadcrumb pageName="Product Management" />
       <div className="flex flex-col gap-10">
-        <TableTwo />
+        <ProductTable />
       </div>
     </>
   );

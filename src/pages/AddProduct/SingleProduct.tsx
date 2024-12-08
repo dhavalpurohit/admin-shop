@@ -41,6 +41,7 @@ export interface BasicDetails {
   selectedImages: string[]; // or string[] if images are URLs
   stockChecked: boolean;
   statusChecked: boolean;
+  doNotDisplay: boolean;
 }
 
 export interface Variant {
@@ -119,6 +120,7 @@ const SingleProduct = () => {
     selectedImages: [],
     stockChecked: true, // Default true
     statusChecked: true,
+    doNotDisplay: false,
   };
   const [basicDetails, setBasicDetails] =
     useState<BasicDetails>(initialBasicDetails);
@@ -213,7 +215,7 @@ const SingleProduct = () => {
         quantity: basicDetails.quantity,
         image: basicDetails.selectedImages[0], // Assumes first image as main image
         description: basicDetails.productDescription,
-        do_not_display: basicDetails.statusChecked ? '0' : '1', // Static value
+        do_not_display: basicDetails.doNotDisplay ? '1' : '0',
         stock: basicDetails.stockChecked ? 'true' : 'false',
         keywords: basicDetails.keywords,
         weight: '', // Static or calculated if available
@@ -232,6 +234,7 @@ const SingleProduct = () => {
         navigate('/products');
       } catch (error) {
         toast.error('Failed to save product. Please try again.'); // Handle API error
+        setIsSavingProduct(false);
       } finally {
         setIsSavingProduct(false); // Reset loading state after API call
       }

@@ -5,6 +5,7 @@ import DropDownCommon from '../../../components/DropDownCommon';
 import { BasicDetails, UpdateBasicDetails } from '../SingleProduct';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
+import toast from 'react-hot-toast';
 
 const codeType = [
   {
@@ -70,12 +71,14 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
     updateBasicDetails('options', [...basicDetails.options, newOption]);
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const files = Array.from(event.target.files || []);
     const maxImages = 6;
 
     if (basicDetails.selectedImages.length + files.length > maxImages) {
-      alert(`You can only upload a maximum of ${maxImages} images.`);
+      toast.error(`You can only upload a maximum of ${maxImages} images.`);
       return;
     }
 
@@ -92,17 +95,46 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
       });
     });
 
-    Promise.all(base64Promises)
-      .then((base64Images) => {
-        updateBasicDetails('selectedImages', [
-          ...basicDetails.selectedImages,
-          ...base64Images,
-        ]);
-      })
-      .catch((error) => {
-        console.error('Error converting images to base64', error);
-        alert('Error converting images. Please try again.');
-      });
+    try {
+      // Convert files to Base64
+      const base64Images = await Promise.all(base64Promises);
+
+      // Prepare the payload with correct structure
+      const payload = {
+        user_id: '-1', // Replace with actual user ID if available
+        product_id: '23562', // Replace with actual product ID if available
+        images: base64Images.map((base64) => ({ image: base64 })), // Correct JSON array format
+      };
+
+      // Send API request
+      const response = await fetch(
+        'https://bt09kmb8yb.execute-api.us-east-1.amazonaws.com/shopnowee/product-images-add-multiple',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        },
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        toast.success(`Images uploaded successfully!`);
+        console.log('Upload response:', data);
+      } else {
+        toast.error(`Upload failed: ${response.statusText}`);
+        throw new Error(`Upload failed: ${response.statusText}`);
+      }
+
+      // Update local state with new images
+      updateBasicDetails('selectedImages', [
+        ...basicDetails.selectedImages,
+        ...base64Images,
+      ]);
+    } catch (error) {
+      toast.error(`Error uploading images', ${error}`);
+    }
   };
 
   const removeImage = (index: number) => {
@@ -110,6 +142,47 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
     newImages.splice(index, 1);
     updateBasicDetails('selectedImages', newImages);
   };
+
+  // const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const files = Array.from(event.target.files || []);
+  //   const maxImages = 6;
+
+  //   if (basicDetails.selectedImages.length + files.length > maxImages) {
+  //     alert(`You can only upload a maximum of ${maxImages} images.`);
+  //     return;
+  //   }
+
+  //   const base64Promises = files.map((file) => {
+  //     return new Promise<string>((resolve, reject) => {
+  //       const reader = new FileReader();
+  //       reader.readAsDataURL(file);
+  //       reader.onloadend = () => {
+  //         resolve(reader.result as string);
+  //       };
+  //       reader.onerror = (error) => {
+  //         reject(error);
+  //       };
+  //     });
+  //   });
+
+  //   Promise.all(base64Promises)
+  //     .then((base64Images) => {
+  //       updateBasicDetails('selectedImages', [
+  //         ...basicDetails.selectedImages,
+  //         ...base64Images,
+  //       ]);
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error converting images to base64', error);
+  //       alert('Error converting images. Please try again.');
+  //     });
+  // };
+
+  // const removeImage = (index: number) => {
+  //   const newImages = [...basicDetails.selectedImages];
+  //   newImages.splice(index, 1);
+  //   updateBasicDetails('selectedImages', newImages);
+  // };
 
   return (
     <div className="grid grid-cols-2 gap-5">
@@ -383,6 +456,55 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
                   </div>
                 </div>
                 Status
+              </label>
+            </div>
+            <div className="w-full">
+              <label
+                htmlFor="donotdisplay"
+                className="flex cursor-pointer select-none items-center pt-2.5"
+              >
+                <div className="relative">
+                  <input
+                    type="checkbox"
+                    id="donotdisplay"
+                    className="sr-only"
+                    checked={basicDetails.doNotDisplay}
+                    onChange={() => {
+                      updateBasicDetails(
+                        'doNotDisplay',
+                        !basicDetails.doNotDisplay,
+                      );
+                    }}
+                  />
+                  <div
+                    className={`mr-4 flex h-5 w-5 items-center justify-center rounded border ${
+                      basicDetails.doNotDisplay &&
+                      'border-primary bg-gray dark:bg-transparent'
+                    }`}
+                  >
+                    <span
+                      className={`opacity-0 ${
+                        basicDetails.doNotDisplay && '!opacity-100'
+                      }`}
+                    >
+                      <svg
+                        width="11"
+                        height="8"
+                        viewBox="0 0 11 8"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M10.0915 0.951972L10.0867 0.946075L10.0813 0.940568C9.90076 0.753564 9.61034 0.753146 9.42927 0.939309L4.16201 6.22962L1.58507 3.63469C1.40401 3.44841 1.11351 3.44879 0.932892 3.63584C0.755703 3.81933 0.755703 4.10875 0.932892 4.29224L0.932878 4.29225L0.934851 4.29424L3.58046 6.95832C3.73676 7.11955 3.94983 7.2 4.1473 7.2C4.36196 7.2 4.55963 7.11773 4.71406 6.9584L10.0468 1.60234C10.2436 1.4199 10.2421 1.1339 10.0915 0.951972ZM4.2327 6.30081L4.2317 6.2998C4.23206 6.30015 4.23237 6.30049 4.23269 6.30082L4.2327 6.30081Z"
+                          fill="#3056D3"
+                          stroke="#3056D3"
+                          strokeWidth="0.4"
+                        ></path>
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+                Do Not Display
               </label>
             </div>
           </div>
