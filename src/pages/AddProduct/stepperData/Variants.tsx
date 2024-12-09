@@ -5,6 +5,7 @@ import DropDownCommon from '../../../components/DropDownCommon';
 import { UpdateVariantsFunction, Variant } from '../SingleProduct';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
+import toast from 'react-hot-toast';
 
 const sizes = [
   {
@@ -72,7 +73,7 @@ const Variants: React.FC<VariantsProps> = ({
         updateVariants(selectedVariantIndex, 'variantImages', base64Images);
       })
       .catch((error) =>
-        console.error('Error converting image to base64', error),
+        toast.error(`Error converting image to base64: ${error}`),
       );
   };
 

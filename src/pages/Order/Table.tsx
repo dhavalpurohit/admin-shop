@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { orderList } from '../../redux/slices/orderSlice';
 import ButtonLoader from '../../common/ButtonLoader';
+import toast from 'react-hot-toast';
 
 const status = [
   { name: 'Return Initiated', value: 'Return Initiated' },
@@ -25,6 +26,9 @@ const OrderTable: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
+  const vendor_id = localStorage.getItem('vendor_id');
+  const [sortColumn, setSortColumn] = useState('');
+  const [sortOrder, setSortOrder] = useState('asc');
 
   // Debouncing effect for search query
   useEffect(() => {
@@ -45,30 +49,37 @@ const OrderTable: React.FC = () => {
     setIsFocused(false);
   };
 
+  const handleSort = (column: string) => {
+    const order = sortColumn === column && sortOrder === 'asc' ? 'desc' : 'asc';
+    setSortColumn(column);
+    setSortOrder(order);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
         await dispatch(
           orderList({
-            orderBy: '',
+            orderBy: sortOrder || 'asc',
             page_number: '1',
             search: debouncedQuery, // Default to empty string if no query
             order_status: selectedStatus || '', // Default to empty string if no status
-            vendor_id: '4',
+            vendor_id: vendor_id,
             order_to_date: '',
             order_from_date: '',
           }),
         );
       } catch (error) {
-        console.error('Error fetching order data:', error);
+        toast.error(`Error fetching order data: ${error}`);
+        setIsLoading(false);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchData(); // Always call this on page load
-  }, [debouncedQuery, selectedStatus, dispatch]); // Dependencies remain the same
+  }, [debouncedQuery, selectedStatus, sortColumn, sortOrder, dispatch]); // Dependencies remain the same
 
   const handleStatusChange = (status: string) => {
     setSelectedStatus(status);
@@ -182,11 +193,27 @@ const OrderTable: React.FC = () => {
             <table className="w-full table-auto">
               <thead>
                 <tr className="bg-gray-2 text-left dark:bg-meta-4">
-                  <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white">
-                    Order Date
+                  <th
+                    className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white cursor-pointer"
+                    onClick={() => handleSort('Order_Date')}
+                  >
+                    Order Date{' '}
+                    {sortColumn === 'Order_Date'
+                      ? sortOrder === 'asc'
+                        ? '↑'
+                        : '↓'
+                      : '↑'}
                   </th>
-                  <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
-                    Order id
+                  <th
+                    className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white cursor-pointer"
+                    onClick={() => handleSort('Order_Id')}
+                  >
+                    Order ID{' '}
+                    {sortColumn === 'Order_Id'
+                      ? sortOrder === 'asc'
+                        ? '↑'
+                        : '↓'
+                      : '↑'}
                   </th>
                   <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
                     Product name

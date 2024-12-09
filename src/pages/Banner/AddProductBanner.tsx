@@ -97,7 +97,8 @@ const AddProductBanner = () => {
           }),
         );
       } catch (error) {
-        console.error('Error fetching product data:', error);
+        toast.error(`Error fetching product data: ${error}`);
+        setIsLoading(false);
       } finally {
         setIsLoading(false);
       }

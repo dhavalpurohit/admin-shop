@@ -5,7 +5,7 @@ import SignIn from '../pages/Authentication/SignIn';
 import SignUp from '../pages/Authentication/SignUp';
 import Calendar from '../pages/Calendar';
 import Chart from '../pages/Chart';
-import ECommerce from '../pages/Dashboard/ECommerce';
+// import ECommerce from '../pages/Dashboard/ECommerce';
 import Profile from '../pages/Profile';
 import Settings from '../pages/Settings';
 import Products from '../pages/Products';
@@ -40,8 +40,8 @@ const RoutesView = () => {
       />
 
       {/* Protected Routes */}
-      <Route
-        path="/"
+      {/* <Route
+        path="/dashboard"
         element={
           <ProtectedRoute>
             <>
@@ -50,7 +50,7 @@ const RoutesView = () => {
             </>
           </ProtectedRoute>
         }
-      />
+      /> */}
       <Route
         path="/profile"
         element={
@@ -80,6 +80,17 @@ const RoutesView = () => {
             <>
               <PageTitle title="Settings | Store Panel" />
               <Settings />
+            </>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <>
+              <PageTitle title="Products | Store Panel" />
+              <Products />
             </>
           </ProtectedRoute>
         }

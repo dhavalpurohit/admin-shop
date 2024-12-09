@@ -14,6 +14,7 @@ import {
   vendorFetchAllCategories,
 } from '../../redux/slices/ProductSlice';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const steps = ['Basic Details', 'Variants', 'Additional'];
 export interface Option {
@@ -40,6 +41,7 @@ export interface BasicDetails {
   selectedImages: string[]; // or string[] if images are URLs
   stockChecked: boolean;
   statusChecked: boolean;
+  doNotDisplay: boolean;
 }
 
 export interface Variant {
@@ -82,9 +84,10 @@ export type UpdateVariantsFunction = (
 // export type UpdateVariantDetails = (field: keyof Variant, value: any) => void;
 
 const SingleProduct = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const vendor_id = localStorage.getItem('vendor_id');
-  // const user_id = localStorage.getItem('user_id');
+  const user_id = localStorage.getItem('user_id');
 
   const categories = useSelector(
     (state: RootState) => state.product.categories,
@@ -117,6 +120,7 @@ const SingleProduct = () => {
     selectedImages: [],
     stockChecked: true, // Default true
     statusChecked: true,
+    doNotDisplay: false,
   };
   const [basicDetails, setBasicDetails] =
     useState<BasicDetails>(initialBasicDetails);
@@ -196,28 +200,28 @@ const SingleProduct = () => {
     const validation = validateBasicDetails(basicDetails);
     if (validation.isValid) {
       setIsSavingProduct(true); // Set loading to true when starting the API call
-      const productDetails = {
+      const productDetails: any = {
         user_id: '-1',
         id: '',
-        name: basicDetails.productName || '',
-        sale_price: basicDetails.salePrice || '',
-        regular_price: basicDetails.regularPrice || '0',
-        category_id: basicDetails.subCategory || '',
+        name: basicDetails.productName,
+        sale_price: basicDetails.salePrice,
+        regular_price: basicDetails.regularPrice,
+        category_id: basicDetails.subCategory,
         product_url: 'http', // Static value as needed
         vendor_product_id: 'RTDG22BDHS00AZTS4', // Static or derived as needed
-        vendor_id: vendor_id || '', // Static value
-        brand_id: basicDetails.brand || '1',
+        vendor_id: vendor_id, // Static value
+        brand_id: basicDetails.brand,
         status: basicDetails.statusChecked ? '1' : '0', // Static value
-        quantity: basicDetails.quantity || '0',
-        image: basicDetails.selectedImages[0] || '', // Assumes first image as main image
-        description: basicDetails.productDescription || '',
-        do_not_display: '1', // Static value
+        quantity: basicDetails.quantity,
+        image: basicDetails.selectedImages[0], // Assumes first image as main image
+        description: basicDetails.productDescription,
+        do_not_display: basicDetails.doNotDisplay ? '1' : '0',
         stock: basicDetails.stockChecked ? 'true' : 'false',
-        keywords: basicDetails.keywords || '',
+        keywords: basicDetails.keywords,
         weight: '', // Static or calculated if available
         skuid: '', // Static or generated
-        GST: basicDetails.taxValue || '',
-        HSNCode: basicDetails.taxCodeType || '',
+        GST: basicDetails.taxValue,
+        HSNCode: basicDetails.taxCodeType,
         CountryOfOrigin: 'India', // Static or derived if necessary
         StyleID: '', // Static or generated
         user_allowed: '1', // Static value
@@ -227,8 +231,10 @@ const SingleProduct = () => {
         await dispatch(createSingleProduct(productDetails)); // Await the dispatch to ensure it's finished
         toast.success('Product saved successfully!'); // Show success message
         setBasicDetails(initialBasicDetails);
+        navigate('/products');
       } catch (error) {
         toast.error('Failed to save product. Please try again.'); // Handle API error
+        setIsSavingProduct(false);
       } finally {
         setIsSavingProduct(false); // Reset loading state after API call
       }

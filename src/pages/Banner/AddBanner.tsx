@@ -106,7 +106,6 @@ const AddBanner = () => {
     parent_id: '0',
     sub_title: '',
     user_id: '-1',
-    // user_id: localStorage.getItem('user_id'),
     sorting: '',
   };
   const [basicDetails, setBasicDetails] =
@@ -131,7 +130,10 @@ const AddBanner = () => {
     }));
   };
 
-  const handleReset = async () => {};
+  const handleReset = async () => {
+    setBasicDetails(initialBasicDetails);
+    toast.success('Form reset to default values.');
+  };
 
   const productBrands = useSelector(
     (state: RootState) => state.product.productBrands?.brands,
@@ -148,7 +150,7 @@ const AddBanner = () => {
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     if (selectedImages.length + files.length > maxImages) {
-      alert(`You can only upload a maximum of ${maxImages} images.`);
+      toast.error(`You can only upload a maximum of ${maxImages} images.`);
       return;
     }
     setSelectedImages((prevImages) => [...prevImages, ...files]);

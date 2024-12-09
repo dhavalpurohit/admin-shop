@@ -2,7 +2,7 @@ export const urls = {
   product: {
     createSingleProduct: 'product-add-update',
     vendorFetchAllCategories: 'admin-vendor-fetch-all-categories',
-    productsList: '/product-search-list',
+    productsList: '/vendor-product-list',
     createBulkProduct: 'insert-product-details-from-excel',
     bulkProductXlsList: 'excel-upload-summary-list'
   },
