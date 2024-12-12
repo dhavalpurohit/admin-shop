@@ -140,7 +140,7 @@ const AddProductBannerModal: React.FC<props> = ({ isOpen, onClose }) => {
     };
 
     fetchData();
-  }, [query, dispatch, selectedSubCategory, isMinPrice, isMaxPrice]);
+  }, [dispatch, selectedSubCategory, isMinPrice, isMaxPrice]);
 
   const handleAddProduct = async (item: any) => {
     try {
@@ -148,6 +148,32 @@ const AddProductBannerModal: React.FC<props> = ({ isOpen, onClose }) => {
       toast.success(`Add Product successfully! ${item.id}`);
     } catch (error) {
       toast.error('Failed to add product. Please try again.');
+    }
+  };
+
+  const handleSearch = async () => {
+    try {
+      setIsLoading(true);
+      await dispatch(
+        productSearchList({
+          id: selectedSubCategory,
+          page_number: '',
+          customer_id: '',
+          min_price: isMinPrice,
+          max_price: isMaxPrice,
+          search: query, // Use the current value of query
+          order: '',
+          brand: '',
+          attribute: '',
+          status: '',
+          vendor_id: vendor_id,
+        }),
+      );
+      toast.success('Search completed!');
+    } catch (error) {
+      toast.error(`Error during search: ${error}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -237,7 +263,7 @@ const AddProductBannerModal: React.FC<props> = ({ isOpen, onClose }) => {
             </div>
           </div>
         </div>
-        <div className="flex items-center bg-white justify-between p-4 rounded-t-xl mt-1 pt-0">
+        <div className="flex items-center bg-white justify-between p-4 rounded-t-xl mt-1 pt-0 gap-2.5">
           <div className="relative w-72 ml-auto">
             {/* Search Icon */}
             <div
@@ -261,6 +287,13 @@ const AddProductBannerModal: React.FC<props> = ({ isOpen, onClose }) => {
               className="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500 transition-all duration-300 ease-in-out"
             />
           </div>
+          <button
+            type="button"
+            onClick={handleSearch}
+            className="flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:bg-opacity-90"
+          >
+            Search
+          </button>
         </div>
         <div className="bg-white">
           <div className="max-w-full overflow-x-auto max-h-[calc(100vh-440px)]">
@@ -333,7 +366,10 @@ const AddProductBannerModal: React.FC<props> = ({ isOpen, onClose }) => {
                             className="flex items-center space-x-3.5"
                             onClick={() => handleAddProduct(item)}
                           >
-                            <button className="flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:bg-opacity-90">
+                            <button
+                              type="button"
+                              className="flex justify-center rounded bg-primary py-2 px-6 font-medium text-gray hover:bg-opacity-90"
+                            >
                               Add
                             </button>
                           </div>

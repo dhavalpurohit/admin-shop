@@ -5,7 +5,7 @@ import {
   fetchProductBrands,
   vendorFetchAllCategories,
 } from '../../redux/slices/ProductSlice';
-import { createBanner } from '../../redux/slices/bannerSlice';
+import { allBannerList, createBanner } from '../../redux/slices/bannerSlice';
 import { AppDispatch, RootState } from '../../redux/store';
 import { useNavigate } from 'react-router-dom';
 import { removeFromSelectedProducts } from '../../redux/slices/selectedProductSlice';
@@ -55,17 +55,6 @@ const type = [
   },
 ];
 
-const parents = [
-  {
-    name: 'parent 1',
-    value: 'parent 1',
-  },
-  {
-    name: 'parent 2',
-    value: 'parent 2',
-  },
-];
-
 interface bannerDetails {
   banner_id: string | null;
   banner_name: string | null;
@@ -88,16 +77,18 @@ const AddBanner = () => {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [selectedBrand, setselectedBrand] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedType, setSelectedType] = useState('');
   const [isModalOpen, setModalOpen] = useState(false);
-
+  const [isMinPrice, setIsMinPrice] = useState('');
+  const [isMaxPrice, setIsMaxPrice] = useState('');
   const maxImages = 2;
+
+  const bannerList = useSelector(
+    (state: RootState) => state.banner.allBannerList,
+  );
 
   const selectedProducts = useSelector(
     (state: RootState) => state.selectedProducts?.items,
   );
-
-  console.log('selectedProducts', selectedProducts);
 
   const initialBasicDetails: bannerDetails = {
     banner_id: '',
@@ -108,26 +99,14 @@ const AddBanner = () => {
     product_ids: '23566',
     products: 'category:70',
     deal: '',
-    type: selectedType,
-    parent_id: '0',
+    type: '',
+    parent_id: '',
     sub_title: '',
     user_id: '-1',
     sorting: '',
   };
   const [basicDetails, setBasicDetails] =
     useState<bannerDetails>(initialBasicDetails);
-
-  const handleSave = async () => {
-    try {
-      setIsSavingBanner(true);
-      await dispatch(createBanner(basicDetails));
-      toast.success(`Add Banner successfully!`);
-      setIsSavingBanner(false);
-      navigate('/banners');
-    } catch (error) {
-      toast.error('Failed to add Banner. Please try again.');
-    }
-  };
 
   const handleInputChange = (key: keyof bannerDetails, value: string) => {
     setBasicDetails((prevState) => ({
@@ -188,8 +167,11 @@ const AddBanner = () => {
     setSelectedCategory(newCategory);
   };
 
-  const handleTypeChange = (type: string) => {
-    setSelectedType(type);
+  const handleTypeChange = (key: keyof bannerDetails, type: any) => {
+    setBasicDetails((prevState) => ({
+      ...prevState,
+      [key]: type,
+    }));
   };
 
   const handleRemoveProduct = async (itemId: string) => {
@@ -198,6 +180,46 @@ const AddBanner = () => {
       toast.success(`Remove Product successfully! ${itemId}`);
     } catch (error) {
       toast.error('Failed to remove product. Please try again.');
+    }
+  };
+
+  useEffect(() => {
+    dispatch(
+      allBannerList({
+        status: '',
+      }),
+    );
+  }, [dispatch]);
+
+  const parents = bannerList?.banner_list?.map((item: any) => ({
+    name: item.name,
+    value: item.id,
+  }));
+
+  const handleMinPrice = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsMinPrice(e.target.value);
+  };
+  const handleMaxPrice = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsMaxPrice(e.target.value);
+  };
+
+  const handleParentChange = (key: keyof bannerDetails, parent: string) => {
+    setBasicDetails((prevState) => ({
+      ...prevState,
+      [key]: parent,
+    }));
+  };
+
+  const handleSave = async () => {
+    console.log('basicDetails', basicDetails);
+    try {
+      setIsSavingBanner(true);
+      await dispatch(createBanner(basicDetails));
+      toast.success(`Add Banner successfully!`);
+      setIsSavingBanner(false);
+      navigate('/banners');
+    } catch (error) {
+      toast.error('Failed to add Banner. Please try again.');
     }
   };
 
@@ -297,8 +319,10 @@ const AddBanner = () => {
                           labelKey="name"
                           valueKey="value"
                           defaultOption="Select Type"
-                          onOptionChange={handleTypeChange}
-                          selectedOption={selectedType}
+                          selectedOption={basicDetails.type}
+                          onOptionChange={(value: any) =>
+                            handleTypeChange('type', value)
+                          }
                         />
                       </div>
                     </div>
@@ -315,6 +339,10 @@ const AddBanner = () => {
                           labelKey="name"
                           valueKey="value"
                           defaultOption="Select Parent"
+                          onOptionChange={(value: any) =>
+                            handleParentChange('parent_id', value)
+                          }
+                          selectedOption={basicDetails.parent_id}
                         />
                       </div>
                     </div>
@@ -462,12 +490,12 @@ const AddBanner = () => {
                       <div className="relative">
                         <input
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                          type="text"
+                          type="number"
                           name="minprice"
                           id="minprice"
-                          value={''}
+                          value={isMinPrice}
                           placeholder="Banner Title"
-                          onChange={() => {}}
+                          onChange={handleMinPrice}
                         />
                         {/* {errors.minprice && (
                   <p className="text-red-500">{errors.minprice}</p>
@@ -484,12 +512,12 @@ const AddBanner = () => {
                       <div className="relative">
                         <input
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                          type="text"
+                          type="number"
                           name="maxprice"
                           id="maxprice"
-                          value={''}
+                          value={isMaxPrice}
                           placeholder="Banner Title"
-                          onChange={() => {}}
+                          onChange={handleMaxPrice}
                         />
                         {/* {errors.maxprice && (
                   <p className="text-red-500">{errors.maxprice}</p>
