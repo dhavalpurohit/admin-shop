@@ -93,6 +93,12 @@ const AddBanner = () => {
 
   const maxImages = 2;
 
+  const selectedProducts = useSelector(
+    (state: RootState) => state.selectedProducts?.items,
+  );
+
+  console.log('selectedProducts', selectedProducts);
+
   const initialBasicDetails: bannerDetails = {
     banner_id: '',
     banner_name: '',
@@ -185,10 +191,6 @@ const AddBanner = () => {
   const handleTypeChange = (type: string) => {
     setSelectedType(type);
   };
-
-  const selectedProducts = useSelector(
-    (state: RootState) => state.selectedProducts?.items,
-  );
 
   const handleRemoveProduct = async (itemId: string) => {
     try {
@@ -420,6 +422,7 @@ const AddBanner = () => {
                             className="w-full h-full object-cover rounded"
                           />
                           <button
+                            type="button"
                             onClick={() => removeImage(index)}
                             className="absolute -top-1.5 -right-2.5 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                           >

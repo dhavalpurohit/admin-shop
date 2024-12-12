@@ -121,7 +121,7 @@ const Variants: React.FC<VariantsProps> = ({
                     lists={colourCodes?.color_codes} // Pass the color_codes directly
                     labelKey="color_name" // Use "color_name" as the label
                     valueKey="color_code" // Use "color_code" as the value
-                    selectedOption={variants[selectedVariantIndex].color} // Pass the selected variant's color
+                    selectedOption={variants[selectedVariantIndex]?.color} // Pass the selected variant's color
                     onOptionChange={
                       (value) =>
                         updateVariants(selectedVariantIndex, 'color', value) // Update the selected variant's color
@@ -142,7 +142,7 @@ const Variants: React.FC<VariantsProps> = ({
                     lists={sizes}
                     labelKey="size"
                     valueKey="value"
-                    selectedOption={variants[selectedVariantIndex].size}
+                    selectedOption={variants[selectedVariantIndex]?.size}
                     // value={variants[selectedVariantIndex]?.size || ''} // Add value prop
                     onOptionChange={
                       (value) =>
