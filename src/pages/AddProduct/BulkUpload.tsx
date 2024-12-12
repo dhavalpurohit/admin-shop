@@ -40,10 +40,6 @@ const BulkUpload = () => {
     (state: RootState) => state.product.categories?.categories,
   );
 
-  const productSampleFile = useSelector(
-    (state: RootState) => state.product.productSampleFile,
-  );
-
   useEffect(() => {
     if (!categories) {
       dispatch(
@@ -53,21 +49,6 @@ const BulkUpload = () => {
       );
     }
   }, [categories]);
-
-  useEffect(() => {
-    const fetchSampleFile = async () => {
-      try {
-        setSampleFileLoading(true); // Start loading
-        await dispatch(fetchProductSampleFile()).unwrap(); // Wait for the API to resolve
-      } catch (error) {
-        toast.error(`Error fetching product sample file: ${error}`);
-      } finally {
-        setSampleFileLoading(false); // Stop loading
-      }
-    };
-
-    fetchSampleFile();
-  }, [dispatch]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setError(null); // Reset error message
@@ -124,17 +105,26 @@ const BulkUpload = () => {
     maxFiles: 1, // Only allow one file at a time (optional)
   });
 
-  const handleDownloadSampleFile = () => {
-    // Ensure `productSampleFile` and its `link_to_download_excel_file` property are defined
-    if (productSampleFile?.link_to_download_excel_file) {
-      const a = document.createElement('a');
-      a.href = productSampleFile.link_to_download_excel_file; // Correctly set the URL
-      a.download = 'product_sample_file.xlsx'; // Set the file name for download
-      document.body.appendChild(a);
-      a.click(); // Trigger the download
-      document.body.removeChild(a); // Clean up
-    } else {
-      toast.error('No download link available');
+  const handleDownloadSampleFile = async () => {
+    try {
+      setSampleFileLoading(true);
+      const response = await dispatch(fetchProductSampleFile()).unwrap();
+
+      console.log(' response', response);
+      if (response?.link_to_download_excel_file) {
+        const a = document.createElement('a');
+        a.href = response.link_to_download_excel_file; // Correctly set the URL
+        a.download = 'product_sample_file.xlsx'; // Set the file name for download
+        document.body.appendChild(a);
+        a.click(); // Trigger the download
+        document.body.removeChild(a); // Clean up
+      } else {
+        toast.error('No download link available');
+      }
+    } catch (error) {
+      toast.error(`Error fetching product sample file: ${error}`);
+    } finally {
+      setSampleFileLoading(false); // Stop loading
     }
   };
 
