@@ -20,8 +20,8 @@ import toast from 'react-hot-toast';
 // import IconViewEye from '../../images/icon/icon-view-eye.svg';
 
 const status = [
-  { name: 'Active', value: '0' },
-  { name: 'Inactive', value: '1' },
+  { name: 'Active', value: '1' },
+  { name: 'Inactive', value: '0' },
 ];
 
 const ProductTable: React.FC = () => {

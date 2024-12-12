@@ -184,6 +184,8 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
   //   updateBasicDetails('selectedImages', newImages);
   // };
 
+  console.log('basicDetails', basicDetails);
+
   return (
     <div className="grid grid-cols-2 gap-5">
       <div className="flex flex-col gap-5">
@@ -654,6 +656,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
                     className="w-full h-full object-cover rounded"
                   />
                   <button
+                    type="button"
                     onClick={() => removeImage(index)}
                     className="absolute -top-1.5 -right-2.5 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                   >
@@ -706,6 +709,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
                   />
                   {/* Remove icon (button) */}
                   <button
+                    type="button"
                     onClick={() => removeOption(option.id)}
                     className="absolute top-8 right-0 mt-2 mr-2 text-red-500 hover:text-red-700"
                     title="Remove option"
