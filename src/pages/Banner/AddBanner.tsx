@@ -97,7 +97,9 @@ const AddBanner = () => {
     (state: RootState) => state.selectedProducts?.items,
   );
 
-  console.log('selectedProducts', selectedProducts);
+  const selectedProductsIds = selectedProducts
+    .map((product: { id: any }) => product.id)
+    .join(',');
 
   const initialBasicDetails: bannerDetails = {
     banner_id: '',
@@ -105,7 +107,7 @@ const AddBanner = () => {
     image: '',
     status: '1',
     show_homepage: '1',
-    product_ids: '23566',
+    product_ids: '',
     products: 'category:70',
     deal: '',
     type: selectedType,
@@ -116,6 +118,13 @@ const AddBanner = () => {
   };
   const [basicDetails, setBasicDetails] =
     useState<bannerDetails>(initialBasicDetails);
+
+  useEffect(() => {
+    setBasicDetails((prevState) => ({
+      ...prevState,
+      product_ids: selectedProductsIds,
+    }));
+  }, [selectedProductsIds]);
 
   const handleSave = async () => {
     try {
@@ -465,9 +474,9 @@ const AddBanner = () => {
                           type="text"
                           name="minprice"
                           id="minprice"
-                          value={''}
+                          // value={''}
                           placeholder="Banner Title"
-                          onChange={() => {}}
+                          // onChange={() => {}}
                         />
                         {/* {errors.minprice && (
                   <p className="text-red-500">{errors.minprice}</p>
@@ -487,9 +496,9 @@ const AddBanner = () => {
                           type="text"
                           name="maxprice"
                           id="maxprice"
-                          value={''}
+                          // value={''}
                           placeholder="Banner Title"
-                          onChange={() => {}}
+                          // onChange={() => {}}
                         />
                         {/* {errors.maxprice && (
                   <p className="text-red-500">{errors.maxprice}</p>

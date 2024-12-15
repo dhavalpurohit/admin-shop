@@ -37,8 +37,9 @@ const ProductTable: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState(1);
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const [totalProductList , setTotalProductList] = useState(0);
 
-  const totalItems = 100;
+  // const totalItems = 100;
 
   const categories = useSelector(
     (state: RootState) => state.product.categories?.categories,
@@ -46,6 +47,10 @@ const ProductTable: React.FC = () => {
   const singleProductList = useSelector(
     (state: RootState) => state.product.productList,
   );
+
+  useEffect(() => {
+    setTotalProductList(singleProductList?.total);
+  }, [singleProductList]);
 
   const bulkProductXlsData = useSelector(
     (state: RootState) => state.product.bulkProductXlsList,
@@ -143,6 +148,7 @@ const ProductTable: React.FC = () => {
           productSearchList({
             id: selectedSubCategory,
             page_number: page,
+            page_size : pageSize,
             customer_id: '',
             min_price: '',
             max_price: '',
@@ -618,7 +624,7 @@ const ProductTable: React.FC = () => {
                       </span>
                     </div>
                     <Pagination
-                      totalItems={totalItems}
+                      totalItems={totalProductList}
                       initialPageSize={pageSize}
                       pageSizeOptions={[5, 10, 20, 50]}
                       onPageChange={(newPage) => setPage(newPage)}

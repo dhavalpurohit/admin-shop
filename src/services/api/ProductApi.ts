@@ -34,4 +34,8 @@ export class ProductServices {
   static bulkProductXlsList() {
     return CommonService.post(urls.product.bulkProductXlsList);
   }
+
+  static productAddMultipleImages(data: object) {
+    return CommonService.post(urls.product.productAddMultipleImages, data);
+  }
 }
