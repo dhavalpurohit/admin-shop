@@ -138,15 +138,7 @@ const AddProductBannerModal: React.FC<props> = ({ isOpen, onClose }) => {
     };
 
     fetchData();
-  }, [
-    query,
-    dispatch,
-    selectedSubCategory,
-    selectedCategory,
-    isMinPrice,
-    isMaxPrice,
-  ]);
-
+  }, [dispatch, selectedSubCategory, selectedCategory, isMinPrice, isMaxPrice]);
 
   const handleAddProduct = async (item: any) => {
     try {
@@ -162,7 +154,7 @@ const AddProductBannerModal: React.FC<props> = ({ isOpen, onClose }) => {
       setIsLoading(true);
       await dispatch(
         productSearchList({
-          id: selectedSubCategory,
+          id: selectedSubCategory ? selectedSubCategory : selectedCategory,
           page_number: '',
           customer_id: '',
           min_price: isMinPrice,

@@ -17,8 +17,8 @@ export const urls = {
     loginVendor: 'admin-vendor-login',
   },
   banner: {
-    allBannerList: 'banner-list-all',
-    createBanner: 'banner-add-update',
+    allBannerList: 'vendor-banner-list-for-all-banners',
+    createBanner: 'vendor-banner-add-update',
   },
   samplefile: 'extract-excel-validation-data',
 

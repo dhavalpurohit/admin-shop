@@ -176,7 +176,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
                 className="mb-3 block text-sm font-medium text-black dark:text-white"
                 htmlFor="productId"
               >
-                External Product ID
+                Vendor Product ID
               </label>
               <div className="relative">
                 <input
