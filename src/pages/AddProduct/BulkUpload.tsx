@@ -191,7 +191,15 @@ const BulkUpload = () => {
       } finally {
         setIsLoading(false);
       }
+    } else {
+      toast.error(`Please upload a file.`);
     }
+  };
+
+  const handleReset = () => {
+    removeFile();
+    setSelectedCategory('');
+    setSelectedSubCategory('');
   };
   return (
     <div className="p-7 rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -207,7 +215,11 @@ const BulkUpload = () => {
           >
             {isLoading ? <ButtonLoader /> : ' Save'}
           </button>
-          <button className="flex justify-center rounded border border-stroke py-2 px-6 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white">
+          <button
+            type="submit"
+            onClick={handleReset}
+            className="flex justify-center rounded border border-stroke py-2 px-6 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white"
+          >
             Reset
           </button>
         </div>

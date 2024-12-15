@@ -247,7 +247,7 @@ const SingleProduct = () => {
             user_id: '-1', // Static or replace with actual user ID
             product_id: productId.toString(), // Use the extracted product ID
             images: basicDetails.selectedImages.map((image) => ({
-              image: image.base64, // Send base64 of images
+              image: image.base64.replace(/^data:image\/\w+;base64,/, ''),
               caption: image.caption,
               size: image.size,
             })),
