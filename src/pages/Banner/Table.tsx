@@ -8,17 +8,8 @@ import { AppDispatch, RootState } from '../../redux/store';
 import { allBannerList } from '../../redux/slices/bannerSlice';
 import ButtonLoader from '../../common/ButtonLoader';
 import { vendorFetchAllCategories } from '../../redux/slices/ProductSlice';
+import Pagination from '../../common/Pagination';
 
-const category = [
-  {
-    name: 'cate 1',
-    value: 'cate 1',
-  },
-  {
-    name: 'cate 2',
-    value: 'cate 2',
-  },
-];
 const status = [
   {
     name: 'Active',
@@ -73,6 +64,8 @@ const type = [
 ];
 
 const BannerTable: React.FC = () => {
+  const totalItems = 100;
+
   const dispatch = useDispatch<AppDispatch>();
   const bannerList = useSelector(
     (state: RootState) => state.banner.allBannerList,
@@ -82,6 +75,9 @@ const BannerTable: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [pageSize, setPageSize] = useState(50);
+  const [page, setPage] = useState(1);
+  // const [totalProducts, setTotalProducts] = useState(0);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
@@ -111,6 +107,10 @@ const BannerTable: React.FC = () => {
         await dispatch(
           allBannerList({
             status: selectedStatus || '', // Default to empty string if no status
+            category: selectedCategory || '', // Default to empty string if no category
+            page_number: page,
+            page_size: pageSize,
+            search: query,
           }),
         );
       } catch (error) {
@@ -121,7 +121,7 @@ const BannerTable: React.FC = () => {
     };
 
     fetchData();
-  }, [selectedStatus, dispatch]);
+  }, [selectedStatus, selectedCategory, pageSize, page, query, dispatch]);
 
   const handleStatusChange = (status: string) => {
     setSelectedStatus(status);
@@ -392,6 +392,19 @@ const BannerTable: React.FC = () => {
               </tbody>
             </table>
           )}
+          <div className="flex items-center justify-between p-6">
+            <div className="flex items-center w-full gap-2.5">
+              <span className="flex items-center">Current Page: {page}</span>
+              <span className="flex items-center">Page Size: {pageSize}</span>
+            </div>
+            <Pagination
+              totalItems={totalItems}
+              initialPageSize={pageSize}
+              pageSizeOptions={[5, 10, 20, 50]}
+              onPageChange={(newPage) => setPage(newPage)}
+              onPageSizeChange={(newSize) => setPageSize(newSize)}
+            />
+          </div>
         </div>
       </div>
     </div>

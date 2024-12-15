@@ -98,28 +98,26 @@ const AddProductBannerModal: React.FC<props> = ({ isOpen, onClose }) => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        // await dispatch(
-        //   productSearchList({
-        //     id: '2',
-        //     page_number: '1',
-        //     customer_id: '4',
-        //     min_price: '',
-        //     max_price: '',
-        //     search: query,
-        //     order: '',
-        //     brand: '',
-        //     exclude_vendor: '',
-        //     attribute: '',
-        //     vendor_id: '1',
-        //     // vendor_id,
-        //     page_size: '',
-        //     trending: '',
-        //     vendor_product_id: '',
-        //   }),
-        // );
+
+        const data = {
+          id: selectedSubCategory ? selectedSubCategory : selectedCategory,
+          page_number: '',
+          customer_id: '',
+          min_price: isMinPrice,
+          max_price: isMaxPrice,
+          search: query,
+          order: '',
+          brand: '',
+          attribute: '',
+          status: '',
+          vendor_id: vendor_id,
+        };
+
+        console.log('data ::::::::', data);
+        console.log(selectedCategory);
         await dispatch(
           productSearchList({
-            id: selectedSubCategory,
+            id: selectedSubCategory ? selectedSubCategory : selectedCategory,
             page_number: '',
             customer_id: '',
             min_price: isMinPrice,
@@ -140,7 +138,15 @@ const AddProductBannerModal: React.FC<props> = ({ isOpen, onClose }) => {
     };
 
     fetchData();
-  }, [dispatch, selectedSubCategory, isMinPrice, isMaxPrice]);
+  }, [
+    query,
+    dispatch,
+    selectedSubCategory,
+    selectedCategory,
+    isMinPrice,
+    isMaxPrice,
+  ]);
+
 
   const handleAddProduct = async (item: any) => {
     try {

@@ -71,70 +71,67 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
     updateBasicDetails('options', [...basicDetails.options, newOption]);
   };
 
-  const handleImageUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     const maxImages = 6;
 
     if (basicDetails.selectedImages.length + files.length > maxImages) {
-      toast.error(`You can only upload a maximum of ${maxImages} images.`);
+      alert(`You can only upload a maximum of ${maxImages} images.`);
       return;
     }
 
     const base64Promises = files.map((file) => {
-      return new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onloadend = () => {
-          resolve(reader.result as string);
-        };
-        reader.onerror = (error) => {
-          reject(error);
-        };
-      });
-    });
+      return new Promise<{ base64: string; name: string; size: string }>(
+        (resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
 
-    try {
-      // Convert files to Base64
-      const base64Images = await Promise.all(base64Promises);
+          reader.onloadend = () => {
+            const base64 = reader.result as string;
 
-      // Prepare the payload with correct structure
-      const payload = {
-        user_id: '-1', // Replace with actual user ID if available
-        product_id: '23562', // Replace with actual product ID if available
-        images: base64Images.map((base64) => ({ image: base64 })), // Correct JSON array format
-      };
+            // To get the image size (dimensions)
+            const img = new Image();
+            img.src = base64;
 
-      // Send API request
-      const response = await fetch(
-        'https://bt09kmb8yb.execute-api.us-east-1.amazonaws.com/shopnowee/product-images-add-multiple',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
+            img.onload = () => {
+              const dimensions = `${img.width}x${img.height}`; // e.g., "1024x1080"
+              resolve({
+                base64,
+                name: file.name, // file name as caption
+                size: dimensions, // image dimensions
+              });
+            };
+
+            img.onerror = (error) => {
+              reject('Error getting image dimensions');
+            };
+          };
+
+          reader.onerror = (error) => {
+            reject(error);
+          };
         },
       );
+    });
 
-      if (response.ok) {
-        const data = await response.json();
-        toast.success(`Images uploaded successfully!`);
-        console.log('Upload response:', data);
-      } else {
-        toast.error(`Upload failed: ${response.statusText}`);
-        throw new Error(`Upload failed: ${response.statusText}`);
-      }
+    Promise.all(base64Promises)
+      .then((images) => {
+        // Combine existing images with the new images
+        const newImageDetails = images.map((img) => ({
+          base64: img.base64,
+          caption: img.name,
+          size: img.size,
+        }));
 
-      // Update local state with new images
-      updateBasicDetails('selectedImages', [
-        ...basicDetails.selectedImages,
-        ...base64Images,
-      ]);
-    } catch (error) {
-      toast.error(`Error uploading images', ${error}`);
-    }
+        updateBasicDetails('selectedImages', [
+          ...basicDetails.selectedImages,
+          ...newImageDetails,
+        ]);
+      })
+      .catch((error) => {
+        console.error('Error converting images to base64', error);
+        alert('Error converting images. Please try again.');
+      });
   };
 
   const removeImage = (index: number) => {
@@ -142,47 +139,6 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
     newImages.splice(index, 1);
     updateBasicDetails('selectedImages', newImages);
   };
-
-  // const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const files = Array.from(event.target.files || []);
-  //   const maxImages = 6;
-
-  //   if (basicDetails.selectedImages.length + files.length > maxImages) {
-  //     alert(`You can only upload a maximum of ${maxImages} images.`);
-  //     return;
-  //   }
-
-  //   const base64Promises = files.map((file) => {
-  //     return new Promise<string>((resolve, reject) => {
-  //       const reader = new FileReader();
-  //       reader.readAsDataURL(file);
-  //       reader.onloadend = () => {
-  //         resolve(reader.result as string);
-  //       };
-  //       reader.onerror = (error) => {
-  //         reject(error);
-  //       };
-  //     });
-  //   });
-
-  //   Promise.all(base64Promises)
-  //     .then((base64Images) => {
-  //       updateBasicDetails('selectedImages', [
-  //         ...basicDetails.selectedImages,
-  //         ...base64Images,
-  //       ]);
-  //     })
-  //     .catch((error) => {
-  //       console.error('Error converting images to base64', error);
-  //       alert('Error converting images. Please try again.');
-  //     });
-  // };
-
-  // const removeImage = (index: number) => {
-  //   const newImages = [...basicDetails.selectedImages];
-  //   newImages.splice(index, 1);
-  //   updateBasicDetails('selectedImages', newImages);
-  // };
 
   console.log('basicDetails', basicDetails);
 
@@ -215,7 +171,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
             General Information
           </h2>
           <div className="grid grid-cols-2 py-2 gap-2.5 mt-3">
-            <div className="w-full hidden">
+            <div className="w-full ">
               <label
                 className="mb-3 block text-sm font-medium text-black dark:text-white"
                 htmlFor="productId"
@@ -651,7 +607,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
               {basicDetails.selectedImages.map((image, index) => (
                 <div key={index} className="relative border w-25 h-25">
                   <img
-                    src={image} // Use base64 string as the image source
+                    src={image.base64} // Use base64 string as the image source
                     alt={`Preview ${index}`}
                     className="w-full h-full object-cover rounded"
                   />

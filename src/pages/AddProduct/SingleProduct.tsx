@@ -11,6 +11,7 @@ import {
   createSingleProduct,
   fetchColorCodeMain,
   fetchProductBrands,
+  productAddMultipleImages,
   vendorFetchAllCategories,
 } from '../../redux/slices/ProductSlice';
 import toast from 'react-hot-toast';
@@ -20,6 +21,11 @@ const steps = ['Basic Details', 'Variants', 'Additional'];
 export interface Option {
   id: number;
   value: string;
+}
+interface ImageDetails {
+  base64: string; // Base64-encoded string or image URL
+  caption: string; // File name or caption
+  size: string; // Image dimensions in the format "width x height"
 }
 
 export interface BasicDetails {
@@ -38,7 +44,7 @@ export interface BasicDetails {
   manufactureInfo: string;
   importerDetails: string;
   options: Option[];
-  selectedImages: string[]; // or string[] if images are URLs
+  selectedImages: ImageDetails[]; // or string[] if images are URLs
   stockChecked: boolean;
   statusChecked: boolean;
   doNotDisplay: boolean;
@@ -207,36 +213,67 @@ const SingleProduct = () => {
         sale_price: basicDetails.salePrice,
         regular_price: basicDetails.regularPrice,
         category_id: basicDetails.subCategory,
-        product_url: 'http', // Static value as needed
-        vendor_product_id: 'RTDG22BDHS00AZTS4', // Static or derived as needed
-        vendor_id: vendor_id, // Static value
+        product_url: 'http', // Static value
+        vendor_product_id: basicDetails.productId,
+        vendor_id: vendor_id,
         brand_id: basicDetails.brand,
-        status: basicDetails.statusChecked ? '1' : '0', // Static value
+        status: basicDetails.statusChecked ? '1' : '0',
         quantity: basicDetails.quantity,
-        image: basicDetails.selectedImages[0], // Assumes first image as main image
         description: basicDetails.productDescription,
         do_not_display: basicDetails.doNotDisplay ? '1' : '0',
         stock: basicDetails.stockChecked ? 'true' : 'false',
         keywords: basicDetails.keywords,
-        weight: '', // Static or calculated if available
-        skuid: '', // Static or generated
+        weight: '',
+        skuid: '',
         GST: basicDetails.taxValue,
         HSNCode: basicDetails.taxCodeType,
-        CountryOfOrigin: 'India', // Static or derived if necessary
-        StyleID: '', // Static or generated
-        user_allowed: '1', // Static value
+        CountryOfOrigin: 'India',
+        StyleID: '',
+        user_allowed: '1',
       };
 
       try {
-        await dispatch(createSingleProduct(productDetails)); // Await the dispatch to ensure it's finished
-        toast.success('Product saved successfully!'); // Show success message
+        // First API call to save the product
+        const response = await dispatch(createSingleProduct(productDetails));
+
+        // Extract the 'id' from the response
+        const productId = response.payload?.id; // Adjust this based on actual API response structure
+        if (!productId) throw new Error('Failed to get product ID');
+
+        // Check if selectedImages has one or more images
+        if (basicDetails.selectedImages.length > 0) {
+          // Prepare payload for the second API call
+          const imagePayload = {
+            user_id: '-1', // Static or replace with actual user ID
+            product_id: productId.toString(), // Use the extracted product ID
+            images: basicDetails.selectedImages.map((image) => ({
+              image: image.base64, // Send base64 of images
+              caption: image.caption,
+              size: image.size,
+            })),
+          };
+
+          // Send the second API call to upload multiple images
+          const uploadResponse = await dispatch(
+            productAddMultipleImages(imagePayload),
+          );
+          if (!uploadResponse.payload) {
+            throw new Error('Failed to upload images');
+          }
+        }
+
+        toast.success('Product and images saved successfully!');
         setBasicDetails(initialBasicDetails);
         navigate('/products');
       } catch (error) {
-        toast.error('Failed to save product. Please try again.'); // Handle API error
+        console.error(error);
+        toast.error(
+          (error as Error).message ||
+            'An error occurred while saving the product',
+        );
         setIsSavingProduct(false);
       } finally {
-        setIsSavingProduct(false); // Reset loading state after API call
+        setIsSavingProduct(false); // Reset loading state
       }
     } else {
       setErrors(validation.errors);

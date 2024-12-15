@@ -90,13 +90,17 @@ const AddBanner = () => {
     (state: RootState) => state.selectedProducts?.items,
   );
 
+  const selectedProductsIds = selectedProducts
+    .map((product: { id: any }) => product.id)
+    .join(',');
+  
   const initialBasicDetails: bannerDetails = {
     banner_id: '',
     banner_name: '',
     image: '',
     status: '1',
     show_homepage: '1',
-    product_ids: '23566',
+    product_ids: '',
     products: 'category:70',
     deal: '',
     type: '',
@@ -107,6 +111,26 @@ const AddBanner = () => {
   };
   const [basicDetails, setBasicDetails] =
     useState<bannerDetails>(initialBasicDetails);
+
+ useEffect(() => {
+    setBasicDetails((prevState) => ({
+      ...prevState,
+      product_ids: selectedProductsIds,
+    }));
+  }, [selectedProductsIds]);
+
+  const handleSave = async () => {
+    try {
+      setIsSavingBanner(true);
+      await dispatch(createBanner(basicDetails));
+      toast.success(`Add Banner successfully!`);
+      setIsSavingBanner(false);
+      navigate('/banners');
+    } catch (error) {
+      toast.error('Failed to add Banner. Please try again.');
+    }
+  };
+
 
   const handleInputChange = (key: keyof bannerDetails, value: string) => {
     setBasicDetails((prevState) => ({

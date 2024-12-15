@@ -4,7 +4,8 @@ export const urls = {
     vendorFetchAllCategories: 'admin-vendor-fetch-all-categories',
     productsList: '/vendor-product-list',
     createBulkProduct: 'insert-product-details-from-excel',
-    bulkProductXlsList: 'excel-upload-summary-list'
+    bulkProductXlsList: 'excel-upload-summary-list',
+    productAddMultipleImages: 'product-images-add-multiple',
   },
   colour: {
     fetchColorCodeMain:
@@ -17,10 +18,9 @@ export const urls = {
   },
   banner: {
     allBannerList: 'banner-list-all',
-    createBanner: 'banner-add-update'
+    createBanner: 'banner-add-update',
   },
   samplefile: 'extract-excel-validation-data',
 
-  orderList: "vendor-order-display"
-  
+  orderList: 'vendor-order-display',
 };

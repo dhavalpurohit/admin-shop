@@ -88,9 +88,7 @@ export const createBulkProduct = createAsyncThunk(
   '/product/createBulkProduct',
   async (data: object) => {
     try {
-      const response = await ProductServices.createBulkProduct(
-        data,
-      );
+      const response = await ProductServices.createBulkProduct(data);
       return response;
     } catch (error) {
       return error;
@@ -98,12 +96,23 @@ export const createBulkProduct = createAsyncThunk(
   },
 );
 
-
 export const bulkProductXlsList = createAsyncThunk(
   '/bulkProductXlsList',
   async () => {
     try {
       const response = await ProductServices.bulkProductXlsList();
+      return response;
+    } catch (error) {
+      return error;
+    }
+  },
+);
+
+export const productAddMultipleImages = createAsyncThunk(
+  '/productAddMultipleImages',
+  async (data: object) => {
+    try {
+      const response = await ProductServices.productAddMultipleImages(data);
       return response;
     } catch (error) {
       return error;
