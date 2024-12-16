@@ -38,4 +38,12 @@ export class ProductServices {
   static productAddMultipleImages(data: object) {
     return CommonService.post(urls.product.productAddMultipleImages, data);
   }
+
+  static productAttributeAddUpdate(data: object) {
+    return CommonService.post(urls.product.productAttributeAddUpdate, data);
+  }
+
+  static productOptionAddUpdate(data: object) {
+    return CommonService.post(urls.product.productOptionAddUpdate, data);
+  }
 }

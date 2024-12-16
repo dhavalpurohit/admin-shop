@@ -12,6 +12,8 @@ import {
   fetchColorCodeMain,
   fetchProductBrands,
   productAddMultipleImages,
+  productAttributeAddUpdate,
+  productOptionAddUpdate,
   vendorFetchAllCategories,
 } from '../../redux/slices/ProductSlice';
 import toast from 'react-hot-toast';
@@ -22,7 +24,7 @@ export interface Option {
   id: number;
   value: string;
 }
-interface ImageDetails {
+export interface ImageDetails {
   base64: string; // Base64-encoded string or image URL
   caption: string; // File name or caption
   size: string; // Image dimensions in the format "width x height"
@@ -202,6 +204,89 @@ const SingleProduct = () => {
     }
   }, [productBrands]);
 
+  // const handleSave = async () => {
+  //   const validation = validateBasicDetails(basicDetails);
+  //   if (validation.isValid) {
+  //     setIsSavingProduct(true); // Set loading to true when starting the API call
+  //     const productDetails: any = {
+  //       user_id: '-1',
+  //       id: '',
+  //       name: basicDetails.productName,
+  //       sale_price: basicDetails.salePrice,
+  //       regular_price: basicDetails.regularPrice,
+  //       category_id: basicDetails.subCategory,
+  //       product_url: 'http', // Static value
+  //       vendor_product_id: basicDetails.productId,
+  //       vendor_id: vendor_id,
+  //       brand_id: basicDetails.brand,
+  //       status: basicDetails.statusChecked ? '1' : '0',
+  //       quantity: basicDetails.quantity,
+  //       description: basicDetails.productDescription,
+  //       do_not_display: basicDetails.doNotDisplay ? '1' : '0',
+  //       stock: basicDetails.stockChecked ? 'true' : 'false',
+  //       keywords: basicDetails.keywords,
+  //       weight: '',
+  //       skuid: '',
+  //       GST: basicDetails.taxValue,
+  //       HSNCode: basicDetails.taxCodeType,
+  //       CountryOfOrigin: 'India',
+  //       StyleID: '',
+  //       user_allowed: '1',
+  //     };
+
+  //     try {
+  //       // First API call to save the product
+  //       const response = await dispatch(createSingleProduct(productDetails));
+
+  //       // Extract the 'id' from the response
+  //       const productId = response.payload?.id; // Adjust this based on actual API response structure
+  //       if (!productId) throw new Error('Failed to get product ID');
+
+  //       // Check if selectedImages has one or more images
+  //       if (basicDetails.selectedImages.length > 0) {
+  //         // Prepare payload for the second API call
+  //         const imagePayload = {
+  //           user_id: '-1', // Static or replace with actual user ID
+  //           product_id: productId.toString(), // Use the extracted product ID
+  //           images: basicDetails.selectedImages.map((image) => ({
+  //             image: image.base64.replace(/^data:image\/\w+;base64,/, ''),
+  //             caption: image.caption,
+  //             size: image.size,
+  //           })),
+  //         };
+
+  //         // Send the second API call to upload multiple images
+  //         const uploadResponse = await dispatch(
+  //           productAddMultipleImages(imagePayload),
+  //         );
+  //         if (!uploadResponse.payload) {
+  //           throw new Error('Failed to upload images');
+  //         }
+  //       }
+
+  //       toast.success('Product and images saved successfully!');
+  //       setBasicDetails(initialBasicDetails);
+  //       navigate('/products');
+  //     } catch (error) {
+  //       console.error(error);
+  //       toast.error(
+  //         (error as Error).message ||
+  //           'An error occurred while saving the product',
+  //       );
+  //       setIsSavingProduct(false);
+  //     } finally {
+  //       setIsSavingProduct(false); // Reset loading state
+  //     }
+  //   } else {
+  //     setErrors(validation.errors);
+  //     if (validation.firstError) {
+  //       toast.error(validation.firstError); // Show the first error message
+  //     } else {
+  //       toast.error('Please fill all the required fields');
+  //     }
+  //   }
+  // };
+
   const handleSave = async () => {
     const validation = validateBasicDetails(basicDetails);
     if (validation.isValid) {
@@ -213,7 +298,7 @@ const SingleProduct = () => {
         sale_price: basicDetails.salePrice,
         regular_price: basicDetails.regularPrice,
         category_id: basicDetails.subCategory,
-        product_url: 'http', // Static value
+        product_url: 'http',
         vendor_product_id: basicDetails.productId,
         vendor_id: vendor_id,
         brand_id: basicDetails.brand,
@@ -237,33 +322,88 @@ const SingleProduct = () => {
         const response = await dispatch(createSingleProduct(productDetails));
 
         // Extract the 'id' from the response
-        const productId = response.payload?.id; // Adjust this based on actual API response structure
+        const productId = response.payload?.id;
         if (!productId) throw new Error('Failed to get product ID');
 
-        // Check if selectedImages has one or more images
+        // Image upload payload
         if (basicDetails.selectedImages.length > 0) {
-          // Prepare payload for the second API call
           const imagePayload = {
-            user_id: '-1', // Static or replace with actual user ID
-            product_id: productId.toString(), // Use the extracted product ID
+            user_id: '-1',
+            product_id: productId.toString(),
             images: basicDetails.selectedImages.map((image) => ({
               image: image.base64.replace(/^data:image\/\w+;base64,/, ''),
               caption: image.caption,
               size: image.size,
             })),
           };
-
-          // Send the second API call to upload multiple images
           const uploadResponse = await dispatch(
             productAddMultipleImages(imagePayload),
           );
-          if (!uploadResponse.payload) {
+          if (!uploadResponse.payload)
             throw new Error('Failed to upload images');
-          }
         }
 
-        toast.success('Product and images saved successfully!');
+        // Additional attribute payload
+        const attributePayload = {
+          id: '',
+          att_group_id: '2',
+          att_group_value: '975781559891967283',
+          product_id: productId.toString(),
+          original_product_id: productId.toString(),
+          product_url: 'https',
+          price: basicDetails.salePrice || '',
+          status: basicDetails.statusChecked ? '1' : '0',
+          stock: basicDetails.stockChecked ? 'true' : 'false',
+          user_id: '-1',
+        };
+        const attributeResponse = await dispatch(
+          productAttributeAddUpdate(attributePayload),
+        );
+        if (!attributeResponse.payload) {
+          throw new Error('Failed to update product attributes');
+        }
+
+        // New: Product Option Update API Call
+        const productOptionPayload = {
+          user_id: '-1', // Static value
+          id: '', // ID to be passed dynamically if needed
+          option_group_id: '8', // Static option group ID
+          option_group_value: '26', // Static option group value
+          product_id: productId.toString(),
+        };
+
+        const optionResponse = await dispatch(
+          productOptionAddUpdate(productOptionPayload),
+        );
+        if (!optionResponse.payload) {
+          throw new Error('Failed to update product options');
+        }
+
+        // Success toast after all API calls
+        toast.success(
+          'Product, images, attributes, and options saved successfully!',
+        );
         setBasicDetails(initialBasicDetails);
+        setAdditionalDetails({
+          offerName: '',
+          offerDescription: '',
+          dangerousGoodsRegulations: '',
+          complianceCertification: '',
+        });
+        setVariants([
+          {
+            color: '',
+            size: '',
+            colormap: '',
+            name: '',
+            stock: '',
+            lengthSize: '',
+            waistSize: '',
+            hipSize: '',
+            bustSize: '',
+            variantImages: [],
+          },
+        ]);
         navigate('/products');
       } catch (error) {
         console.error(error);
@@ -271,17 +411,14 @@ const SingleProduct = () => {
           (error as Error).message ||
             'An error occurred while saving the product',
         );
-        setIsSavingProduct(false);
       } finally {
-        setIsSavingProduct(false); // Reset loading state
+        setIsSavingProduct(false);
       }
     } else {
       setErrors(validation.errors);
-      if (validation.firstError) {
-        toast.error(validation.firstError); // Show the first error message
-      } else {
-        toast.error('Please fill all the required fields');
-      }
+      toast.error(
+        validation.firstError || 'Please fill all the required fields',
+      );
     }
   };
 

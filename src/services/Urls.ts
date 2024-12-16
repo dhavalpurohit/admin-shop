@@ -6,6 +6,8 @@ export const urls = {
     createBulkProduct: 'insert-product-details-from-excel',
     bulkProductXlsList: 'excel-upload-summary-list',
     productAddMultipleImages: 'product-images-add-multiple',
+    productAttributeAddUpdate: 'product-attribute-add-update',
+    productOptionAddUpdate: 'product-option-add-update',
   },
   colour: {
     fetchColorCodeMain:

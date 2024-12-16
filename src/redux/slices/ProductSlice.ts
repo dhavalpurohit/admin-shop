@@ -120,6 +120,30 @@ export const productAddMultipleImages = createAsyncThunk(
   },
 );
 
+export const productAttributeAddUpdate = createAsyncThunk(
+  '/productAttributeAddUpdate',
+  async (data: object) => {
+    try {
+      const response = await ProductServices.productAttributeAddUpdate(data);
+      return response;
+    } catch (error) {
+      return error;
+    }
+  },
+);
+
+export const productOptionAddUpdate = createAsyncThunk(
+  '/productOptionAddUpdate',
+  async (data: object) => {
+    try {
+      const response = await ProductServices.productOptionAddUpdate(data);
+      return response;
+    } catch (error) {
+      return error;
+    }
+  },
+);
+
 export const initialState = {
   isLoading: false,
   error: null as string | null,
