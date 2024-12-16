@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { removeFromSelectedProducts } from '../../redux/slices/selectedProductSlice';
 import AddProductBannerModal from './AddProductBannerModal';
 import toast from 'react-hot-toast';
+import { ImageDetails } from '../AddProduct/SingleProduct';
 
 const type = [
   {
@@ -58,7 +59,9 @@ const type = [
 interface bannerDetails {
   banner_id: string | null;
   banner_name: string | null;
-  image: string | null;
+  // image: ImageDetails[] | null;
+  image: string;
+
   status: string | null;
   show_homepage: string | null;
   product_ids: string | null;
@@ -74,13 +77,13 @@ const AddBanner = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const [isSavingBanner, setIsSavingBanner] = useState(false);
-  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  // const [selectedImages, setSelectedImages] = useState<ImageDetails[]>([]);
   const [selectedBrand, setselectedBrand] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [isModalOpen, setModalOpen] = useState(false);
   const [isMinPrice, setIsMinPrice] = useState('');
   const [isMaxPrice, setIsMaxPrice] = useState('');
-  const maxImages = 2;
+  // const maxImages = 2;
 
   const bannerList = useSelector(
     (state: RootState) => state.banner.allBannerList,
@@ -97,7 +100,9 @@ const AddBanner = () => {
   const initialBasicDetails: bannerDetails = {
     banner_id: '',
     banner_name: '',
+    // image: [],
     image: '',
+
     status: '1',
     show_homepage: '1',
     product_ids: '',
@@ -142,20 +147,76 @@ const AddBanner = () => {
   const handleBrand = (brand: string) => {
     setselectedBrand(brand);
   };
-
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    if (selectedImages.length + files.length > maxImages) {
+    const maxImages = 1;
+
+    if ((basicDetails?.image?.length ?? 0) + files.length > maxImages) {
       toast.error(`You can only upload a maximum of ${maxImages} images.`);
       return;
     }
-    setSelectedImages((prevImages) => [...prevImages, ...files]);
+
+    const base64Promises = files.map((file) => {
+      return new Promise<{ base64: string; caption: string; size: string }>(
+        (resolve, reject) => {
+          const reader = new FileReader();
+          const img = new Image();
+
+          reader.readAsDataURL(file);
+          reader.onloadend = () => {
+            img.src = reader.result as string;
+
+            img.onload = () => {
+              const width = img.width;
+              const height = img.height;
+              resolve({
+                base64: reader.result as string,
+                caption: file.name,
+                size: `${width}x${height}`,
+              });
+            };
+
+            img.onerror = (err) => reject(err);
+          };
+
+          reader.onerror = (error) => {
+            reject(error);
+          };
+        },
+      );
+    });
+
+    Promise.all(base64Promises)
+      .then((base64Images) => {
+        setBasicDetails((prevDetails) => ({
+          ...prevDetails,
+          image: base64Images[0].base64, // Append images here
+        }));
+        // setBasicDetails((prevDetails) => ({
+        //   ...prevDetails,
+        //   image: [...(prevDetails.image ?? []), ...base64Images], // Append images here
+        // }));
+      })
+      .catch((error) => {
+        console.error('Error converting images', error);
+        toast.error('Failed to upload images. Please try again.');
+      });
   };
 
-  const removeImage = (index: number) => {
-    const newImages = [...selectedImages];
-    newImages.splice(index, 1);
-    setSelectedImages(newImages);
+  // const removeImage = (index: number) => {
+  //   const newImages = [...selectedImages];
+  //   newImages.splice(index, 1);
+  //   setSelectedImages(newImages);
+  // };
+
+  const removeImage = () => {
+    // const newImages = [...selectedImages];
+    // newImages.splice(index, 1);
+    // setSelectedImages(newImages);
+    setBasicDetails((prevDetails) => ({
+      ...prevDetails,
+      image: '', // Append images here
+    }));
   };
 
   useEffect(() => {
@@ -222,11 +283,20 @@ const AddBanner = () => {
   };
 
   const handleSave = async () => {
-    console.log('basicDetails', basicDetails);
     try {
       setIsSavingBanner(true);
-      await dispatch(createBanner(basicDetails));
-      toast.success(`Add Banner successfully!`);
+      const response = await dispatch(
+        createBanner({
+          ...basicDetails,
+          image: basicDetails.image.replace(
+            /^data:image\/[a-zA-Z]+;base64,/,
+            '',
+          ),
+        }),
+      );
+      if (response) {
+        toast.success(`Add Banner successfully!`);
+      }
       setIsSavingBanner(false);
       navigate('/banners');
     } catch (error) {
@@ -428,10 +498,7 @@ const AddBanner = () => {
                   <div className="mt-3">
                     {/* Image Upload */}
                     <label
-                      className={`w-full h-64 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-200 ${
-                        selectedImages.length >= maxImages &&
-                        'cursor-not-allowed'
-                      }`}
+                      className={`w-full h-64 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-200 `}
                     >
                       <input
                         type="file"
@@ -439,48 +506,53 @@ const AddBanner = () => {
                         accept="image/*"
                         onChange={handleImageUpload}
                         className="hidden"
-                        disabled={selectedImages.length >= maxImages}
+                        // disabled={selectedImages.length >= maxImages}
                       />
                       <span className="text-gray-500">
-                        {selectedImages.length >= maxImages
+                        {/* {selectedImages.length >= maxImages
                           ? `Maximum ${maxImages} images reached`
-                          : 'Add images'}
+                          : 'Add images'} */}
                       </span>
                     </label>
 
                     {/* Image Preview */}
                     <div className="mt-4 grid grid-cols-2 gap-4 justify-items-center">
-                      {selectedImages.map((image, index) => (
-                        <div
-                          key={index}
-                          className="relative border w-32 h-auto"
-                        >
-                          <img
-                            src={URL.createObjectURL(image)}
-                            alt={`Preview ${index}`}
-                            className="w-full h-full object-cover rounded"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => removeImage(index)}
-                            className="absolute -top-1.5 -right-2.5 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                      {
+                        basicDetails?.image && (
+                          // basicDetails?.image.map((image, index) => (
+                          <div
+                            key={basicDetails?.image}
+                            className="relative border w-32 h-auto"
                           >
-                            <svg
-                              className="h-4 w-4 stroke-current"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
+                            <img
+                              src={basicDetails?.image}
+                              alt={`Preview `}
+                              className="w-full h-full object-cover rounded"
+                            />
+                            <button
+                              type="button"
+                              // onClick={() => removeImage(index)}
+                              onClick={() => removeImage()}
+                              className="absolute -top-1.5 -right-2.5 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M6 18L18 6M6 6l12 12"
-                              ></path>
-                            </svg>
-                          </button>
-                        </div>
-                      ))}
+                              <svg
+                                className="h-4 w-4 stroke-current"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M6 18L18 6M6 6l12 12"
+                                ></path>
+                              </svg>
+                            </button>
+                          </div>
+                        )
+                        // ))
+                      }
                     </div>
                   </div>
                 </div>
