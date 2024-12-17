@@ -19,7 +19,6 @@ const ViewSingleProduct: React.FC<props> = ({
   onClose,
   productData,
 }) => {
-  console.log('productData', productData);
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className=" bg-white ">

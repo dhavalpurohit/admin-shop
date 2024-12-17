@@ -9,12 +9,13 @@ import Chart from '../pages/Chart';
 import Profile from '../pages/Profile';
 import Settings from '../pages/Settings';
 import Products from '../pages/Products';
-import BulkUpload from '../pages/AddProduct/BulkUpload';
+import BulkUpload from '../pages/Product/BulkUpload';
 import Banner from '../pages/Banner';
-import SingleProduct from '../pages/AddProduct/SingleProduct';
+import SingleProduct from '../pages/Product/SingleProduct';
 import Order from '../pages/Order';
 import AddBanner from '../pages/Banner/AddBanner';
 import AddProductBanner from '../pages/Banner/AddProductBanner';
+import UpdateProduct from '../pages/Product/UpdateProduct';
 
 const RoutesView = () => {
   return (
@@ -122,6 +123,17 @@ const RoutesView = () => {
             <PageTitle title="Bulk-Upload Products | Store Panel" />
             <BulkUpload />
           </>
+        }
+      />
+      <Route
+        path="/product/updateProduct"
+        element={
+          <ProtectedRoute>
+            <>
+              <PageTitle title="Update Products | Store Panel" />
+              <UpdateProduct />
+            </>
+          </ProtectedRoute>
         }
       />
       <Route

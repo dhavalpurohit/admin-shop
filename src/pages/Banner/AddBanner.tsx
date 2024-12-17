@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { removeFromSelectedProducts } from '../../redux/slices/selectedProductSlice';
 import AddProductBannerModal from './AddProductBannerModal';
 import toast from 'react-hot-toast';
-import { ImageDetails } from '../AddProduct/SingleProduct';
+import { ImageDetails } from '../Product/SingleProduct';
 
 const type = [
   {

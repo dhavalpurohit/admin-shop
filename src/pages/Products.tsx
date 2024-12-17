@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
-import ProductTable from '../pages/AddProduct/ProductTable';
+import ProductTable from '../pages/Product/ProductTable';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import {
