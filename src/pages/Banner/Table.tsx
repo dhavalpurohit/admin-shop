@@ -78,6 +78,7 @@ const BannerTable: React.FC = () => {
   const [pageSize, setPageSize] = useState(50);
   const [page, setPage] = useState(1);
   // const [totalProducts, setTotalProducts] = useState(0);
+  const vendor_id = localStorage.getItem('vendor_id');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
@@ -111,6 +112,7 @@ const BannerTable: React.FC = () => {
             page_number: page,
             page_size: pageSize,
             search: query,
+            vendor_id: vendor_id,
           }),
         );
       } catch (error) {

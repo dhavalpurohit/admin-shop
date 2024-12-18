@@ -84,6 +84,7 @@ const AddBanner = () => {
   const [isMinPrice, setIsMinPrice] = useState('');
   const [isMaxPrice, setIsMaxPrice] = useState('');
   // const maxImages = 2;
+  const vendor_id = localStorage.getItem('vendor_id');
 
   const bannerList = useSelector(
     (state: RootState) => state.banner.allBannerList,
@@ -258,7 +259,12 @@ const AddBanner = () => {
   useEffect(() => {
     dispatch(
       allBannerList({
-        status: '',
+        status: '', // Default to empty string if no status
+        category: '', // Default to empty string if no category
+        page_number: '',
+        page_size: '',
+        search: '',
+        vendor_id: vendor_id,
       }),
     );
   }, [dispatch]);
