@@ -16,6 +16,7 @@ import Order from '../pages/Order';
 import AddBanner from '../pages/Banner/AddBanner';
 import AddProductBanner from '../pages/Banner/AddProductBanner';
 import UpdateProduct from '../pages/Product/UpdateProduct';
+import UpdateBanner from '../pages/Banner/UpdateBanner';
 
 const RoutesView = () => {
   return (
@@ -154,6 +155,17 @@ const RoutesView = () => {
             <>
               <PageTitle title="Banner | Store Panel" />
               <Banner />
+            </>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/banner/updateBanner"
+        element={
+          <ProtectedRoute>
+            <>
+              <PageTitle title="Update Products | Store Panel" />
+              <UpdateBanner />
             </>
           </ProtectedRoute>
         }
