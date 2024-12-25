@@ -77,9 +77,7 @@ const UpdateBanner = () => {
   const navigate = useNavigate();
 
   const location = useLocation();
-  const { bannerData } = location.state || {};
-
-  console.log('bannerData', bannerData);
+  const { item } = location.state || {};
 
   const [isSavingBanner, setIsSavingBanner] = useState(false);
   // const [selectedImages, setSelectedImages] = useState<ImageDetails[]>([]);
@@ -104,19 +102,19 @@ const UpdateBanner = () => {
     .join(',');
 
   const initialBasicDetails: bannerDetails = {
-    banner_id: bannerData?.brand,
-    banner_name: bannerData?.name,
+    banner_id: item?.brand,
+    banner_name: item?.name,
     // image: [],
     image: '',
 
-    status: bannerData?.status,
+    status: item?.status,
     show_homepage: '1',
     product_ids: '',
     products: 'category:70',
     deal: '',
-    type: bannerData?.type,
-    parent_id: bannerData?.category,
-    sub_title: bannerData?.sub_title,
+    type: item?.type,
+    parent_id: item?.category,
+    sub_title: item?.sub_title,
     user_id: '-1',
     sorting: '',
   };
@@ -204,8 +202,7 @@ const UpdateBanner = () => {
         // }));
       })
       .catch((error) => {
-        console.error('Error converting images', error);
-        toast.error('Failed to upload images. Please try again.');
+        toast.error('Failed to upload images. Please try again.', error);
       });
   };
 

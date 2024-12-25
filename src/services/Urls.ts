@@ -8,6 +8,8 @@ export const urls = {
     productAddMultipleImages: 'product-images-add-multiple',
     productAttributeAddUpdate: 'product-attribute-add-update',
     productOptionAddUpdate: 'product-option-add-update',
+    productFilterData: 'filter',
+    productDetailsView: 'vendor-product-detail',
   },
   colour: {
     fetchColorCodeMain:

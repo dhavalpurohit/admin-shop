@@ -339,7 +339,7 @@ const BannerTable: React.FC = () => {
                       <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                         <div className="flex items-center space-x-3.5">
                           <button
-                            className="hover:text-primary hidden"
+                            className="hover:text-primary"
                             onClick={() => viewBanner(item)}
                           >
                             <BsFillEyeFill className="eye-btn cursor-pointer" />

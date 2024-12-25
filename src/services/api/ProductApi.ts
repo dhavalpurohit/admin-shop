@@ -46,4 +46,11 @@ export class ProductServices {
   static productOptionAddUpdate(data: object) {
     return CommonService.post(urls.product.productOptionAddUpdate, data);
   }
+  static productFilterData(data: object) {
+    return CommonService.post(urls.product.productFilterData, data);
+  }
+
+  static productDetailsView(data: object) {
+    return CommonService.post(urls.product.productDetailsView, data);
+  }
 }

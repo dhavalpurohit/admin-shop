@@ -144,6 +144,31 @@ export const productOptionAddUpdate = createAsyncThunk(
   },
 );
 
+export const productFilterData = createAsyncThunk(
+  '/productFilterData',
+  async (data: object) => {
+    try {
+      const response = await ProductServices.productFilterData(data);
+      return response;
+    } catch (error) {
+      return error;
+    }
+  },
+);
+
+
+export const productDetailsView = createAsyncThunk(
+  '/productDetailsView',
+  async (data: object) => {
+    try {
+      const response = await ProductServices.productDetailsView(data);
+      return response;
+    } catch (error) {
+      return error;
+    }
+  },
+);
+
 export const initialState = {
   isLoading: false,
   error: null as string | null,
@@ -153,6 +178,7 @@ export const initialState = {
   productList: null,
   productSampleFile: null,
   bulkProductXlsList: null,
+  productDetails:null,
 };
 
 const contactSlice = createSlice({
@@ -201,6 +227,11 @@ const contactSlice = createSlice({
       })
       .addCase(bulkProductXlsList.fulfilled, (state, action) => {
         state.bulkProductXlsList = action.payload;
+        state.isLoading = false;
+        state.error = null;
+      })
+      .addCase(productDetailsView.fulfilled, (state, action) => {
+        state.productDetails = action.payload;
         state.isLoading = false;
         state.error = null;
       })
