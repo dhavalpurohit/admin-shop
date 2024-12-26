@@ -113,8 +113,6 @@ const AddProductBannerModal: React.FC<props> = ({ isOpen, onClose }) => {
           vendor_id: vendor_id,
         };
 
-        console.log('data ::::::::', data);
-        console.log(selectedCategory);
         await dispatch(
           productSearchList({
             id: selectedSubCategory ? selectedSubCategory : selectedCategory,

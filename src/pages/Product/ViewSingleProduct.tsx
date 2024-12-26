@@ -7,11 +7,15 @@ import {
   Slider,
 } from 'pure-react-carousel';
 import 'pure-react-carousel/dist/react-carousel.es.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../redux/store';
+import { useEffect } from 'react';
+import { productDetailsView } from '../../redux/slices/ProductSlice';
 
 interface props {
   isOpen: boolean;
   onClose: () => void;
-  productData?: any;
+  productData: any;
 }
 
 const ViewSingleProduct: React.FC<props> = ({
@@ -19,6 +23,27 @@ const ViewSingleProduct: React.FC<props> = ({
   onClose,
   productData,
 }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const vendor_id = localStorage.getItem('vendor_id');
+
+  useEffect(() => {
+    if (productData) {
+      dispatch(
+        productDetailsView({
+          id: productDetails?.product_detail[0]?.id || '',
+          customer_id: productDetails?.product_detail[0]?.customer_id || '',
+          vendor_id: vendor_id,
+        }),
+      );
+    }
+  }, [productData]);
+
+  const productDetails = useSelector(
+    (state: RootState) => state.product.productDetails,
+  );
+
+  console.log('productDetails', productDetails);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className=" bg-white ">
@@ -46,7 +71,9 @@ const ViewSingleProduct: React.FC<props> = ({
           <div className="min-w-[500px] min-h-[400px] w-[500px] h-[400px] max-h-[400px]  overflow-hidden  rounded-md shadow-md">
             <CarouselProvider
               visibleSlides={1}
-              totalSlides={productData?.image_extra?.length || 0}
+              totalSlides={
+                productDetails?.product_detail[0]?.Image?.length || 0
+              }
               step={1}
               naturalSlideWidth={350}
               naturalSlideHeight={350}
@@ -54,15 +81,17 @@ const ViewSingleProduct: React.FC<props> = ({
             >
               <div className="relative max-w-2xl mx-auto">
                 <Slider className="overflow-hidden min-w-[500px] min-h-[400px] w-[500px] h-[400px]">
-                  {productData?.image_extra?.map((item: any, i: number) => (
-                    <Slide index={i}>
-                      <img
-                        src={item?.image}
-                        alt={`image-${i}`}
-                        className="h-full w-full"
-                      />
-                    </Slide>
-                  ))}
+                  {productDetails?.product_detail[0]?.Image?.map(
+                    (item: any, i: number) => (
+                      <Slide index={i}>
+                        <img
+                          src={item?.image}
+                          alt={`image-${i}`}
+                          className="h-full w-full"
+                        />
+                      </Slide>
+                    ),
+                  )}
                 </Slider>
                 <ButtonBack className="absolute top-1/2 left-0 -translate-y-1/2">
                   <span className="h-8 w-8 rounded-full flex items-center justify-center bg-primary text-white  shadow-2xl cursor-pointer rotate-90">
@@ -111,28 +140,33 @@ const ViewSingleProduct: React.FC<props> = ({
             <ul className="grid grid-cols-2 gap-3">
               <li className="flex flex-col gap-1">
                 <span className="font-medium">Name:</span>
-                <span className="text-sm"> {productData?.name}</span>
+                <span className="text-sm">
+                  {' '}
+                  {productDetails?.product_detail[0]?.name}
+                </span>
               </li>
               <li className="flex flex-col gap-1">
                 <span className="font-medium">Description:</span>
                 <span className="text-sm">
                   {' '}
-                  {productData?.description ? productData?.description : '-'}
+                  {productDetails?.product_detail[0]?.description
+                    ? productDetails?.product_detail[0]?.description
+                    : '-'}
                 </span>
               </li>
               <li className="flex flex-col gap-1">
                 <span className="font-medium">Currency:</span>
                 <span className="text-sm">
                   {' '}
-                  {productData?.Currency ? productData?.Currency : '-'}
+                  {productDetails?.Currency ? productDetails?.Currency : '-'}
                 </span>
               </li>
               <li className="flex flex-col gap-1">
                 <span className="font-medium">Regular Price:</span>
                 <span className="text-sm">
                   {' '}
-                  {productData?.regular_price
-                    ? productData?.regular_price
+                  {productDetails?.product_detail[0]?.regular_price
+                    ? productDetails?.product_detail[0]?.regular_price
                     : '-'}
                 </span>
               </li>
@@ -140,21 +174,36 @@ const ViewSingleProduct: React.FC<props> = ({
                 <span className="font-medium">Sale Price:</span>
                 <span className="text-sm">
                   {' '}
-                  {productData?.sale_price ? productData?.sale_price : '-'}
+                  {productDetails?.product_detail[0]?.sale_price
+                    ? productDetails?.product_detail[0]?.sale_price
+                    : '-'}
                 </span>
               </li>
               <li className="flex flex-col gap-1">
                 <span className="font-medium">Stock:</span>
                 <span className="text-sm">
                   {' '}
-                  {productData?.stock ? productData?.stock : '-'}
+                  {productDetails?.product_detail[0]?.stock
+                    ? productDetails?.product_detail[0]?.stock
+                    : '-'}
                 </span>
               </li>
               <li className="flex flex-col gap-1">
                 <span className="font-medium">Wishlist:</span>
                 <span className="text-sm">
                   {' '}
-                  {productData?.wishlist ? productData?.wishlist : '-'}
+                  {productDetails?.product_detail[0]?.wishlist
+                    ? productDetails?.product_detail[0]?.wishlist
+                    : '-'}
+                </span>
+              </li>
+              <li className="flex flex-col gap-1">
+                <span className="font-medium">Country of origin:</span>
+                <span className="text-sm">
+                  {' '}
+                  {productDetails?.product_detail[0]?.country_of_origin
+                    ? productDetails?.product_detail[0]?.country_of_origin
+                    : '-'}
                 </span>
               </li>
             </ul>

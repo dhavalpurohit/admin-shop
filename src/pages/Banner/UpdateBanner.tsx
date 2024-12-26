@@ -7,11 +7,10 @@ import {
 } from '../../redux/slices/ProductSlice';
 import { allBannerList, createBanner } from '../../redux/slices/bannerSlice';
 import { AppDispatch, RootState } from '../../redux/store';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { removeFromSelectedProducts } from '../../redux/slices/selectedProductSlice';
 import AddProductBannerModal from './AddProductBannerModal';
 import toast from 'react-hot-toast';
-import { ImageDetails } from '../Product/SingleProduct';
 
 const type = [
   {
@@ -73,9 +72,13 @@ interface bannerDetails {
   user_id: string | null;
   sorting: string | null;
 }
-const AddBanner = () => {
+const UpdateBanner = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+
+  const location = useLocation();
+  const { item } = location.state || {};
+
   const [isSavingBanner, setIsSavingBanner] = useState(false);
   // const [selectedImages, setSelectedImages] = useState<ImageDetails[]>([]);
   const [selectedBrand, setselectedBrand] = useState('');
@@ -99,19 +102,19 @@ const AddBanner = () => {
     .join(',');
 
   const initialBasicDetails: bannerDetails = {
-    banner_id: '',
-    banner_name: '',
+    banner_id: item?.brand,
+    banner_name: item?.name,
     // image: [],
     image: '',
 
-    status: '1',
+    status: item?.status,
     show_homepage: '1',
     product_ids: '',
     products: 'category:70',
     deal: '',
-    type: '',
-    parent_id: '',
-    sub_title: '',
+    type: item?.type,
+    parent_id: item?.category,
+    sub_title: item?.sub_title,
     user_id: '-1',
     sorting: '',
   };
@@ -199,8 +202,7 @@ const AddBanner = () => {
         // }));
       })
       .catch((error) => {
-        console.error('Error converting images', error);
-        toast.error('Failed to upload images. Please try again.');
+        toast.error('Failed to upload images. Please try again.', error);
       });
   };
 
@@ -315,7 +317,7 @@ const AddBanner = () => {
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="flex items-center justify-between border-b border-stroke py-4 px-7 dark:border-strokedark">
           <h3 className="font-medium text-black dark:text-white">
-            ADD NEW BANNER
+            Update BANNER
           </h3>
           <div className="flex justify-end gap-4.5">
             <button
@@ -687,4 +689,4 @@ const AddBanner = () => {
   );
 };
 
-export default AddBanner;
+export default UpdateBanner;

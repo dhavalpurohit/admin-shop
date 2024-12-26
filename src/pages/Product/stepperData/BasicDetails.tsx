@@ -3,9 +3,11 @@ import CategoryDropdown from '../../../components/ProductCategoryDropdown/Catego
 import SubCategoryDropdown from '../../../components/ProductCategoryDropdown/SubCategoryDropdown';
 import DropDownCommon from '../../../components/DropDownCommon';
 import { BasicDetails, UpdateBasicDetails } from '../SingleProduct';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../../redux/store';
 import toast from 'react-hot-toast';
+import { useEffect } from 'react';
+import { productFilterData } from '../../../redux/slices/ProductSlice';
 
 const codeType = [
   {
@@ -33,7 +35,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
   const categories = useSelector(
     (state: RootState) => state.product.categories,
   );
-
+  const dispatch = useDispatch<AppDispatch>();
   const productBrands = useSelector(
     (state: RootState) => state.product.productBrands?.brands,
   );
@@ -141,6 +143,18 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
   };
 
   console.log('basicDetails', basicDetails);
+
+  useEffect(() => {
+    if (categories) {
+      dispatch(
+        productFilterData({
+          category_id: basicDetails.subCategory
+            ? basicDetails.subCategory
+            : basicDetails.category,
+        }),
+      );
+    }
+  }, [handleCategoryChange, handleSubCategoryChange]);
 
   return (
     <div className="grid grid-cols-2 gap-5">

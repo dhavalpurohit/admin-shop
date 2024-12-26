@@ -214,10 +214,6 @@ const ProductTable: React.FC = () => {
     setSelectedProduct(data);
   };
 
-  const editProduct = (data: any) => {
-    setSelectedProduct(data);
-  };
-
   return (
     <>
       <div>
