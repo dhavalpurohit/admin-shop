@@ -11,6 +11,7 @@ import {
   fetchProductBrands,
   productAddMultipleImages,
   productAttributeAddUpdate,
+  productDetailsView,
   productOptionAddUpdate,
   vendorFetchAllCategories,
 } from '../../../redux/slices/ProductSlice';
@@ -94,9 +95,26 @@ const UpdateProduct = () => {
   const location = useLocation();
   const { product } = location.state || {};
 
-  console.log('UpdateProduct', product);
   const dispatch = useDispatch<AppDispatch>();
   const vendor_id = localStorage.getItem('vendor_id');
+
+  const productUpdateDetails = useSelector(
+    (state: RootState) => state.product.productDetails,
+  );
+
+  useEffect(() => {
+    if (product) {
+      dispatch(
+        productDetailsView({
+          id: product?.id || '',
+          customer_id: product?.customer_id || '',
+          vendor_id: vendor_id,
+        }),
+      );
+    }
+  }, [product]);
+
+  console.log('UpdateProduct', productUpdateDetails);
 
   const categories = useSelector(
     (state: RootState) => state.product.categories,
@@ -111,35 +129,43 @@ const UpdateProduct = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [isSavingProduct, setIsSavingProduct] = useState(false);
   const initialBasicDetails: BasicDetails = {
-    category: product?.category || '',
-    subCategory: product?.subCategory || '',
-    productId: product?.id || '',
-    productName: product?.name || '',
-    brand: product?.brand || '',
-    keywords: product?.keywords || '',
-    productDescription: product?.description || '',
-    regularPrice: product?.regular_price || '',
-    salePrice: product?.sale_price || '',
-    quantity: product?.quantity || '',
-    taxCodeType: product?.tax_code || '',
-    taxValue: product?.tax_value || '',
-    manufactureInfo: product?.manufacture_info || '',
-    importerDetails: product?.importer_details || '',
-    options: product?.options || [{ id: 1, value: '' }],
-    selectedImages: product?.image_extra || [],
-    stockChecked: product?.stock || false,
-    statusChecked: product?.status === '1',
-    doNotDisplay: product?.do_not_display || false,
+    category: productUpdateDetails?.product_detail[0]?.main_category_id || '',
+    subCategory: productUpdateDetails?.product_detail[0]?.sub_category_id || '',
+    productId: productUpdateDetails?.product_detail[0]?.id || '',
+    productName: productUpdateDetails?.product_detail[0]?.name || '',
+    brand: productUpdateDetails?.product_detail[0]?.brand || '',
+    keywords: productUpdateDetails?.product_detail[0]?.keywords || '',
+    productDescription:
+      productUpdateDetails?.product_detail[0]?.description || '',
+    regularPrice: productUpdateDetails?.product_detail[0]?.regular_price || '',
+    salePrice: productUpdateDetails?.product_detail[0]?.sale_price || '',
+    quantity: productUpdateDetails?.product_detail[0]?.quantity || '',
+    taxCodeType: productUpdateDetails?.product_detail[0]?.tax_code || '',
+    taxValue: productUpdateDetails?.product_detail[0]?.tax_value || '',
+    manufactureInfo:
+      productUpdateDetails?.product_detail[0]?.manufacture_info || '',
+    importerDetails:
+      productUpdateDetails?.product_detail[0]?.importer_details || '',
+    options: productUpdateDetails?.product_detail[0]?.option || [
+      { id: 1, value: '' },
+    ],
+    selectedImages: productUpdateDetails?.product_detail[0]?.Image || [],
+    stockChecked: productUpdateDetails?.product_detail[0]?.stock || false,
+    statusChecked: productUpdateDetails?.product_detail[0]?.status === '1',
+    doNotDisplay:
+      productUpdateDetails?.product_detail[0]?.do_not_display || false,
   };
   const [basicDetails, setBasicDetails] =
     useState<BasicDetails>(initialBasicDetails);
 
   const [additionalDetails, setAdditionalDetails] = useState<AdditionalDetails>(
     {
-      offerName: product?.offer_name || '',
-      offerDescription: product?.offer_description || '',
-      dangerousGoodsRegulations: product?.dangerous_goods_regulations || '',
-      complianceCertification: product?.compliance_certification || '',
+      offerName: productUpdateDetails?.offers?.offer_name || '',
+      offerDescription: productUpdateDetails?.offers?.offer_description || '',
+      dangerousGoodsRegulations:
+        productUpdateDetails?.offers?.dangerous_goods_regulations || '',
+      complianceCertification:
+        productUpdateDetails?.offers?.compliance_certification || '',
     },
   );
 
@@ -195,6 +221,7 @@ const UpdateProduct = () => {
     }));
   };
 
+  console.log('updateBasicDetails ===>', basicDetails);
   useEffect(() => {
     !categories?.length && dispatch(vendorFetchAllCategories({ id: '0' }));
   }, []);
@@ -214,27 +241,35 @@ const UpdateProduct = () => {
       setIsSavingProduct(true); // Set loading to true when starting the API call
       const productDetails: any = {
         user_id: '-1',
-        id: product?.id,
-        name: basicDetails.productName,
-        sale_price: basicDetails.salePrice,
-        regular_price: basicDetails.regularPrice,
-        category_id: basicDetails.subCategory,
-        product_url: 'http',
+        id: productUpdateDetails?.product_detail[0]?.id,
+        name: productUpdateDetails?.product_detail[0]?.productName,
+        sale_price: productUpdateDetails?.product_detail[0]?.salePrice,
+        regular_price: productUpdateDetails?.product_detail[0]?.regularPrice,
+        category_id: productUpdateDetails?.product_detail[0]?.main_category_id,
+        product_url: productUpdateDetails?.product_detail[0]?.product_url,
         vendor_product_id: 'RTDG22BDHS00AZTS4',
         vendor_id: vendor_id,
-        brand_id: basicDetails.brand,
-        status: basicDetails.statusChecked ? '1' : '0',
-        quantity: basicDetails.quantity,
-        description: basicDetails.productDescription,
-        do_not_display: basicDetails.doNotDisplay ? '1' : '0',
-        stock: basicDetails.stockChecked ? 'true' : 'false',
-        keywords: basicDetails.keywords,
+        brand_id: productUpdateDetails?.product_detail[0]?.brand,
+        status: productUpdateDetails?.product_detail[0]?.statusChecked
+          ? '1'
+          : '0',
+        quantity: productUpdateDetails?.product_detail[0]?.quantity,
+        description:
+          productUpdateDetails?.product_detail[0]?.productDescription,
+        do_not_display: productUpdateDetails?.product_detail[0]?.doNotDisplay
+          ? '1'
+          : '0',
+        stock: productUpdateDetails?.product_detail[0]?.stockChecked
+          ? 'true'
+          : 'false',
+        keywords: productUpdateDetails?.product_detail[0]?.keywords,
         weight: '',
         skuid: '',
-        GST: basicDetails.taxValue,
-        HSNCode: basicDetails.taxCodeType,
-        CountryOfOrigin: 'India',
-        StyleID: '',
+        GST: productUpdateDetails?.product_detail[0]?.taxValue,
+        HSNCode: productUpdateDetails?.product_detail[0]?.taxCodeType,
+        CountryOfOrigin:
+          productUpdateDetails?.product_detail[0]?.country_of_origin,
+        StyleID: productUpdateDetails?.product_detail[0]?.style_id,
         user_allowed: '1',
       };
 
