@@ -26,23 +26,21 @@ const ViewSingleProduct: React.FC<props> = ({
   const dispatch = useDispatch<AppDispatch>();
   const vendor_id = localStorage.getItem('vendor_id');
 
+  const productDetails = useSelector(
+    (state: RootState) => state.product.productDetails,
+  );
+
   useEffect(() => {
     if (productData) {
       dispatch(
         productDetailsView({
-          id: productDetails?.product_detail[0]?.id || '',
-          customer_id: productDetails?.product_detail[0]?.customer_id || '',
+          id: productData?.id || '',
+          customer_id: productData?.customer_id || '',
           vendor_id: vendor_id,
         }),
       );
     }
   }, [productData]);
-
-  const productDetails = useSelector(
-    (state: RootState) => state.product.productDetails,
-  );
-
-  console.log('productDetails', productDetails);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -137,6 +135,9 @@ const ViewSingleProduct: React.FC<props> = ({
             </CarouselProvider>
           </div>
           <div className="w-full">
+            <h2 className="text-lg text-primary font-medium">
+              General Information
+            </h2>
             <ul className="grid grid-cols-2 gap-3">
               <li className="flex flex-col gap-1">
                 <span className="font-medium">Name:</span>
@@ -189,6 +190,15 @@ const ViewSingleProduct: React.FC<props> = ({
                 </span>
               </li>
               <li className="flex flex-col gap-1">
+                <span className="font-medium">Quantity:</span>
+                <span className="text-sm">
+                  {' '}
+                  {productDetails?.product_detail[0]?.quantity
+                    ? productDetails?.product_detail[0]?.quantity
+                    : '-'}
+                </span>
+              </li>
+              <li className="flex flex-col gap-1">
                 <span className="font-medium">Wishlist:</span>
                 <span className="text-sm">
                   {' '}
@@ -197,17 +207,94 @@ const ViewSingleProduct: React.FC<props> = ({
                     : '-'}
                 </span>
               </li>
-              <li className="flex flex-col gap-1">
-                <span className="font-medium">Country of origin:</span>
-                <span className="text-sm">
-                  {' '}
-                  {productDetails?.product_detail[0]?.country_of_origin
-                    ? productDetails?.product_detail[0]?.country_of_origin
-                    : '-'}
-                </span>
-              </li>
             </ul>
           </div>
+        </div>
+        <div className="w-full p-7 pt-2.5">
+          <h2 className="text-lg text-primary font-medium">Other Details</h2>
+          <ul className="grid grid-cols-3 gap-3">
+            <li className="flex flex-col gap-1">
+              <span className="font-medium">Category</span>
+              <span className="text-sm">
+                {' '}
+                {productDetails?.product_detail[0]?.main_category
+                  ? productDetails?.product_detail[0]?.main_category
+                  : '-'}
+              </span>
+            </li>
+            <li className="flex flex-col gap-1">
+              <span className="font-medium">Sub Category</span>
+              <span className="text-sm">
+                {' '}
+                {productDetails?.product_detail[0]?.category
+                  ? productDetails?.product_detail[0]?.category
+                  : '-'}
+              </span>
+            </li>
+            <li className="flex flex-col gap-1">
+              <span className="font-medium">Brand</span>
+              <span className="text-sm">
+                {' '}
+                {productDetails?.product_detail[0]?.brand
+                  ? productDetails?.product_detail[0]?.brand
+                  : '-'}
+              </span>
+            </li>
+            <li className="flex flex-col gap-1">
+              <span className="font-medium">GST</span>
+              <span className="text-sm">
+                {' '}
+                {productDetails?.product_detail[0]?.GST
+                  ? productDetails?.product_detail[0]?.GST
+                  : '-'}
+              </span>
+            </li>
+            <li className="flex flex-col gap-1">
+              <span className="font-medium">Do Not Display</span>
+              <span className="text-sm">
+                {' '}
+                {productDetails?.product_detail[0]?.do_not_display
+                  ? productDetails?.product_detail[0]?.do_not_display
+                  : '-'}
+              </span>
+            </li>
+            <li className="flex flex-col gap-1">
+              <span className="font-medium">Expected Date of Delivery</span>
+              <span className="text-sm">
+                {' '}
+                {productDetails?.product_detail[0]?.expected_date_of_delivery
+                  ? productDetails?.product_detail[0]?.expected_date_of_delivery
+                  : '-'}
+              </span>
+            </li>
+            <li className="flex flex-col gap-1">
+              <span className="font-medium">HSN Code</span>
+              <span className="text-sm">
+                {' '}
+                {productDetails?.product_detail[0]?.hsn_code
+                  ? productDetails?.product_detail[0]?.hsn_code
+                  : '-'}
+              </span>
+            </li>
+            <li className="flex flex-col gap-1">
+              <span className="font-medium">Keywords</span>
+              <span className="text-sm">
+                {' '}
+                {productDetails?.product_detail[0]?.keywords
+                  ? productDetails?.product_detail[0]?.keywords
+                  : '-'}
+              </span>
+            </li>
+            <li className="flex flex-col gap-1">
+              <span className="font-medium">Country of origin:</span>
+              <span className="text-sm">
+                {' '}
+                {productDetails?.product_detail[0]?.country_of_origin
+                  ? productDetails?.product_detail[0]?.country_of_origin
+                  : '-'}
+              </span>
+            </li>
+          </ul>
         </div>
       </div>
     </Modal>

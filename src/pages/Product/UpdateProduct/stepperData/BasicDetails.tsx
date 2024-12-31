@@ -602,17 +602,17 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
 
             {/* Image Preview */}
             <div className="mt-4 grid grid-cols-3 gap-4 justify-items-center">
-              {basicDetails.selectedImages.map((image, index) => (
+              {basicDetails.selectedImages.map((image: any, index) => (
                 <div key={index} className="relative border w-25 h-25">
                   <img
-                    src={image.base64} // Use base64 string as the image source
+                    src={image?.image} // Use base64 string as the image source
                     alt={`Preview ${index}`}
                     className="w-full h-full object-cover rounded"
                   />
                   <button
                     type="button"
                     onClick={() => removeImage(index)}
-                    className="absolute -top-1.5 -right-2.5 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                    className="absolute -top-1.5 -right-2.5 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 hidden"
                   >
                     <svg
                       className="h-4 w-4 stroke-current"
