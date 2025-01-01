@@ -25,6 +25,7 @@ export interface Option {
   value: string;
 }
 export interface ImageDetails {
+  image: string | undefined;
   base64: string; // Base64-encoded string or image URL
   caption: string; // File name or caption
   size: string; // Image dimensions in the format "width x height"
@@ -289,6 +290,13 @@ const SingleProduct = () => {
 
   const handleSave = async () => {
     const validation = validateBasicDetails(basicDetails);
+
+    if (!additionalDetails.offerName || !additionalDetails.offerDescription) {
+      toast.error(
+        'Offer name and description are required fields in additional details section',
+      );
+      return;
+    }
     if (validation.isValid) {
       setIsSavingProduct(true); // Set loading to true when starting the API call
       const productDetails: any = {
@@ -344,6 +352,19 @@ const SingleProduct = () => {
         }
 
         // Additional attribute payload
+        // const attributePayload = {
+        //   id: '',
+        //   att_group_id: '2',
+        //   att_group_value: '975781559891967283',
+        //   product_id: productId.toString(),
+        //   original_product_id: productId.toString(),
+        //   product_url: 'https',
+        //   price: basicDetails.salePrice || '',
+        //   status: basicDetails.statusChecked ? '1' : '0',
+        //   stock: basicDetails.stockChecked ? 'true' : 'false',
+        //   user_id: '-1',
+        // };
+
         const attributePayload = {
           id: '',
           att_group_id: '2',
@@ -355,6 +376,10 @@ const SingleProduct = () => {
           status: basicDetails.statusChecked ? '1' : '0',
           stock: basicDetails.stockChecked ? 'true' : 'false',
           user_id: '-1',
+          bust_size: variants[0]?.bustSize,
+          waist_size: variants[0]?.waistSize,
+          hip_size: variants[0]?.hipSize,
+          length_size: variants[0]?.lengthSize,
         };
         const attributeResponse = await dispatch(
           productAttributeAddUpdate(attributePayload),

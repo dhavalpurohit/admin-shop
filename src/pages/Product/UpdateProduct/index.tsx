@@ -24,7 +24,14 @@ export interface Option {
   id: number;
   value: string;
 }
+// export interface ImageDetails {
+//   base64: string; // Base64-encoded string or image URL
+//   caption: string; // File name or caption
+//   size: string; // Image dimensions in the format "width x height"
+// }
+
 export interface ImageDetails {
+  image: string | undefined;
   base64: string; // Base64-encoded string or image URL
   caption: string; // File name or caption
   size: string; // Image dimensions in the format "width x height"
@@ -170,11 +177,26 @@ const UpdateProduct = () => {
     },
   );
 
-  useEffect(() => {
-    return () => {
-      dispatch(RESET_PRODUCT_DETAILS());
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     dispatch(RESET_PRODUCT_DETAILS());
+  //   };
+  // }, []);
+  // useEffect(() => {
+  //   return () => {
+  //     dispatch(RESET_PRODUCT_DETAILS());
+  //   };
+  // }, [dispatch]);
+
+  // useEffect(() => {
+  //   console.log('Location changed:', location.pathname);
+  //   return () => {
+  //     // Only reset when navigating away from this route
+  //     if (location.pathname !== '/product/updateProduct') {
+  //       dispatch(RESET_PRODUCT_DETAILS());
+  //     }
+  //   };
+  // }, [location, dispatch]);
 
   const [variants, setVariants] = useState<Variant[]>(
     product?.variants || [
@@ -309,6 +331,10 @@ const UpdateProduct = () => {
           status: basicDetails.statusChecked ? '1' : '0',
           stock: basicDetails.stockChecked ? 'true' : 'false',
           user_id: '-1',
+          bust_size: variants[0]?.bustSize,
+          waist_size: variants[0]?.waistSize,
+          hip_size: variants[0]?.hipSize,
+          length_size: variants[0]?.lengthSize,
         };
         const attributeResponse = await dispatch(
           productAttributeAddUpdate(attributePayload),

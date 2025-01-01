@@ -7,16 +7,16 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import toast from 'react-hot-toast';
 
-const sizes = [
-  {
-    size: 'xl',
-    value: 'xl',
-  },
-  {
-    size: '2xl',
-    value: '2xl',
-  },
-];
+// const sizes = [
+//   {
+//     size: 'xl',
+//     value: 'xl',
+//   },
+//   {
+//     size: '2xl',
+//     value: '2xl',
+//   },
+// ];
 interface VariantsProps {
   variants: Variant[];
   updateVariants: UpdateVariantsFunction;
@@ -33,6 +33,33 @@ const Variants: React.FC<VariantsProps> = ({
   const colourCodes = useSelector(
     (state: RootState) => state.product.ColorCodeMain,
   );
+
+  const productFilteredData = useSelector(
+    (state: RootState) => state.product.productFilteredData,
+  );
+
+  const sizes =
+    productFilteredData?.attribute
+      ?.find(
+        (attr: { atgrpname: string }) =>
+          attr.atgrpname.toLowerCase() === 'size',
+      ) // Find "size" group
+      ?.attributeval.map((attrVal: { attvalname: any; attvalid: any }) => ({
+        size: attrVal.attvalname, // Label for dropdown
+        value: attrVal.attvalid, // Value for dropdown
+      })) || [];
+
+  // Extract colors from the attribute array
+  const colors =
+    productFilteredData?.attribute
+      ?.find(
+        (attr: { atgrpname: string }) =>
+          attr.atgrpname.toLowerCase() === 'color',
+      ) // Find "color" group
+      ?.attributeval.map((attrVal: { attvalname: any; attvalid: any }) => ({
+        color_name: attrVal.attvalname, // Label for dropdown
+        color_code: attrVal.attvalid, // Value for dropdown
+      })) || [];
 
   const [isStockChecked, setIsStockChecked] = useState<boolean>(true);
   const [isStatusChecked, setIsStatusChecked] = useState<boolean>(true);
@@ -117,8 +144,8 @@ const Variants: React.FC<VariantsProps> = ({
                   Color
                 </label>
                 <div className="relative">
-                  <DropDownCommon
-                    lists={colourCodes?.color_codes} // Pass the color_codes directly
+                  {/* <DropDownCommon
+                    lists={colors} // Pass the color_codes directly
                     labelKey="color_name" // Use "color_name" as the label
                     valueKey="color_code" // Use "color_code" as the value
                     selectedOption={variants[selectedVariantIndex]?.color} // Pass the selected variant's color
@@ -127,6 +154,17 @@ const Variants: React.FC<VariantsProps> = ({
                         updateVariants(selectedVariantIndex, 'color', value) // Update the selected variant's color
                     }
                     defaultOption={'colour'}
+                  /> */}
+
+                  <DropDownCommon
+                    lists={colors} // Dynamically extracted colors
+                    labelKey="color_name" // Use "color_name" as the label key
+                    valueKey="color_code" // Use "color_code" as the value key
+                    selectedOption={variants[selectedVariantIndex]?.color} // Currently selected color
+                    onOptionChange={(value) =>
+                      updateVariants(selectedVariantIndex, 'color', value)
+                    } // Update color
+                    defaultOption="Select color"
                   />
                 </div>
               </div>
@@ -138,7 +176,7 @@ const Variants: React.FC<VariantsProps> = ({
                   Size
                 </label>
                 <div className="relative">
-                  <DropDownCommon
+                  {/* <DropDownCommon
                     lists={sizes}
                     labelKey="size"
                     valueKey="value"
@@ -149,6 +187,16 @@ const Variants: React.FC<VariantsProps> = ({
                         updateVariants(selectedVariantIndex, 'size', value) // Correctly pass value to updateVariants
                     }
                     defaultOption="size"
+                  /> */}
+                  <DropDownCommon
+                    lists={sizes} // Dynamically extracted sizes
+                    labelKey="size" // Use "size" as the label key
+                    valueKey="value" // Use "value" as the value key
+                    selectedOption={variants[selectedVariantIndex]?.size} // Currently selected size
+                    onOptionChange={(value) =>
+                      updateVariants(selectedVariantIndex, 'size', value)
+                    } // Update size
+                    defaultOption="Select size"
                   />
                 </div>
               </div>

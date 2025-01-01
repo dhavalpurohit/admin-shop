@@ -5,7 +5,7 @@ import DropDownCommon from '../../../components/DropDownCommon';
 import { BasicDetails, UpdateBasicDetails } from '../SingleProduct';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../../redux/store';
-import toast from 'react-hot-toast';
+// import toast from 'react-hot-toast';
 import { useEffect } from 'react';
 import { productFilterData } from '../../../redux/slices/ProductSlice';
 
@@ -36,8 +36,19 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
     (state: RootState) => state.product.categories,
   );
   const dispatch = useDispatch<AppDispatch>();
-  const productBrands = useSelector(
-    (state: RootState) => state.product.productBrands?.brands,
+  // const productBrands = useSelector(
+  //   (state: RootState) => state.product.productBrands?.brands,
+  // );
+
+  const productFilteredData = useSelector(
+    (state: RootState) => state.product.productFilteredData,
+  );
+
+  const productBrands = productFilteredData?.brand?.map?.(
+    (brand: { name: string; id: number }) => ({
+      brand_name: brand.name, // Map `name` to `brand_name`
+      id: brand.id, // Keep `id` as is
+    }),
   );
 
   const handleCategoryChange = (category: string) => {
@@ -152,7 +163,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
         }),
       );
     }
-  }, [handleCategoryChange, handleSubCategoryChange]);
+  }, [basicDetails.subCategory, basicDetails.category]);
 
   return (
     <div className="grid grid-cols-2 gap-5">
@@ -237,12 +248,12 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
               </label>
               <div className="relative">
                 <DropDownCommon
-                  lists={productBrands}
-                  labelKey="brand_name"
-                  valueKey="id"
-                  selectedOption={basicDetails.brand}
-                  onOptionChange={(value) => updateBasicDetails('brand', value)}
-                  defaultOption="brands"
+                  lists={productBrands} // Pass the mapped brands
+                  labelKey="brand_name" // The key for the label in the dropdown
+                  valueKey="id" // The key for the value in the dropdown
+                  selectedOption={basicDetails.brand} // Bind the selected value from `basicDetails`
+                  onOptionChange={(value) => updateBasicDetails('brand', value)} // Update the state when an option is selected
+                  defaultOption="brands" // Default label when no option is selected
                 />
               </div>
             </div>

@@ -10,6 +10,7 @@ export const urls = {
     productOptionAddUpdate: 'product-option-add-update',
     productFilterData: 'filter',
     productDetailsView: 'vendor-product-detail',
+    productOfferAddUpdate: 'product-offers-add-update',
   },
   colour: {
     fetchColorCodeMain:
