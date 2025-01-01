@@ -13,6 +13,7 @@ import {
   productAttributeAddUpdate,
   productDetailsView,
   productOptionAddUpdate,
+  RESET_PRODUCT_DETAILS,
   vendorFetchAllCategories,
 } from '../../../redux/slices/ProductSlice';
 import toast from 'react-hot-toast';
@@ -169,6 +170,12 @@ const UpdateProduct = () => {
     },
   );
 
+  useEffect(() => {
+    return () => {
+      dispatch(RESET_PRODUCT_DETAILS());
+    };
+  }, []);
+
   const [variants, setVariants] = useState<Variant[]>(
     product?.variants || [
       {
@@ -221,7 +228,6 @@ const UpdateProduct = () => {
     }));
   };
 
-  console.log('updateBasicDetails ===>', basicDetails);
   useEffect(() => {
     !categories?.length && dispatch(vendorFetchAllCategories({ id: '0' }));
   }, []);
@@ -241,35 +247,27 @@ const UpdateProduct = () => {
       setIsSavingProduct(true); // Set loading to true when starting the API call
       const productDetails: any = {
         user_id: '-1',
-        id: productUpdateDetails?.product_detail[0]?.id,
-        name: productUpdateDetails?.product_detail[0]?.productName,
-        sale_price: productUpdateDetails?.product_detail[0]?.salePrice,
-        regular_price: productUpdateDetails?.product_detail[0]?.regularPrice,
-        category_id: productUpdateDetails?.product_detail[0]?.main_category_id,
-        product_url: productUpdateDetails?.product_detail[0]?.product_url,
+        id: product?.id,
+        name: basicDetails.productName,
+        sale_price: basicDetails.salePrice,
+        regular_price: basicDetails.regularPrice,
+        category_id: basicDetails.subCategory,
+        product_url: 'http',
         vendor_product_id: 'RTDG22BDHS00AZTS4',
         vendor_id: vendor_id,
-        brand_id: productUpdateDetails?.product_detail[0]?.brand,
-        status: productUpdateDetails?.product_detail[0]?.statusChecked
-          ? '1'
-          : '0',
-        quantity: productUpdateDetails?.product_detail[0]?.quantity,
-        description:
-          productUpdateDetails?.product_detail[0]?.productDescription,
-        do_not_display: productUpdateDetails?.product_detail[0]?.doNotDisplay
-          ? '1'
-          : '0',
-        stock: productUpdateDetails?.product_detail[0]?.stockChecked
-          ? 'true'
-          : 'false',
-        keywords: productUpdateDetails?.product_detail[0]?.keywords,
+        brand_id: basicDetails.brand,
+        status: basicDetails.statusChecked ? '1' : '0',
+        quantity: basicDetails.quantity,
+        description: basicDetails.productDescription,
+        do_not_display: basicDetails.doNotDisplay ? '1' : '0',
+        stock: basicDetails.stockChecked ? 'true' : 'false',
+        keywords: basicDetails.keywords,
         weight: '',
         skuid: '',
-        GST: productUpdateDetails?.product_detail[0]?.taxValue,
-        HSNCode: productUpdateDetails?.product_detail[0]?.taxCodeType,
-        CountryOfOrigin:
-          productUpdateDetails?.product_detail[0]?.country_of_origin,
-        StyleID: productUpdateDetails?.product_detail[0]?.style_id,
+        GST: basicDetails.taxValue,
+        HSNCode: basicDetails.taxCodeType,
+        CountryOfOrigin: 'India',
+        StyleID: '',
         user_allowed: '1',
       };
 

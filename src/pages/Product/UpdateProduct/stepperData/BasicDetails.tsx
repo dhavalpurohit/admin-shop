@@ -576,11 +576,11 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
       </div>
       <div className="flex flex-col gap-5">
         <div className="p-8 shadow border rounded">
-          <h2 className="text-lg text-primary font-medium">Upload Image</h2>
+          <h2 className="text-lg text-primary font-medium">Images</h2>
           <div className="mt-3">
             {/* Image Upload */}
             <label
-              className={`w-full h-64 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-200 ${
+              className={`w-full h-64 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-200 hidden ${
                 basicDetails.selectedImages.length >= maxImages &&
                 'cursor-not-allowed'
               }`}

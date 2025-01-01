@@ -142,8 +142,6 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
     updateBasicDetails('selectedImages', newImages);
   };
 
-  console.log('basicDetails', basicDetails);
-
   useEffect(() => {
     if (categories) {
       dispatch(

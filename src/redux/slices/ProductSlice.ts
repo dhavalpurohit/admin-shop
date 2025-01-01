@@ -187,6 +187,9 @@ const contactSlice = createSlice({
 
   reducers: {
     RESET_STATE: () => initialState,
+    RESET_PRODUCT_DETAILS: (state) => {
+      state.productDetails = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -245,5 +248,5 @@ const contactSlice = createSlice({
   },
 });
 
-export const {} = contactSlice.actions;
+export const {RESET_PRODUCT_DETAILS} = contactSlice.actions;
 export default contactSlice.reducer;

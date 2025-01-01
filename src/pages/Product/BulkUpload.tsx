@@ -109,8 +109,6 @@ const BulkUpload = () => {
     try {
       setSampleFileLoading(true);
       const response = await dispatch(fetchProductSampleFile()).unwrap();
-
-      console.log(' response', response);
       if (response?.link_to_download_excel_file) {
         const a = document.createElement('a');
         a.href = response.link_to_download_excel_file; // Correctly set the URL
