@@ -46,7 +46,7 @@ export interface BasicDetails {
   taxValue: string;
   manufactureInfo: string;
   importerDetails: string;
-  options: Option[];
+  options: [] | any;
   selectedImages: ImageDetails[]; // or string[] if images are URLs
   stockChecked: boolean;
   statusChecked: boolean;
@@ -125,7 +125,7 @@ const SingleProduct = () => {
     taxValue: '',
     manufactureInfo: '',
     importerDetails: '',
-    options: [{ id: 1, value: '' }],
+    options: [],
     selectedImages: [],
     stockChecked: true, // Default true
     statusChecked: true,
@@ -390,10 +390,10 @@ const SingleProduct = () => {
 
         // New: Product Option Update API Call
         const productOptionPayload = {
-          user_id: '-1', // Static value
-          id: '', // ID to be passed dynamically if needed
-          option_group_id: '8', // Static option group ID
-          option_group_value: '26', // Static option group value
+          user_id: '-1',
+          id: '',
+          option_group_id: basicDetails?.options?.option_group_id,
+          option_group_value: basicDetails?.options?.option_group_value,
           product_id: productId.toString(),
         };
 
