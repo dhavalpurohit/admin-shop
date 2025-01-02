@@ -12,6 +12,7 @@ import {
   productAddMultipleImages,
   productAttributeAddUpdate,
   productDetailsView,
+  productOfferAddUpdate,
   productOptionAddUpdate,
   RESET_PRODUCT_DETAILS,
   vendorFetchAllCategories,
@@ -358,6 +359,18 @@ const UpdateProduct = () => {
         if (!optionResponse.payload) {
           throw new Error('Failed to update product options');
         }
+
+        const offerUpdateResponse = await dispatch(
+          productOfferAddUpdate({
+            offer_id: '',
+            offer_name: additionalDetails.offerName,
+            product_id: productId.toString(),
+            user_id: '-1',
+          }),
+        );
+
+        if (!offerUpdateResponse.payload)
+          throw new Error('Failed to add offer');
 
         // Success toast after all API calls
         toast.success(
