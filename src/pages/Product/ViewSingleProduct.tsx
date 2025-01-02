@@ -9,8 +9,9 @@ import {
 import 'pure-react-carousel/dist/react-carousel.es.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { productDetailsView } from '../../redux/slices/ProductSlice';
+import ButtonLoader from '../../common/ButtonLoader';
 
 interface props {
   isOpen: boolean;
@@ -25,22 +26,31 @@ const ViewSingleProduct: React.FC<props> = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const vendor_id = localStorage.getItem('vendor_id');
-
+  const [isLoading, setIsLoading] = useState(false);
   const productDetails = useSelector(
     (state: RootState) => state.product.productDetails,
   );
 
   useEffect(() => {
-    if (productData) {
-      dispatch(
-        productDetailsView({
-          id: productData?.id || '',
-          customer_id: productData?.customer_id || '',
-          vendor_id: vendor_id,
-        }),
-      );
-    }
-  }, [productData]);
+    const fetchData = async () => {
+      if (productData) {
+        setIsLoading(true); // Start loading
+        try {
+          await dispatch(
+            productDetailsView({
+              id: productData?.id || '',
+              customer_id: productData?.customer_id || '',
+              vendor_id: vendor_id,
+            }),
+          );
+        } finally {
+          setIsLoading(false); // End loading
+        }
+      }
+    };
+
+    fetchData();
+  }, [productData, dispatch]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -85,7 +95,7 @@ const ViewSingleProduct: React.FC<props> = ({
                         <img
                           src={item?.image}
                           alt={`image-${i}`}
-                          className="h-full w-full"
+                          className="h-full w-auto m-auto"
                         />
                       </Slide>
                     ),
@@ -296,6 +306,14 @@ const ViewSingleProduct: React.FC<props> = ({
             </li>
           </ul>
         </div>
+        {isLoading && (
+          <div className="absolute inset-0 z-9999 h-screen  flex items-center justify-center bg-gray-900/10">
+            <ButtonLoader
+              bgColor="bg-transparent"
+              borderColor="border-primary"
+            />
+          </div>
+        )}
       </div>
     </Modal>
   );
