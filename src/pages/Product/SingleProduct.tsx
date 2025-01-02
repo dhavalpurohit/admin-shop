@@ -135,6 +135,56 @@ const SingleProduct = () => {
   const [basicDetails, setBasicDetails] =
     useState<BasicDetails>(initialBasicDetails);
 
+  const [optTable, setOptTable] = useState<
+    { parentId: number; parentName: string; subId: number; subName: string }[]
+  >([]);
+
+  const addOptionRow = (
+    parentId: number,
+    parentName: string,
+    subId: number,
+    subName: string,
+  ) => {
+    setOptTable((prev) => [...prev, { parentId, parentName, subId, subName }]);
+  };
+
+  const removeOption = (index: number) => {
+    // Remove the row from the table (optTable)
+    const updatedOptTable = optTable.filter((_, i) => i !== index);
+    setOptTable(updatedOptTable); // Update the table state
+
+    // Update the options field in basicDetails state
+    const optionGroupIds = basicDetails.options.option_group_id.split(',');
+    const optionGroupValues =
+      basicDetails.options.option_group_value.split(',');
+
+    // Remove the values at the specified index
+    optionGroupIds.splice(index, 1); // Remove the option_group_id at the index
+    optionGroupValues.splice(index, 1); // Remove the option_group_value at the index
+
+    // Update the state with the new values
+    updateBasicDetails('options', {
+      option_group_id: optionGroupIds.join(','),
+      option_group_value: optionGroupValues.join(','),
+    });
+  };
+
+  const updateOptionRow = (
+    index: number,
+    updatedRow: {
+      parentId: number;
+      parentName: string;
+      subId: number;
+      subName: string;
+    },
+  ) => {
+    setOptTable((prev) => {
+      const updatedTable = [...prev];
+      updatedTable[index] = updatedRow;
+      return updatedTable;
+    });
+  };
+
   const [additionalDetails, setAdditionalDetails] = useState<AdditionalDetails>(
     {
       offerName: '',
@@ -513,6 +563,8 @@ const SingleProduct = () => {
     toast.success('Form reset to default values.'); // Optional success message
   };
 
+  console.log('basicDetails ::::', basicDetails);
+
   return (
     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="flex items-center justify-between border-b border-stroke py-4 px-7 dark:border-strokedark">
@@ -573,10 +625,20 @@ const SingleProduct = () => {
         {/* Step Content */}
         <form className="p-7" action="#">
           {activeStep === 0 && (
+            // <BasicDetails
+            //   basicDetails={basicDetails}
+            //   updateBasicDetails={updateBasicDetails}
+            //   errors={errors}
+            // />
+
             <BasicDetails
               basicDetails={basicDetails}
               updateBasicDetails={updateBasicDetails}
               errors={errors}
+              optTable={optTable}
+              addOptionRow={addOptionRow}
+              removeOptionRow={removeOption}
+              updateOptionRow={updateOptionRow}
             />
           )}
           {activeStep === 1 && (

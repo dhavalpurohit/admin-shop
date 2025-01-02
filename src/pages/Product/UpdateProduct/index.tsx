@@ -24,6 +24,7 @@ const steps = ['Basic Details', 'Variants', 'Additional'];
 export interface Option {
   id: number;
   value: string;
+  option_group_value: string;
 }
 // export interface ImageDetails {
 //   base64: string; // Base64-encoded string or image URL
@@ -53,7 +54,7 @@ export interface BasicDetails {
   taxValue: string;
   manufactureInfo: string;
   importerDetails: string;
-  options: Option[];
+  options: [] | any;
   selectedImages: ImageDetails[]; // or string[] if images are URLs
   stockChecked: boolean;
   statusChecked: boolean;
@@ -137,35 +138,137 @@ const UpdateProduct = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [activeStep, setActiveStep] = useState(0);
   const [isSavingProduct, setIsSavingProduct] = useState(false);
+  // const initialBasicDetails: BasicDetails = {
+  //   category: productUpdateDetails?.product_detail[0]?.main_category_id || '',
+  //   subCategory: productUpdateDetails?.product_detail[0]?.sub_category_id || '',
+  //   productId: productUpdateDetails?.product_detail[0]?.id || '',
+  //   productName: productUpdateDetails?.product_detail[0]?.name || '',
+  //   brand: productUpdateDetails?.product_detail[0]?.brand || '',
+  //   keywords: productUpdateDetails?.product_detail[0]?.keywords || '',
+  //   productDescription:
+  //     productUpdateDetails?.product_detail[0]?.description || '',
+  //   regularPrice: productUpdateDetails?.product_detail[0]?.regular_price || '',
+  //   salePrice: productUpdateDetails?.product_detail[0]?.sale_price || '',
+  //   quantity: productUpdateDetails?.product_detail[0]?.quantity || '',
+  //   taxCodeType: productUpdateDetails?.product_detail[0]?.tax_code || '',
+  //   taxValue: productUpdateDetails?.product_detail[0]?.tax_value || '',
+  //   manufactureInfo:
+  //     productUpdateDetails?.product_detail[0]?.manufacture_info || '',
+  //   importerDetails:
+  //     productUpdateDetails?.product_detail[0]?.importer_details || '',
+  //   options: productUpdateDetails?.product_detail[0]?.option || [
+  //     { id: 1, value: '' },
+  //   ],
+  //   selectedImages: productUpdateDetails?.product_detail[0]?.Image || [],
+  //   stockChecked: productUpdateDetails?.product_detail[0]?.stock || false,
+  //   statusChecked: productUpdateDetails?.product_detail[0]?.status === '1',
+  //   doNotDisplay:
+  //     productUpdateDetails?.product_detail[0]?.do_not_display || false,
+  // };
+
   const initialBasicDetails: BasicDetails = {
-    category: productUpdateDetails?.product_detail[0]?.main_category_id || '',
-    subCategory: productUpdateDetails?.product_detail[0]?.sub_category_id || '',
-    productId: productUpdateDetails?.product_detail[0]?.id || '',
-    productName: productUpdateDetails?.product_detail[0]?.name || '',
-    brand: productUpdateDetails?.product_detail[0]?.brand || '',
-    keywords: productUpdateDetails?.product_detail[0]?.keywords || '',
-    productDescription:
-      productUpdateDetails?.product_detail[0]?.description || '',
-    regularPrice: productUpdateDetails?.product_detail[0]?.regular_price || '',
-    salePrice: productUpdateDetails?.product_detail[0]?.sale_price || '',
-    quantity: productUpdateDetails?.product_detail[0]?.quantity || '',
-    taxCodeType: productUpdateDetails?.product_detail[0]?.tax_code || '',
-    taxValue: productUpdateDetails?.product_detail[0]?.tax_value || '',
-    manufactureInfo:
-      productUpdateDetails?.product_detail[0]?.manufacture_info || '',
-    importerDetails:
-      productUpdateDetails?.product_detail[0]?.importer_details || '',
-    options: productUpdateDetails?.product_detail[0]?.option || [
-      { id: 1, value: '' },
-    ],
-    selectedImages: productUpdateDetails?.product_detail[0]?.Image || [],
-    stockChecked: productUpdateDetails?.product_detail[0]?.stock || false,
-    statusChecked: productUpdateDetails?.product_detail[0]?.status === '1',
-    doNotDisplay:
-      productUpdateDetails?.product_detail[0]?.do_not_display || false,
+    category: '',
+    subCategory: '',
+    productId: '',
+    productName: '',
+    brand: '',
+    keywords: '',
+    productDescription: '',
+    regularPrice: '',
+    salePrice: '',
+    quantity: '',
+    taxCodeType: '',
+    taxValue: '',
+    manufactureInfo: '',
+    importerDetails: '',
+    options: [],
+    selectedImages: [],
+    stockChecked: false,
+    statusChecked: false,
+    doNotDisplay: false,
   };
+
   const [basicDetails, setBasicDetails] =
     useState<BasicDetails>(initialBasicDetails);
+
+  useEffect(() => {
+    if (productUpdateDetails?.product_detail?.length > 0) {
+      const product = productUpdateDetails.product_detail[0];
+
+      // Update the state with the fetched data
+      setBasicDetails({
+        category: product.main_category_id || '',
+        subCategory: product.sub_category_id || '',
+        productId: product.id || '',
+        productName: product.name || '',
+        brand: product.brand || '',
+        keywords: product.keywords || '',
+        productDescription: product.description || '',
+        regularPrice: product.regular_price || '',
+        salePrice: product.sale_price || '',
+        quantity: product.quantity || '',
+        taxCodeType: product.tax_code || '',
+        taxValue: product.tax_value || '',
+        manufactureInfo: product.manufacture_info || '',
+        importerDetails: product.importer_details || '',
+        options: product.option || [],
+        selectedImages: product.Image || [],
+        stockChecked: product.stock || false,
+        statusChecked: product.status === '1',
+        doNotDisplay: product.do_not_display || false,
+      });
+    }
+  }, [productUpdateDetails]);
+
+  const [optTable, setOptTable] = useState<
+    { parentId: number; parentName: string; subId: number; subName: string }[]
+  >([]);
+
+  const addOptionRow = (
+    parentId: number,
+    parentName: string,
+    subId: number,
+    subName: string,
+  ) => {
+    setOptTable((prev) => [...prev, { parentId, parentName, subId, subName }]);
+  };
+
+  const removeOption = (index: number) => {
+    // Remove the row from the table (optTable)
+    const updatedOptTable = optTable.filter((_, i) => i !== index);
+    setOptTable(updatedOptTable); // Update the table state
+
+    // Update the options field in basicDetails state
+    const optionGroupIds = basicDetails.options.option_group_id.split(',');
+    const optionGroupValues =
+      basicDetails.options.option_group_value.split(',');
+
+    // Remove the values at the specified index
+    optionGroupIds.splice(index, 1); // Remove the option_group_id at the index
+    optionGroupValues.splice(index, 1); // Remove the option_group_value at the index
+
+    // Update the state with the new values
+    updateBasicDetails('options', {
+      option_group_id: optionGroupIds.join(','),
+      option_group_value: optionGroupValues.join(','),
+    });
+  };
+
+  const updateOptionRow = (
+    index: number,
+    updatedRow: {
+      parentId: number;
+      parentName: string;
+      subId: number;
+      subName: string;
+    },
+  ) => {
+    setOptTable((prev) => {
+      const updatedTable = [...prev];
+      updatedTable[index] = updatedRow;
+      return updatedTable;
+    });
+  };
 
   const [additionalDetails, setAdditionalDetails] = useState<AdditionalDetails>(
     {
@@ -178,26 +281,11 @@ const UpdateProduct = () => {
     },
   );
 
-  // useEffect(() => {
-  //   return () => {
-  //     dispatch(RESET_PRODUCT_DETAILS());
-  //   };
-  // }, []);
-  // useEffect(() => {
-  //   return () => {
-  //     dispatch(RESET_PRODUCT_DETAILS());
-  //   };
-  // }, [dispatch]);
-
-  // useEffect(() => {
-  //   console.log('Location changed:', location.pathname);
-  //   return () => {
-  //     // Only reset when navigating away from this route
-  //     if (location.pathname !== '/product/updateProduct') {
-  //       dispatch(RESET_PRODUCT_DETAILS());
-  //     }
-  //   };
-  // }, [location, dispatch]);
+  useEffect(() => {
+    return () => {
+      dispatch(RESET_PRODUCT_DETAILS());
+    };
+  }, []);
 
   const [variants, setVariants] = useState<Variant[]>(
     product?.variants || [
@@ -540,6 +628,10 @@ const UpdateProduct = () => {
               basicDetails={basicDetails}
               updateBasicDetails={updateBasicDetails}
               errors={errors}
+              optTable={optTable}
+              addOptionRow={addOptionRow}
+              removeOptionRow={removeOption}
+              updateOptionRow={updateOptionRow}
             />
           )}
           {activeStep === 1 && (
