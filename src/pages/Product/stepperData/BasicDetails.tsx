@@ -20,10 +20,39 @@ const codeType = [
   },
 ];
 
+// interface BasicDetailsProps {
+//   basicDetails: BasicDetails;
+//   updateBasicDetails: UpdateBasicDetails;
+//   errors: Record<string, string>; // Add errors prop to BasicDetails
+// }
 interface BasicDetailsProps {
   basicDetails: BasicDetails;
   updateBasicDetails: UpdateBasicDetails;
-  errors: Record<string, string>; // Add errors prop to BasicDetails
+  errors: Record<string, string>;
+
+  // Props for managing option table
+  optTable: {
+    parentId: number;
+    parentName: string;
+    subId: number;
+    subName: string;
+  }[];
+  addOptionRow: (
+    parentId: number,
+    parentName: string,
+    subId: number,
+    subName: string,
+  ) => void;
+  removeOptionRow: (index: number) => void;
+  updateOptionRow: (
+    index: number,
+    updatedRow: {
+      parentId: number;
+      parentName: string;
+      subId: number;
+      subName: string;
+    },
+  ) => void;
 }
 
 interface OptionGroup {
@@ -31,15 +60,19 @@ interface OptionGroup {
   optgrpid: string; // Parent option ID
 }
 
-interface SubOption {
-  optvalname: string; // Sub-option name
-  optvalid: string; // Sub-option ID
-}
+// interface SubOption {
+//   optvalname: string; // Sub-option name
+//   optvalid: string; // Sub-option ID
+// }
 
 const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
   basicDetails,
   updateBasicDetails,
   // errors,
+  optTable,
+  addOptionRow,
+  removeOptionRow,
+  // updateOptionRow,
 }) => {
   const maxImages = 6;
   const categories = useSelector(
@@ -48,10 +81,10 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
   const dispatch = useDispatch<AppDispatch>();
   const [selectOpt, setSelectOpt] = useState(null);
   const [selectSubOpt, setSelectSubOpt] = useState(null);
-  const [filteredSubOptions, setFilteredSubOptions] = useState<SubOption[]>([]);
-  const [optTable, setOptTable] = useState<
-    { parentId: number; parentName: string; subId: number; subName: string }[]
-  >([basicDetails?.options]);
+  const [filteredSubOptions, setFilteredSubOptions] = useState<any[]>([]);
+  // const [optTable, setOptTable] = useState<
+  //   { parentId: number; parentName: string; subId: number; subName: string }[]
+  // >([]);
 
   const [apiPayload, setApiPayload] = useState({
     option_group_id: '',
@@ -114,18 +147,85 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
     updateBasicDetails('subCategory', subCategory);
   };
 
-  const handleRemoveOption = (id: number) => {
-    const newTable = optTable.filter((_, i) => i !== id);
-    setOptTable(newTable);
-    updateApiPayload(newTable);
-    updateBasicDetails('options', apiPayload);
-  };
+  // const handleRemoveOption = (id: number) => {
+  //   const newTable = optTable.filter((_, i) => i !== id);
+  //   setOptTable(newTable);
+  //   updateApiPayload(newTable);
+  //   updateBasicDetails('options', apiPayload);
+  // };
+
+  // const addOption = () => {
+  //   if (!selectOpt || !selectSubOpt) {
+  //     alert('Please select both options.');
+  //     return;
+  //   }
+  //   const parentOption = optionData.find(
+  //     (item: any) => item.optgrpid === selectOpt,
+  //   );
+  //   const subOption = filteredSubOptions.find(
+  //     (item) => item.optvalid === selectSubOpt,
+  //   );
+
+  //   if (parentOption && subOption) {
+  //     const newTable: any = [
+  //       ...optTable,
+  //       {
+  //         parentId: parentOption.optgrpid,
+  //         parentName: parentOption.optgrpname,
+  //         subId: subOption.optvalid,
+  //         subName: subOption.optvalname,
+  //       },
+  //     ];
+  //     setOptTable(newTable);
+  //     updateApiPayload(newTable);
+  //     updateBasicDetails('options', apiPayload);
+  //   }
+  // };
+
+  // const addOption = () => {
+  //   if (!selectOpt || !selectSubOpt) {
+  //     alert('Please select both options.');
+  //     return;
+  //   }
+
+  //   // Find the selected parent and sub options
+  //   const parentOption = optionData.find(
+  //     (item: any) => item.optgrpid === selectOpt,
+  //   );
+  //   const subOption = filteredSubOptions.find(
+  //     (item) => item.optvalid === selectSubOpt,
+  //   );
+
+  //   // If both options are found, add the row to the table
+  //   if (parentOption && subOption) {
+  //     const newOptionRow = {
+  //       parentId: parentOption.optgrpid,
+  //       parentName: parentOption.optgrpname,
+  //       subId: subOption.optvalid,
+  //       subName: subOption.optvalname,
+  //     };
+
+  //     // Call addOptionRow to update the optTable in the parent component
+  //     addOptionRow(
+  //       newOptionRow.parentId,
+  //       newOptionRow.parentName,
+  //       newOptionRow.subId,
+  //       newOptionRow.subName,
+  //     );
+
+  //     // Optionally, update the API payload if necessary
+  //     updateApiPayload([...optTable, newOptionRow]);
+  //     updateBasicDetails('options', apiPayload);
+  //   }
+  // };
 
   const addOption = () => {
     if (!selectOpt || !selectSubOpt) {
       alert('Please select both options.');
       return;
     }
+
+    // Find the selected parent and sub options
     const parentOption = optionData.find(
       (item: any) => item.optgrpid === selectOpt,
     );
@@ -133,19 +233,44 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
       (item) => item.optvalid === selectSubOpt,
     );
 
+    // If both options are found, proceed with validation and adding the row
     if (parentOption && subOption) {
-      const newTable: any = [
-        ...optTable,
-        {
-          parentId: parentOption.optgrpid,
-          parentName: parentOption.optgrpname,
-          subId: subOption.optvalid,
-          subName: subOption.optvalname,
-        },
-      ];
-      setOptTable(newTable);
-      updateApiPayload(newTable);
+      // Check if the selected option already exists in the optTable
+      const isDuplicate = optTable.some(
+        (row) =>
+          row.parentId === parentOption.optgrpid &&
+          row.subId === subOption.optvalid,
+      );
+
+      if (isDuplicate) {
+        // Show an error if the combination already exists
+        alert('This option already exists.');
+        return;
+      }
+
+      // If no duplicates, add the new row to the table
+      const newOptionRow = {
+        parentId: parentOption.optgrpid,
+        parentName: parentOption.optgrpname,
+        subId: subOption.optvalid,
+        subName: subOption.optvalname,
+      };
+
+      // Call addOptionRow to update the optTable in the parent component
+      addOptionRow(
+        newOptionRow.parentId,
+        newOptionRow.parentName,
+        newOptionRow.subId,
+        newOptionRow.subName,
+      );
+
+      // Optionally, update the API payload if necessary
+      updateApiPayload([...optTable, newOptionRow]);
       updateBasicDetails('options', apiPayload);
+
+      // Clear the selected option and sub-option values after successful addition
+      setSelectOpt(null); // Reset selectOpt
+      setSelectSubOpt(null); // Reset selectSubOpt
     }
   };
 
@@ -781,7 +906,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
                       </td>
                       <td className="border-b border-[#eee] p-2">
                         <button
-                          onClick={() => handleRemoveOption(index)}
+                          onClick={() => removeOptionRow(index)}
                           className="fill-gray"
                           type="button"
                         >
