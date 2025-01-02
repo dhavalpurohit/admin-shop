@@ -51,7 +51,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
   const [filteredSubOptions, setFilteredSubOptions] = useState<SubOption[]>([]);
   const [optTable, setOptTable] = useState<
     { parentId: number; parentName: string; subId: number; subName: string }[]
-  >([]);
+  >([basicDetails?.options]);
 
   const [apiPayload, setApiPayload] = useState({
     option_group_id: '',
@@ -235,7 +235,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
     if (apiPayload.option_group_id && apiPayload.option_group_value) {
       updateBasicDetails('options', apiPayload);
     }
-  }, [apiPayload, updateBasicDetails]);
+  }, [apiPayload]);
 
   return (
     <div className="grid grid-cols-2 gap-5">
@@ -783,6 +783,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
                         <button
                           onClick={() => handleRemoveOption(index)}
                           className="fill-gray"
+                          type="button"
                         >
                           <svg
                             className="fill-current"

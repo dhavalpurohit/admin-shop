@@ -465,7 +465,7 @@ const Variants: React.FC<VariantsProps> = ({
                     />
                   </div>
                 </div>
-                <div className="w-full">
+                <div className="w-full hidden">
                   <label
                     className="mb-3 block text-sm font-medium text-black dark:text-white"
                     htmlFor="bust-size"

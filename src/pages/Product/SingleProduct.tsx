@@ -13,6 +13,7 @@ import {
   fetchProductBrands,
   productAddMultipleImages,
   productAttributeAddUpdate,
+  productOfferAddUpdate,
   productOptionAddUpdate,
   vendorFetchAllCategories,
 } from '../../redux/slices/ProductSlice';
@@ -350,6 +351,18 @@ const SingleProduct = () => {
           if (!uploadResponse.payload)
             throw new Error('Failed to upload images');
         }
+
+        const offerUpdateResponse = await dispatch(
+          productOfferAddUpdate({
+            offer_id: '',
+            offer_name: additionalDetails.offerName,
+            product_id: productId.toString(),
+            user_id: '-1',
+          }),
+        );
+
+        if (!offerUpdateResponse.payload)
+          throw new Error('Failed to add offer');
 
         // Additional attribute payload
         // const attributePayload = {

@@ -48,7 +48,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
   };
 
   const handleInputChange = (id: number, newValue: string) => {
-    const updatedOptions = basicDetails.options.map((option) =>
+    const updatedOptions = basicDetails.options.map((option: any) =>
       option.id === id ? { ...option, value: newValue } : option,
     );
     updateBasicDetails('options', updatedOptions);
@@ -56,7 +56,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
 
   const removeOption = (id: number) => {
     const updatedOptions = basicDetails.options.filter(
-      (option) => option.id !== id,
+      (option : any) => option.id !== id,
     );
     updateBasicDetails('options', updatedOptions);
   };
@@ -647,7 +647,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
           </div>
           <div className="mt-3">
             <div className="grid grid-cols-2 gap-4 mb-4">
-              {basicDetails.options.map((option, index) => (
+              {basicDetails.options.map((option: any, index: number) => (
                 <div key={option.id} className="flex flex-col relative">
                   <label className="mb-3 block text-sm font-medium text-black dark:text-white">
                     {`Option ${index + 1}`}
