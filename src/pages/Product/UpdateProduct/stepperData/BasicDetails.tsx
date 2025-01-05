@@ -3,9 +3,10 @@ import CategoryDropdown from '../../../../components/ProductCategoryDropdown/Cat
 import SubCategoryDropdown from '../../../../components/ProductCategoryDropdown/SubCategoryDropdown';
 import DropDownCommon from '../../../../components/DropDownCommon';
 import { BasicDetails, UpdateBasicDetails } from '../../SingleProduct';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../../redux/store';
-import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../../../redux/store';
+import { useEffect, useState } from 'react';
+import { productFilterData } from '../../../../redux/slices/ProductSlice';
 
 const codeType = [
   {
@@ -57,6 +58,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
   removeOptionRow,
   // updateOptionRow,
 }) => {
+  const dispatch = useDispatch<AppDispatch>();
   const maxImages = 6;
 
   const [selectOpt, setSelectOpt] = useState(null);
@@ -67,6 +69,18 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
   });
 
   const [filteredSubOptions, setFilteredSubOptions] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (categories) {
+      dispatch(
+        productFilterData({
+          category_id: basicDetails.subCategory
+            ? basicDetails.subCategory
+            : basicDetails.category,
+        }),
+      );
+    }
+  }, [basicDetails.subCategory, basicDetails.category]);
 
   const categories = useSelector(
     (state: RootState) => state.product.categories,
