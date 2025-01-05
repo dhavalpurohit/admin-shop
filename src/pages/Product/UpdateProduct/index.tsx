@@ -113,6 +113,10 @@ const UpdateProduct = () => {
     (state: RootState) => state.product.productDetails,
   );
 
+  const productFilteredData = useSelector(
+    (state: RootState) => state.product.productFilteredData,
+  );
+
   useEffect(() => {
     if (product) {
       dispatch(
@@ -196,13 +200,18 @@ const UpdateProduct = () => {
     if (productUpdateDetails?.product_detail?.length > 0) {
       const product = productUpdateDetails.product_detail[0];
 
+      const matchingBrand = productFilteredData?.brand?.find(
+        (brand: { name: any; id: any }) =>
+          brand.name === product.brand || brand.id === product.brand || '',
+      );
+
       // Update the state with the fetched data
       setBasicDetails({
         category: product.main_category_id || '',
         subCategory: product.sub_category_id || '',
         productId: product.id || '',
         productName: product.name || '',
-        brand: product.brand || '',
+        brand: matchingBrand?.id,
         keywords: product.keywords || '',
         productDescription: product.description || '',
         regularPrice: product.regular_price || '',
@@ -219,7 +228,7 @@ const UpdateProduct = () => {
         doNotDisplay: product.do_not_display || false,
       });
     }
-  }, [productUpdateDetails]);
+  }, [productUpdateDetails, productFilteredData]);
 
   const [optTable, setOptTable] = useState<
     { parentId: number; parentName: string; subId: number; subName: string }[]
@@ -321,13 +330,36 @@ const UpdateProduct = () => {
   };
 
   const handleStepClick = (index: number) => {
+    // If the user is trying to go beyond the first step
+    if (index > 0 && activeStep === 0) {
+      const { isValid, firstError } = validateBasicDetails(basicDetails);
+
+      if (!isValid) {
+        toast.error(firstError); // Display the first error (you can use a better UI for this)
+        return; // Prevent step change
+      }
+    }
+
+    // Allow navigation to the clicked step
     setActiveStep(index);
   };
   const handleNext = () => {
+    // If the current step is 0 (Basic Details)
+    if (activeStep === 0) {
+      const { isValid, firstError } = validateBasicDetails(basicDetails);
+
+      if (!isValid) {
+        alert(firstError); // Display the first error (you can replace this with a better UI)
+        return; // Prevent navigation to the next step
+      }
+    }
+
+    // Proceed to the next step
     if (activeStep < steps.length - 1) {
       setActiveStep((prev) => prev + 1);
     }
   };
+
   const handlePrevious = () => {
     if (activeStep > 0) {
       setActiveStep((prev) => prev - 1);
@@ -365,7 +397,7 @@ const UpdateProduct = () => {
         regular_price: basicDetails.regularPrice,
         category_id: basicDetails.subCategory,
         product_url: 'http',
-        vendor_product_id: 'RTDG22BDHS00AZTS4',
+        vendor_product_id: product?.id,
         vendor_id: vendor_id,
         brand_id: basicDetails.brand,
         status: basicDetails.statusChecked ? '1' : '0',
@@ -389,7 +421,7 @@ const UpdateProduct = () => {
 
         // Extract the 'id' from the response
         const productId = response.payload?.id;
-        if (!productId) throw new Error('Failed to get product ID');
+        if (!productId) throw new Error(response.payload?.message);
 
         // Image upload payload
         if (basicDetails.selectedImages.length > 0) {
@@ -512,6 +544,8 @@ const UpdateProduct = () => {
     const errors: Record<string, string> = {};
     let firstError: string | null = null;
 
+    console.log('details::::::', details);
+
     // Required fields
     if (!details.category) {
       errors.category = 'Category is required';
@@ -520,6 +554,10 @@ const UpdateProduct = () => {
     if (!details.subCategory) {
       errors.subCategory = 'Subcategory is required';
       if (!firstError) firstError = errors.subCategory; // Capture first error
+    }
+    if (!details.brand) {
+      errors.subCategory = 'Brand is required';
+      if (!firstError) firstError = errors.brand; // Capture first error
     }
     if (!details.productName) {
       errors.productName = 'Product name is required';
