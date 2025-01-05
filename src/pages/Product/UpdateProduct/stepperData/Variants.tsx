@@ -29,6 +29,11 @@ const Variants: React.FC<VariantsProps> = ({
   deleteVariant,
 }) => {
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0); // Start with the first variant
+
+  const productFilteredData = useSelector(
+    (state: RootState) => state.product.productFilteredData,
+  );
+
   //   const maxImages : 6;
   const colourCodes = useSelector(
     (state: RootState) => state.product.ColorCodeMain,
@@ -93,6 +98,54 @@ const Variants: React.FC<VariantsProps> = ({
     setSelectedVariantIndex(index);
   };
 
+  const updateAttrGrpId = (attrGrpIdToModify: string, shouldAdd: boolean) => {
+    const currentAttrGrpId = variants[selectedVariantIndex]?.attrGrpId || '';
+    const attrGrpIdSet = new Set(currentAttrGrpId.split(',').filter(Boolean)); // Create a set of existing IDs
+
+    if (shouldAdd) {
+      attrGrpIdSet.add(attrGrpIdToModify); // Add the new ID
+    } else {
+      attrGrpIdSet.delete(attrGrpIdToModify); // Remove the ID
+    }
+
+    const updatedAttrGrpId = Array.from(attrGrpIdSet).join(','); // Convert back to a comma-separated string
+    updateVariants(selectedVariantIndex, 'attrGrpId', updatedAttrGrpId);
+  };
+
+  const handleColorChange = (value: string) => {
+    const colorAttrGrpId =
+      productFilteredData?.attribute.find(
+        (attr: { atgrpname: string }) =>
+          attr.atgrpname.toLowerCase() === 'color',
+      )?.atgrpid || '';
+
+    updateVariants(selectedVariantIndex, 'color', value);
+
+    // If value is empty or default, remove the group ID; otherwise, add it
+    if (!value || value === 'Select color') {
+      updateAttrGrpId(colorAttrGrpId, false); // Remove attrGrpId
+    } else {
+      updateAttrGrpId(colorAttrGrpId, true); // Add attrGrpId
+    }
+  };
+
+  const handleSizeChange = (value: string) => {
+    const sizeAttrGrpId =
+      productFilteredData?.attribute.find(
+        (attr: { atgrpname: string }) =>
+          attr.atgrpname.toLowerCase() === 'size',
+      )?.atgrpid || '';
+
+    updateVariants(selectedVariantIndex, 'size', value);
+
+    // If value is empty or default, remove the group ID; otherwise, add it
+    if (!value || value === 'Select size') {
+      updateAttrGrpId(sizeAttrGrpId, false); // Remove attrGrpId
+    } else {
+      updateAttrGrpId(sizeAttrGrpId, true); // Add attrGrpId
+    }
+  };
+
   return (
     <div className="flex flex-col gap-5">
       <div className="p-8 shadow border rounded">
@@ -122,10 +175,11 @@ const Variants: React.FC<VariantsProps> = ({
                     labelKey="color_name" // Use "color_name" as the label
                     valueKey="color_code" // Use "color_code" as the value
                     selectedOption={variants[selectedVariantIndex]?.color} // Pass the selected variant's color
-                    onOptionChange={
-                      (value) =>
-                        updateVariants(selectedVariantIndex, 'color', value) // Update the selected variant's color
-                    }
+                    // onOptionChange={
+                    //   (value) =>
+                    //     updateVariants(selectedVariantIndex, 'color', value) // Update the selected variant's color
+                    // }
+                    onOptionChange={handleColorChange}
                     defaultOption={'colour'}
                   />
                 </div>
@@ -144,10 +198,11 @@ const Variants: React.FC<VariantsProps> = ({
                     valueKey="value"
                     selectedOption={variants[selectedVariantIndex]?.size}
                     // value={variants[selectedVariantIndex]?.size || ''} // Add value prop
-                    onOptionChange={
-                      (value) =>
-                        updateVariants(selectedVariantIndex, 'size', value) // Correctly pass value to updateVariants
-                    }
+                    // onOptionChange={
+                    //   (value) =>
+                    //     updateVariants(selectedVariantIndex, 'size', value) // Correctly pass value to updateVariants
+                    // }
+                    onOptionChange={handleSizeChange}
                     defaultOption="size"
                   />
                 </div>

@@ -2,6 +2,7 @@ import _axios, { AxiosRequestConfig } from 'axios';
 // import Cookies from 'js-cookie';
 // import { Toast } from "@utils/Toasts";
 import { ErrorResponse } from '../../types/http';
+import { toast } from 'react-toastify';
 export class CommonService {
   private static axios = _axios.create({
     // baseURL: process.env.BASE_URL,
@@ -123,7 +124,7 @@ export class CommonService {
       const errorMessage =
         error.response.data?.message ||
         'Something Went Wrong. Please Try Again';
-      //   Toast.error(errorMessage);
+      toast.error(errorMessage);
       console.log(errorMessage);
     } else {
       //   Toast.error("Something went wrong. Please try again.");

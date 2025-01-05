@@ -30,9 +30,9 @@ const Variants: React.FC<VariantsProps> = ({
 }) => {
   const [selectedVariantIndex, setSelectedVariantIndex] = useState(0); // Start with the first variant
   //   const maxImages : 6;
-  const colourCodes = useSelector(
-    (state: RootState) => state.product.ColorCodeMain,
-  );
+  // const colourCodes = useSelector(
+  //   (state: RootState) => state.product.ColorCodeMain,
+  // );
 
   const productFilteredData = useSelector(
     (state: RootState) => state.product.productFilteredData,
@@ -42,19 +42,26 @@ const Variants: React.FC<VariantsProps> = ({
     productFilteredData?.attribute
       ?.find(
         (attr: { atgrpname: string }) =>
-          attr.atgrpname.toLowerCase() === 'size',
+          attr?.atgrpname?.toLowerCase?.() === 'size',
       ) // Find "size" group
-      ?.attributeval.map((attrVal: { attvalname: any; attvalid: any }) => ({
-        size: attrVal.attvalname, // Label for dropdown
-        value: attrVal.attvalid, // Value for dropdown
+      ?.attributeval?.map((attrVal: { attvalname: any; attvalid: any }) => ({
+        size: attrVal?.attvalname, // Label for dropdown
+        value: attrVal?.attvalid, // Value for dropdown
       })) || [];
+
+  console.log('sizes :::;', sizes);
+
+  console.log(
+    'productFilteredData?.attribute:::::::',
+    productFilteredData?.attribute,
+  );
 
   // Extract colors from the attribute array
   const colors =
     productFilteredData?.attribute
       ?.find(
         (attr: { atgrpname: string }) =>
-          attr.atgrpname.toLowerCase() === 'color',
+          attr?.atgrpname?.toLowerCase?.() === 'color',
       ) // Find "color" group
       ?.attributeval.map((attrVal: { attvalname: any; attvalid: any }) => ({
         color_name: attrVal.attvalname, // Label for dropdown
@@ -120,6 +127,54 @@ const Variants: React.FC<VariantsProps> = ({
     setSelectedVariantIndex(index);
   };
 
+  const updateAttrGrpId = (attrGrpIdToModify: string, shouldAdd: boolean) => {
+    const currentAttrGrpId = variants[selectedVariantIndex]?.attrGrpId || '';
+    const attrGrpIdSet = new Set(currentAttrGrpId.split(',').filter(Boolean)); // Create a set of existing IDs
+
+    if (shouldAdd) {
+      attrGrpIdSet.add(attrGrpIdToModify); // Add the new ID
+    } else {
+      attrGrpIdSet.delete(attrGrpIdToModify); // Remove the ID
+    }
+
+    const updatedAttrGrpId = Array.from(attrGrpIdSet).join(','); // Convert back to a comma-separated string
+    updateVariants(selectedVariantIndex, 'attrGrpId', updatedAttrGrpId);
+  };
+
+  const handleColorChange = (value: string) => {
+    const colorAttrGrpId =
+      productFilteredData?.attribute.find(
+        (attr: { atgrpname: string }) =>
+          attr.atgrpname.toLowerCase() === 'color',
+      )?.atgrpid || '';
+
+    updateVariants(selectedVariantIndex, 'color', value);
+
+    // If value is empty or default, remove the group ID; otherwise, add it
+    if (!value || value === 'Select color') {
+      updateAttrGrpId(colorAttrGrpId, false); // Remove attrGrpId
+    } else {
+      updateAttrGrpId(colorAttrGrpId, true); // Add attrGrpId
+    }
+  };
+
+  const handleSizeChange = (value: string) => {
+    const sizeAttrGrpId =
+      productFilteredData?.attribute.find(
+        (attr: { atgrpname: string }) =>
+          attr.atgrpname.toLowerCase() === 'size',
+      )?.atgrpid || '';
+
+    updateVariants(selectedVariantIndex, 'size', value);
+
+    // If value is empty or default, remove the group ID; otherwise, add it
+    if (!value || value === 'Select size') {
+      updateAttrGrpId(sizeAttrGrpId, false); // Remove attrGrpId
+    } else {
+      updateAttrGrpId(sizeAttrGrpId, true); // Add attrGrpId
+    }
+  };
+
   return (
     <div className="flex flex-col gap-5">
       <div className="p-8 shadow border rounded">
@@ -161,9 +216,10 @@ const Variants: React.FC<VariantsProps> = ({
                     labelKey="color_name" // Use "color_name" as the label key
                     valueKey="color_code" // Use "color_code" as the value key
                     selectedOption={variants[selectedVariantIndex]?.color} // Currently selected color
-                    onOptionChange={(value) =>
-                      updateVariants(selectedVariantIndex, 'color', value)
-                    } // Update color
+                    // onOptionChange={(value) =>
+                    //   updateVariants(selectedVariantIndex, 'color', value)
+                    // } // Update color
+                    onOptionChange={handleColorChange} // Update color and attrGrpId
                     defaultOption="Select color"
                   />
                 </div>
@@ -193,9 +249,11 @@ const Variants: React.FC<VariantsProps> = ({
                     labelKey="size" // Use "size" as the label key
                     valueKey="value" // Use "value" as the value key
                     selectedOption={variants[selectedVariantIndex]?.size} // Currently selected size
-                    onOptionChange={(value) =>
-                      updateVariants(selectedVariantIndex, 'size', value)
-                    } // Update size
+                    // onOptionChange={(value) =>
+                    //   updateVariants(selectedVariantIndex, 'size', value)
+                    // } // Update size
+
+                    onOptionChange={handleSizeChange} // Update size and attrGrpId
                     defaultOption="Select size"
                   />
                 </div>

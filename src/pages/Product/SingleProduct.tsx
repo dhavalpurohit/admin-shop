@@ -66,6 +66,7 @@ export interface Variant {
   hipSize?: string;
   bustSize?: string;
   variantImages: string[];
+  attrGrpId: string;
 }
 
 export interface AdditionalDetails {
@@ -206,6 +207,7 @@ const SingleProduct = () => {
       hipSize: '',
       bustSize: '',
       variantImages: [],
+      attrGrpId: '', // New field for attribute group ID
     },
   ]);
   const updateAdditionalDetails: UpdateAdditionalDetails = (field, value) => {
@@ -340,6 +342,8 @@ const SingleProduct = () => {
   //   }
   // };
 
+  console.log('variants ::::::::::::;', variants);
+
   const handleSave = async () => {
     const validation = validateBasicDetails(basicDetails);
 
@@ -431,8 +435,12 @@ const SingleProduct = () => {
 
         const attributePayload = {
           id: '',
-          att_group_id: '2',
-          att_group_value: '975781559891967283',
+          att_group_id: variants[0]?.attrGrpId,
+          // att_group_value: '975781559891967283',
+          att_group_value: `${variants[0]?.color || ''},${
+            variants[0]?.size || ''
+          }`,
+
           product_id: productId.toString(),
           original_product_id: productId.toString(),
           product_url: 'https',
@@ -491,6 +499,7 @@ const SingleProduct = () => {
             hipSize: '',
             bustSize: '',
             variantImages: [],
+            attrGrpId: '',
           },
         ]);
         navigate('/products');
