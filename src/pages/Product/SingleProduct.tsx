@@ -227,13 +227,37 @@ const SingleProduct = () => {
   };
 
   const handleStepClick = (index: number) => {
+    // If the user is trying to go beyond the first step
+    if (index > 0 && activeStep === 0) {
+      const { isValid, firstError } = validateBasicDetails(basicDetails);
+
+      if (!isValid) {
+        toast.error(firstError); // Display the first error (you can use a better UI for this)
+        return; // Prevent step change
+      }
+    }
+
+    // Allow navigation to the clicked step
     setActiveStep(index);
   };
+
   const handleNext = () => {
+    // If the current step is 0 (Basic Details)
+    if (activeStep === 0) {
+      const { isValid, firstError } = validateBasicDetails(basicDetails);
+
+      if (!isValid) {
+        toast.error(firstError); // Display the first error (you can replace this with a better UI)
+        return; // Prevent navigation to the next step
+      }
+    }
+
+    // Proceed to the next step
     if (activeStep < steps.length - 1) {
       setActiveStep((prev) => prev + 1);
     }
   };
+
   const handlePrevious = () => {
     if (activeStep > 0) {
       setActiveStep((prev) => prev - 1);
@@ -347,13 +371,13 @@ const SingleProduct = () => {
   const handleSave = async () => {
     const validation = validateBasicDetails(basicDetails);
 
-    if (!additionalDetails.offerName || !additionalDetails.offerDescription) {
-      toast.error(
-        'Offer name and description are required fields in additional details section',
-      );
-      return;
-    }
     if (validation.isValid) {
+      if (!additionalDetails.offerName || !additionalDetails.offerDescription) {
+        toast.error(
+          'Offer name and description are required fields in additional details section',
+        );
+        return;
+      }
       setIsSavingProduct(true); // Set loading to true when starting the API call
       const productDetails: any = {
         user_id: '-1',
@@ -532,6 +556,11 @@ const SingleProduct = () => {
     if (!details.subCategory) {
       errors.subCategory = 'Subcategory is required';
       if (!firstError) firstError = errors.subCategory; // Capture first error
+    }
+
+    if (!details.brand) {
+      errors.subCategory = 'Brand is required';
+      if (!firstError) firstError = errors.brand; // Capture first error
     }
     if (!details.productName) {
       errors.productName = 'Product name is required';
