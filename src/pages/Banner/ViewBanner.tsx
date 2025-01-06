@@ -7,7 +7,6 @@ interface props {
 }
 
 const ViewBanner: React.FC<props> = ({ isOpen, onClose, bannerData }) => {
-  console.log('bannerData', bannerData);
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <div className=" bg-white ">

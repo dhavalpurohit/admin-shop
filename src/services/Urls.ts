@@ -7,7 +7,7 @@ export const urls = {
     bulkProductXlsList: 'excel-upload-summary-list',
     productAddMultipleImages: 'product-images-add-multiple',
     productAttributeAddUpdate: 'product-attribute-add-update',
-    productOptionAddUpdate: 'product-option-add-update',
+    productOptionAddUpdate: 'product-options-add-update',
     productFilterData: 'filter',
     productDetailsView: 'vendor-product-detail',
     productOfferAddUpdate: 'product-offers-add-update',

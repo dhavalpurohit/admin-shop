@@ -53,6 +53,7 @@ export interface BasicDetails {
   stockChecked: boolean;
   statusChecked: boolean;
   doNotDisplay: boolean;
+  vendorProductId: string;
 }
 
 export interface Variant {
@@ -133,6 +134,7 @@ const SingleProduct = () => {
     stockChecked: true, // Default true
     statusChecked: true,
     doNotDisplay: false,
+    vendorProductId: '',
   };
   const [basicDetails, setBasicDetails] =
     useState<BasicDetails>(initialBasicDetails);
@@ -366,8 +368,6 @@ const SingleProduct = () => {
   //   }
   // };
 
-  console.log('variants ::::::::::::;', variants);
-
   const handleSave = async () => {
     const validation = validateBasicDetails(basicDetails);
 
@@ -387,7 +387,7 @@ const SingleProduct = () => {
         regular_price: basicDetails.regularPrice,
         category_id: basicDetails.subCategory,
         product_url: 'http',
-        vendor_product_id: basicDetails.productId,
+        vendor_product_id: basicDetails.vendorProductId,
         vendor_id: vendor_id,
         brand_id: basicDetails.brand,
         status: basicDetails.statusChecked ? '1' : '0',
@@ -601,8 +601,6 @@ const SingleProduct = () => {
     setErrors({}); // Clear any existing errors
     toast.success('Form reset to default values.'); // Optional success message
   };
-
-  console.log('basicDetails ::::', basicDetails);
 
   return (
     <>

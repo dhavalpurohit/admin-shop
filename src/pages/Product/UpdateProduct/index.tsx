@@ -59,6 +59,7 @@ export interface BasicDetails {
   stockChecked: boolean;
   statusChecked: boolean;
   doNotDisplay: boolean;
+  vendorProductId: string;
 }
 
 export interface Variant {
@@ -129,8 +130,6 @@ const UpdateProduct = () => {
     }
   }, [product]);
 
-  console.log('UpdateProduct', productUpdateDetails);
-
   const categories = useSelector(
     (state: RootState) => state.product.categories,
   );
@@ -191,6 +190,7 @@ const UpdateProduct = () => {
     stockChecked: false,
     statusChecked: false,
     doNotDisplay: false,
+    vendorProductId: '',
   };
 
   const [basicDetails, setBasicDetails] =
@@ -199,12 +199,29 @@ const UpdateProduct = () => {
   useEffect(() => {
     if (productUpdateDetails?.product_detail?.length > 0) {
       const product = productUpdateDetails.product_detail[0];
-
       const matchingBrand = productFilteredData?.brand?.find(
         (brand: { name: any; id: any }) =>
           brand.name === product.brand || brand.id === product.brand || '',
       );
 
+      const allSize = productFilteredData?.attribute?.filter((attr: any) => {
+        return attr?.atgrpname === 'size';
+      });
+
+      const matchingSize = allSize[0]?.attributeval?.filter((size: any) => {
+        return size.attvalname === productUpdateDetails?.size?.[0].name;
+      });
+
+      const allColor = productFilteredData?.attribute?.filter((attr: any) => {
+        return attr?.atgrpname === 'color';
+      });
+
+      console.log('productFilteredData ', productFilteredData);
+      const matchingColor = allColor[0]?.attributeval?.filter((color: any) => {
+        return color.attvalname === productUpdateDetails?.color?.[0].name;
+      });
+
+      console.log('matchingColor ', matchingColor?.[0].attvalname);
       // Update the state with the fetched data
       setBasicDetails({
         category: product.main_category_id || '',
@@ -226,7 +243,33 @@ const UpdateProduct = () => {
         stockChecked: product.stock || false,
         statusChecked: product.status === '1',
         doNotDisplay: product.do_not_display || false,
+        vendorProductId: product.vendor_product_id || '',
       });
+
+      setAdditionalDetails({
+        offerName: productUpdateDetails?.offers?.[0] || '',
+        offerDescription: productUpdateDetails?.offers?.offer_description || '',
+        dangerousGoodsRegulations:
+          productUpdateDetails?.offers?.dangerous_goods_regulations || '',
+        complianceCertification:
+          productUpdateDetails?.offers?.compliance_certification || '',
+      });
+
+      setVariants([
+        {
+          color: matchingColor?.[0].attvalname,
+          size: matchingSize?.[0].attvalname,
+          colormap: '',
+          name: '',
+          stock: '',
+          lengthSize: '',
+          waistSize: '',
+          hipSize: '',
+          bustSize: '',
+          variantImages: [],
+          attrGrpId: '',
+        },
+      ]);
     }
   }, [productUpdateDetails, productFilteredData]);
 
@@ -282,12 +325,10 @@ const UpdateProduct = () => {
 
   const [additionalDetails, setAdditionalDetails] = useState<AdditionalDetails>(
     {
-      offerName: productUpdateDetails?.offers?.offer_name || '',
-      offerDescription: productUpdateDetails?.offers?.offer_description || '',
-      dangerousGoodsRegulations:
-        productUpdateDetails?.offers?.dangerous_goods_regulations || '',
-      complianceCertification:
-        productUpdateDetails?.offers?.compliance_certification || '',
+      offerName: '',
+      offerDescription: '',
+      dangerousGoodsRegulations: '',
+      complianceCertification: '',
     },
   );
 
@@ -397,7 +438,7 @@ const UpdateProduct = () => {
         regular_price: basicDetails.regularPrice,
         category_id: basicDetails.subCategory,
         product_url: 'http',
-        vendor_product_id: product?.id,
+        vendor_product_id: basicDetails.vendorProductId,
         vendor_id: vendor_id,
         brand_id: basicDetails.brand,
         status: basicDetails.statusChecked ? '1' : '0',
@@ -472,8 +513,8 @@ const UpdateProduct = () => {
         const productOptionPayload = {
           user_id: '-1', // Static value
           id: '', // ID to be passed dynamically if needed
-          option_group_id: '8', // Static option group ID
-          option_group_value: '26', // Static option group value
+          option_group_id: basicDetails?.options?.option_group_id,
+          option_group_value: basicDetails?.options?.option_group_value,
           product_id: productId.toString(),
         };
 
@@ -543,8 +584,6 @@ const UpdateProduct = () => {
   const validateBasicDetails = (details: BasicDetails) => {
     const errors: Record<string, string> = {};
     let firstError: string | null = null;
-
-    console.log('details::::::', details);
 
     // Required fields
     if (!details.category) {

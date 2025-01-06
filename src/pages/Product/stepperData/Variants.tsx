@@ -48,14 +48,6 @@ const Variants: React.FC<VariantsProps> = ({
         size: attrVal?.attvalname, // Label for dropdown
         value: attrVal?.attvalid, // Value for dropdown
       })) || [];
-
-  console.log('sizes :::;', sizes);
-
-  console.log(
-    'productFilteredData?.attribute:::::::',
-    productFilteredData?.attribute,
-  );
-
   // Extract colors from the attribute array
   const colors =
     productFilteredData?.attribute
@@ -70,7 +62,6 @@ const Variants: React.FC<VariantsProps> = ({
 
   const [isStockChecked, setIsStockChecked] = useState<boolean>(true);
   const [isStatusChecked, setIsStatusChecked] = useState<boolean>(true);
-
   // Function to create a new variant with default values
   const addVariant = () => {
     const newVariant = {
@@ -214,7 +205,7 @@ const Variants: React.FC<VariantsProps> = ({
                   <DropDownCommon
                     lists={colors} // Dynamically extracted colors
                     labelKey="color_name" // Use "color_name" as the label key
-                    valueKey="color_code" // Use "color_code" as the value key
+                    valueKey="color_name" // Use "color_code" as the value key
                     selectedOption={variants[selectedVariantIndex]?.color} // Currently selected color
                     // onOptionChange={(value) =>
                     //   updateVariants(selectedVariantIndex, 'color', value)
@@ -247,7 +238,7 @@ const Variants: React.FC<VariantsProps> = ({
                   <DropDownCommon
                     lists={sizes} // Dynamically extracted sizes
                     labelKey="size" // Use "size" as the label key
-                    valueKey="value" // Use "value" as the value key
+                    valueKey="size" // Use "value" as the value key
                     selectedOption={variants[selectedVariantIndex]?.size} // Currently selected size
                     // onOptionChange={(value) =>
                     //   updateVariants(selectedVariantIndex, 'size', value)
@@ -631,9 +622,9 @@ const Variants: React.FC<VariantsProps> = ({
                 <th className="p-4 font-medium text-black dark:text-white">
                   Size
                 </th>
-                <th className="p-4 font-medium text-black dark:text-white">
+                {/* <th className="p-4 font-medium text-black dark:text-white">
                   Price
-                </th>
+                </th> */}
                 <th className="p-4 font-medium text-black dark:text-white">
                   Stock
                 </th>
@@ -651,9 +642,9 @@ const Variants: React.FC<VariantsProps> = ({
                   <td className="border-b border-[#eee] p-4 dark:border-strokedark">
                     <p className="text-sm">{variant.size}</p>
                   </td>
-                  <td className="border-b border-[#eee] p-4 dark:border-strokedark">
+                  {/* <td className="border-b border-[#eee] p-4 dark:border-strokedark">
                     <p className="text-sm">{variant.color}</p>
-                  </td>
+                  </td> */}
                   <td className="border-b border-[#eee] p-4 dark:border-strokedark">
                     <p className="text-sm">{variant.stock}</p>
                   </td>

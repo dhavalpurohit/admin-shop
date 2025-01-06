@@ -126,11 +126,10 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
   const handleGroupOptChange = (grpopt: any) => {
     setSelectOpt(grpopt); // Update selected parent option
     // Find and update sub-options based on the selected parent option
-    console.log('Selected parent option:', grpopt);
     const selectedGroup = productFilteredData?.option?.find?.(
       (item: any) => item.optgrpid === grpopt,
     );
-    console.log('Selected group:', selectedGroup);
+
     setFilteredSubOptions(selectedGroup?.optionval || []);
   };
 
@@ -394,7 +393,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
             <div className="w-full ">
               <label
                 className="mb-3 block text-sm font-medium text-black dark:text-white"
-                htmlFor="productId"
+                htmlFor="vendorProductId"
               >
                 Vendor Product ID
               </label>
@@ -402,12 +401,12 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
                 <input
                   className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   type="text"
-                  name="productId"
-                  id="productId"
-                  placeholder="productId"
-                  value={basicDetails.productId}
+                  name="vendorProductId"
+                  id="vendorProductId"
+                  placeholder="vendorProductId"
+                  value={basicDetails.vendorProductId}
                   onChange={(e) =>
-                    updateBasicDetails('productId', e.target.value)
+                    updateBasicDetails('vendorProductId', e.target.value)
                   }
                 />
               </div>
