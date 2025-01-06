@@ -35,9 +35,19 @@ const Variants: React.FC<VariantsProps> = ({
   );
 
   //   const maxImages : 6;
-  const colourCodes = useSelector(
-    (state: RootState) => state.product.ColorCodeMain,
-  );
+  // const colourCodes = useSelector(
+  //   (state: RootState) => state.product.ColorCodeMain,
+  // );
+  const colors =
+    productFilteredData?.attribute
+      ?.find(
+        (attr: { atgrpname: string }) =>
+          attr?.atgrpname?.toLowerCase?.() === 'color',
+      ) // Find "color" group
+      ?.attributeval.map((attrVal: { attvalname: any; attvalid: any }) => ({
+        color_name: attrVal.attvalname, // Label for dropdown
+        color_code: attrVal.attvalid, // Value for dropdown
+      })) || [];
 
   const [isStockChecked, setIsStockChecked] = useState<boolean>(true);
   const [isStatusChecked, setIsStatusChecked] = useState<boolean>(true);
@@ -170,8 +180,8 @@ const Variants: React.FC<VariantsProps> = ({
                   Color
                 </label>
                 <div className="relative">
-                  <DropDownCommon
-                    lists={colourCodes?.color_codes} // Pass the color_codes directly
+                  {/* <DropDownCommon
+                    lists={colors?.color_codes} // Pass the color_codes directly
                     labelKey="color_name" // Use "color_name" as the label
                     valueKey="color_code" // Use "color_code" as the value
                     selectedOption={variants[selectedVariantIndex]?.color} // Pass the selected variant's color
@@ -181,6 +191,17 @@ const Variants: React.FC<VariantsProps> = ({
                     // }
                     onOptionChange={handleColorChange}
                     defaultOption={'colour'}
+                  /> */}
+                  <DropDownCommon
+                    lists={colors} // Dynamically extracted colors
+                    labelKey="color_name" // Use "color_name" as the label key
+                    valueKey="color_name" // Use "color_code" as the value key
+                    selectedOption={variants[selectedVariantIndex]?.color} // Currently selected color
+                    // onOptionChange={(value) =>
+                    //   updateVariants(selectedVariantIndex, 'color', value)
+                    // } // Update color
+                    onOptionChange={handleColorChange} // Update color and attrGrpId
+                    defaultOption="Select color"
                   />
                 </div>
               </div>
@@ -580,12 +601,12 @@ const Variants: React.FC<VariantsProps> = ({
                 <th className="p-4 font-medium text-black dark:text-white">
                   Size
                 </th>
-                <th className="p-4 font-medium text-black dark:text-white">
+                {/* <th className="p-4 font-medium text-black dark:text-white">
                   Price
-                </th>
-                <th className="p-4 font-medium text-black dark:text-white">
+                </th> */}
+                {/* <th className="p-4 font-medium text-black dark:text-white">
                   Stock
-                </th>
+                </th> */}
                 <th className="p-4 font-medium text-black dark:text-white">
                   Action
                 </th>
@@ -600,12 +621,12 @@ const Variants: React.FC<VariantsProps> = ({
                   <td className="border-b border-[#eee] p-4 dark:border-strokedark">
                     <p className="text-sm">{variant.size}</p>
                   </td>
-                  <td className="border-b border-[#eee] p-4 dark:border-strokedark">
+                  {/* <td className="border-b border-[#eee] p-4 dark:border-strokedark">
                     <p className="text-sm">{variant.color}</p>
-                  </td>
-                  <td className="border-b border-[#eee] p-4 dark:border-strokedark">
+                  </td> */}
+                  {/* <td className="border-b border-[#eee] p-4 dark:border-strokedark">
                     <p className="text-sm">{variant.stock}</p>
-                  </td>
+                  </td> */}
                   <td className="border-b border-[#eee] p-4 dark:border-strokedark">
                     <div className="flex items-center gap-2.5">
                       <button
