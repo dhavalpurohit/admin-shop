@@ -209,7 +209,7 @@ const UpdateProduct = () => {
       });
 
       const matchingSize = allSize[0]?.attributeval?.filter((size: any) => {
-        return size.attvalname === productUpdateDetails?.size?.[0].name;
+        return size.attvalname === productUpdateDetails?.size?.[0]?.name;
       });
 
       const allColor = productFilteredData?.attribute?.filter((attr: any) => {
@@ -218,10 +218,10 @@ const UpdateProduct = () => {
 
       console.log('productFilteredData ', productFilteredData);
       const matchingColor = allColor[0]?.attributeval?.filter((color: any) => {
-        return color.attvalname === productUpdateDetails?.color?.[0].name;
+        return color.attvalname === productUpdateDetails?.color?.[0]?.name;
       });
 
-      console.log('matchingColor ', matchingColor?.[0].attvalname);
+      console.log('matchingColor ', matchingColor?.[0]?.attvalname);
       // Update the state with the fetched data
       setBasicDetails({
         category: product.main_category_id || '',
@@ -243,7 +243,7 @@ const UpdateProduct = () => {
         stockChecked: product.stock || false,
         statusChecked: product.status === '1',
         doNotDisplay: product.do_not_display || false,
-        vendorProductId: product.vendor_product_id || '',
+        vendorProductId: 'RTDG22BDHS00AZTS4',
       });
 
       setAdditionalDetails({
@@ -257,8 +257,8 @@ const UpdateProduct = () => {
 
       setVariants([
         {
-          color: matchingColor?.[0].attvalname,
-          size: matchingSize?.[0].attvalname,
+          color: matchingColor?.[0]?.attvalname,
+          size: matchingSize?.[0]?.attvalname,
           colormap: '',
           name: '',
           stock: '',
@@ -438,7 +438,7 @@ const UpdateProduct = () => {
         regular_price: basicDetails.regularPrice,
         category_id: basicDetails.subCategory,
         product_url: 'http',
-        vendor_product_id: basicDetails.vendorProductId,
+        vendor_product_id: 'RTDG22BDHS00AZTS4',
         vendor_id: vendor_id,
         brand_id: basicDetails.brand,
         status: basicDetails.statusChecked ? '1' : '0',
@@ -465,22 +465,22 @@ const UpdateProduct = () => {
         if (!productId) throw new Error(response.payload?.message);
 
         // Image upload payload
-        if (basicDetails.selectedImages.length > 0) {
-          const imagePayload = {
-            user_id: '-1',
-            product_id: productId.toString(),
-            images: basicDetails.selectedImages.map((image) => ({
-              image: image.base64.replace(/^data:image\/\w+;base64,/, ''),
-              caption: image.caption,
-              size: image.size,
-            })),
-          };
-          const uploadResponse = await dispatch(
-            productAddMultipleImages(imagePayload),
-          );
-          if (!uploadResponse.payload)
-            throw new Error('Failed to upload images');
-        }
+        // if (basicDetails.selectedImages.length > 0) {
+        //   const imagePayload = {
+        //     user_id: '-1',
+        //     product_id: productId.toString(),
+        //     images: basicDetails.selectedImages.map((image) => ({
+        //       image: image.base64.replace(/^data:image\/\w+;base64,/, ''),
+        //       caption: image.caption,
+        //       size: image.size,
+        //     })),
+        //   };
+        //   const uploadResponse = await dispatch(
+        //     productAddMultipleImages(imagePayload),
+        //   );
+        //   if (!uploadResponse.payload)
+        //     throw new Error('Failed to upload images');
+        // }
 
         // Additional attribute payload
         const attributePayload = {

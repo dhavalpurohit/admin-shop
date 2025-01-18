@@ -408,6 +408,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
                   onChange={(e) =>
                     updateBasicDetails('vendorProductId', e.target.value)
                   }
+                  disabled
                 />
               </div>
             </div>
