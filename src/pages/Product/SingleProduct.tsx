@@ -134,7 +134,7 @@ const SingleProduct = () => {
     stockChecked: true, // Default true
     statusChecked: true,
     doNotDisplay: false,
-    vendorProductId: '',
+    vendorProductId: 'RTDG22BDHS00AZTS4',
   };
   const [basicDetails, setBasicDetails] =
     useState<BasicDetails>(initialBasicDetails);
@@ -387,7 +387,7 @@ const SingleProduct = () => {
         regular_price: basicDetails.regularPrice,
         category_id: basicDetails.subCategory,
         product_url: 'http',
-        vendor_product_id: basicDetails.vendorProductId,
+        vendor_product_id: 'RTDG22BDHS00AZTS4',
         vendor_id: vendor_id,
         brand_id: basicDetails.brand,
         status: basicDetails.statusChecked ? '1' : '0',
