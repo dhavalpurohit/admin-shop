@@ -76,7 +76,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
 }) => {
   const maxImages = 6;
   const categories = useSelector(
-    (state: RootState) => state.product.categories,
+  (state: RootState) => state.product.categories,
   );
   const dispatch = useDispatch<AppDispatch>();
   const [selectOpt, setSelectOpt] = useState(null);
@@ -98,6 +98,14 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
   const productFilteredData = useSelector(
     (state: RootState) => state.product.productFilteredData,
   );
+
+
+  // const categories = productFilteredData?.categories?.map?.(
+  //   (cat: { name: string; id: number }) => ({
+  //     cate_name: cat.name, // Map `name`
+  //     id: cat.id, // Keep `id` as is
+  //   }),
+  // );
 
   const productBrands = productFilteredData?.brand?.map?.(
     (brand: { name: string; id: number }) => ({
