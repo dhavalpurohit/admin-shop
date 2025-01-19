@@ -207,8 +207,8 @@ const UpdateProduct = () => {
       const allSize = productFilteredData?.attribute?.filter((attr: any) => {
         return attr?.atgrpname === 'size';
       });
-
-      const matchingSize = allSize[0]?.attributeval?.filter((size: any) => {
+      console.log('allSize ', allSize);
+      const matchingSize = allSize && allSize[0]?.attributeval?.filter((size: any) => {
         return size.attvalname === productUpdateDetails?.size?.[0]?.name;
       });
 
@@ -217,11 +217,11 @@ const UpdateProduct = () => {
       });
 
       console.log('productFilteredData ', productFilteredData);
-      const matchingColor = allColor[0]?.attributeval?.filter((color: any) => {
+      const matchingColor = allColor && allColor[0]?.attributeval?.filter((color: any) => {
         return color.attvalname === productUpdateDetails?.color?.[0]?.name;
       });
 
-      console.log('matchingColor ', matchingColor?.[0]?.attvalname);
+     
       // Update the state with the fetched data
       setBasicDetails({
         category: product.main_category_id || '',

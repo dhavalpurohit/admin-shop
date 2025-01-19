@@ -50,9 +50,9 @@ export interface BasicDetails {
   importerDetails: string;
   options: [] | any;
   selectedImages: ImageDetails[]; // or string[] if images are URLs
-  stockChecked: boolean;
-  statusChecked: boolean;
-  doNotDisplay: boolean;
+  stockChecked: any;
+  statusChecked: any;
+  doNotDisplay: any;
   vendorProductId: string;
 }
 
