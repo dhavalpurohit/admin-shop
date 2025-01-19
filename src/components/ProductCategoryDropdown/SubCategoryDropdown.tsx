@@ -44,9 +44,26 @@ const SubCategoryDropdown: React.FC<SubCategoryDropdownProps> = ({
   const categories = useSelector(
     (state: RootState) => state.product?.categories?.categories,
   );
+
+ 
+
+  //  const productFilteredData = useSelector(
+  //     (state: RootState) => state.product.productFilteredData,
+  //   );
+  
+  
+  //   const categories = productFilteredData?.categories?.map?.(
+  //     (cat: { name: string; id: number, parent_id: any }) => ({
+  //       name: cat.name, // Map `name`
+  //       id: cat.id, // Keep `id` as is
+  //       parent_id: cat.parent_id,
+  //     }),
+  //   );
+    
   const subCategories = categories?.filter(
     (categorymap: Category) => categorymap.parent_id === category,
   );
+
   return (
     <div className="relative">
       <label

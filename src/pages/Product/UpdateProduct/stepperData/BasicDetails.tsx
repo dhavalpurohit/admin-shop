@@ -94,6 +94,14 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
     (state: RootState) => state.product.productBrands?.brands,
   );
 
+  // const productBrands = productFilteredData?.brand?.map?.(
+  //   (brand: { name: string; id: number }) => ({
+  //     brand_name: brand.name, // Map `name` to `brand_name`
+  //     id: brand.id, // Keep `id` as is
+  //   }),
+  // );
+
+
   const optionData = productFilteredData?.option?.map?.(
     (opt: { optgrpname: string; optgrpid: number }) => ({
       optgrpname: opt.optgrpname,

@@ -17,6 +17,19 @@ const CategoryDropdown: React.FC<CategoryDropdownProps> = ({
   const categories = useSelector(
     (state: RootState) => state.product?.categories?.categories,
   );
+
+  // const productFilteredData = useSelector(
+  //   (state: RootState) => state.product.productFilteredData,
+  // );
+
+
+  // const categories = productFilteredData?.categories?.map?.(
+  //   (cat: { name: string; id: number, parent_id: any }) => ({
+  //     name: cat.name, // Map `name`
+  //     id: cat.id, // Keep `id` as is
+  //     parent_id: cat.parent_id,
+  //   }),
+  // );
   
   const topLevelCategories = categories?.filter((category: Category) => category.parent_id === "0");
   return (
