@@ -33,7 +33,7 @@ const DropDownCommon: React.FC<Props> = ({
   return (
     <div className="relative z-20 bg-white dark:bg-form-input">
       <select
-        value={selectedOption}
+        value={selectedOption ?? ''}
         onChange={(e) => {
           onOptionChange && onOptionChange(e.target.value); // Call the handler from props
           changeTextColor();
