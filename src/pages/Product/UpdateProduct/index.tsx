@@ -243,7 +243,7 @@ const UpdateProduct = () => {
         stockChecked: product.stock || false,
         statusChecked: product.status === '1',
         doNotDisplay: product.do_not_display || false,
-        vendorProductId: 'RTDG22BDHS00AZTS4',
+        vendorProductId:product.vendor_product_id || 'RTDG22BDHS00AZTS4',
       });
 
       setAdditionalDetails({
@@ -438,7 +438,7 @@ const UpdateProduct = () => {
         regular_price: basicDetails.regularPrice,
         category_id: basicDetails.subCategory,
         product_url: 'http',
-        vendor_product_id: 'RTDG22BDHS00AZTS4',
+        vendor_product_id: basicDetails.vendorProductId,
         vendor_id: vendor_id,
         brand_id: basicDetails.brand,
         status: basicDetails.statusChecked ? '1' : '0',
