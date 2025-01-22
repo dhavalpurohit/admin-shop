@@ -101,7 +101,6 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
   //   }),
   // );
 
-
   const optionData = productFilteredData?.option?.map?.(
     (opt: { optgrpname: string; optgrpid: number }) => ({
       optgrpname: opt.optgrpname,

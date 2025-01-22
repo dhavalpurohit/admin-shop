@@ -131,8 +131,9 @@ const UpdateProduct = () => {
   }, [product]);
 
   const categories = useSelector(
-    (state: RootState) => state.product.categories,
+    (state: RootState) => state.product?.categories?.categories || [],
   );
+
   const colourCodes = useSelector(
     (state: RootState) => state.product.ColorCodeMain,
   );
@@ -208,24 +209,32 @@ const UpdateProduct = () => {
         return attr?.atgrpname === 'size';
       });
       console.log('allSize ', allSize);
-      const matchingSize = allSize && allSize[0]?.attributeval?.filter((size: any) => {
-        return size.attvalname === productUpdateDetails?.size?.[0]?.name;
-      });
+      const matchingSize =
+        allSize &&
+        allSize[0]?.attributeval?.filter((size: any) => {
+          return size.attvalname === productUpdateDetails?.size?.[0]?.name;
+        });
 
       const allColor = productFilteredData?.attribute?.filter((attr: any) => {
         return attr?.atgrpname === 'color';
       });
 
-      console.log('productFilteredData ', productFilteredData);
-      const matchingColor = allColor && allColor[0]?.attributeval?.filter((color: any) => {
-        return color.attvalname === productUpdateDetails?.color?.[0]?.name;
-      });
+      const matchingColor =
+        allColor &&
+        allColor[0]?.attributeval?.filter((color: any) => {
+          return color.attvalname === productUpdateDetails?.color?.[0]?.name;
+        });
 
-     
+      const matchingSubCategory = categories.find(
+        (cat: any) => cat?.name === product?.category,
+      );
+
       // Update the state with the fetched data
       setBasicDetails({
-        category: product.main_category_id || '',
-        subCategory: product.sub_category_id || '',
+        // category: product.main_category_id || '',
+        // subCategory: product.sub_category_id || '',
+        category: matchingSubCategory?.parent_id || '',
+        subCategory: matchingSubCategory?.id || '',
         productId: product.id || '',
         productName: product.name || '',
         brand: matchingBrand?.id,
@@ -243,7 +252,7 @@ const UpdateProduct = () => {
         stockChecked: product.stock || false,
         statusChecked: product.status === '1',
         doNotDisplay: product.do_not_display || false,
-        vendorProductId:product.vendor_product_id || 'RTDG22BDHS00AZTS4',
+        vendorProductId: product.vendor_product_id || 'RTDG22BDHS00AZTS4',
       });
 
       setAdditionalDetails({
@@ -271,7 +280,7 @@ const UpdateProduct = () => {
         },
       ]);
     }
-  }, [productUpdateDetails, productFilteredData]);
+  }, [productUpdateDetails, categories]);
 
   const [optTable, setOptTable] = useState<
     { parentId: number; parentName: string; subId: number; subName: string }[]
