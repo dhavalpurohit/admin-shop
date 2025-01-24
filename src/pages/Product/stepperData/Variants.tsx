@@ -132,14 +132,55 @@ const Variants: React.FC<VariantsProps> = ({
     updateVariants(selectedVariantIndex, 'attrGrpId', updatedAttrGrpId);
   };
 
-  const handleColorChange = (value: string) => {
-    const colorAttrGrpId =
-      productFilteredData?.attribute.find(
-        (attr: { atgrpname: string }) =>
-          attr.atgrpname.toLowerCase() === 'color',
-      )?.atgrpid || '';
+  // const handleColorChange = (value: string) => {
+  //   const colorAttrGrpId =
+  //     productFilteredData?.attribute.find(
+  //       (attr: { atgrpname: string }) =>
+  //         attr.atgrpname.toLowerCase() === 'color',
+  //     )?.atgrpid || '';
 
+  //   updateVariants(selectedVariantIndex, 'color', value);
+
+  //   // If value is empty or default, remove the group ID; otherwise, add it
+  //   if (!value || value === 'Select color') {
+  //     updateAttrGrpId(colorAttrGrpId, false); // Remove attrGrpId
+  //   } else {
+  //     updateAttrGrpId(colorAttrGrpId, true); // Add attrGrpId
+  //   }
+  // };
+
+  // const handleSizeChange = (value: string) => {
+  //   const sizeAttrGrpId =
+  //     productFilteredData?.attribute.find(
+  //       (attr: { atgrpname: string }) =>
+  //         attr.atgrpname.toLowerCase() === 'size',
+  //     )?.atgrpid || '';
+
+  //   updateVariants(selectedVariantIndex, 'size', value);
+
+  //   // If value is empty or default, remove the group ID; otherwise, add it
+  //   if (!value || value === 'Select size') {
+  //     updateAttrGrpId(sizeAttrGrpId, false); // Remove attrGrpId
+  //   } else {
+  //     updateAttrGrpId(sizeAttrGrpId, true); // Add attrGrpId
+  //   }
+  // };
+
+  const handleColorChange = (value: string) => {
+    const colorGroup = productFilteredData?.attribute.find(
+      (attr: { atgrpname: string }) => attr.atgrpname.toLowerCase() === 'color',
+    );
+
+    const colorAttrGrpId = colorGroup?.atgrpid || ''; // Group ID for "color"
+    const colorId =
+      colorGroup?.attributeval.find(
+        (attrVal: { attvalname: string }) =>
+          attrVal.attvalname.toLowerCase() === value.toLowerCase(),
+      )?.attvalid || ''; // Find the attvalid for the selected color
+
+    // Update the variant with both the color name and ID
     updateVariants(selectedVariantIndex, 'color', value);
+    updateVariants(selectedVariantIndex, 'colorId', colorId);
 
     // If value is empty or default, remove the group ID; otherwise, add it
     if (!value || value === 'Select color') {
@@ -150,13 +191,20 @@ const Variants: React.FC<VariantsProps> = ({
   };
 
   const handleSizeChange = (value: string) => {
-    const sizeAttrGrpId =
-      productFilteredData?.attribute.find(
-        (attr: { atgrpname: string }) =>
-          attr.atgrpname.toLowerCase() === 'size',
-      )?.atgrpid || '';
+    const sizeGroup = productFilteredData?.attribute.find(
+      (attr: { atgrpname: string }) => attr.atgrpname.toLowerCase() === 'size',
+    );
 
+    const sizeAttrGrpId = sizeGroup?.atgrpid || ''; // Group ID for "size"
+    const sizeId =
+      sizeGroup?.attributeval.find(
+        (attrVal: { attvalname: string }) =>
+          attrVal.attvalname.toLowerCase() === value.toLowerCase(),
+      )?.attvalid || ''; // Find the attvalid for the selected size
+
+    // Update the variant with both the size name and ID
     updateVariants(selectedVariantIndex, 'size', value);
+    updateVariants(selectedVariantIndex, 'sizeId', sizeId);
 
     // If value is empty or default, remove the group ID; otherwise, add it
     if (!value || value === 'Select size') {

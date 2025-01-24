@@ -260,7 +260,7 @@ const UpdateProduct = () => {
         taxValue: product.tax_value || '',
         manufactureInfo: product.manufacture_info || '',
         importerDetails: product.importer_details || '',
-        options: product.option || [],
+        options: productUpdateDetails.option || [],
         selectedImages: product.Image || [],
         stockChecked: product.stock || false,
         statusChecked: product.status === '1',
@@ -482,7 +482,7 @@ const UpdateProduct = () => {
       };
 
       try {
-        // First API call to save the product
+        // First API call to  the product
         const response = await dispatch(createSingleProduct(productDetails));
 
         // Extract the 'id' from the response
