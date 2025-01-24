@@ -559,7 +559,7 @@ const SingleProduct = () => {
     }
 
     if (!details.brand) {
-      errors.subCategory = 'Brand is required';
+      errors.brand = 'Brand is required';
       if (!firstError) firstError = errors.brand; // Capture first error
     }
     if (!details.productName) {

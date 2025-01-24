@@ -208,7 +208,7 @@ const UpdateProduct = () => {
       const allSize = productFilteredData?.attribute?.filter((attr: any) => {
         return attr?.atgrpname === 'size';
       });
-      console.log('allSize ', allSize);
+     
       const matchingSize =
         allSize &&
         allSize[0]?.attributeval?.filter((size: any) => {
@@ -229,11 +229,12 @@ const UpdateProduct = () => {
         (cat: any) => cat?.name === product?.category,
       );
 
+
       // Update the state with the fetched data
       setBasicDetails({
         // category: product.main_category_id || '',
         // subCategory: product.sub_category_id || '',
-        category: matchingSubCategory?.parent_id || '',
+         category: matchingSubCategory?.parent_id || '',
         subCategory: matchingSubCategory?.id || '',
         productId: product.id || '',
         productName: product.name || '',

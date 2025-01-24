@@ -504,10 +504,12 @@ const AddBanner = () => {
                   <div className="mt-3">
                     {/* Image Upload */}
                     <label
+                    htmlFor="file"
                       className={`w-full h-64 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-200 `}
                     >
                       <input
                         type="file"
+                        id='file'
                         multiple
                         accept="image/*"
                         onChange={handleImageUpload}
