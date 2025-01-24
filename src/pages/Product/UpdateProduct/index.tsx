@@ -9,7 +9,7 @@ import {
   createSingleProduct,
   fetchColorCodeMain,
   fetchProductBrands,
-  productAddMultipleImages,
+  // productAddMultipleImages,
   productAttributeAddUpdate,
   productDetailsView,
   productOfferAddUpdate,
@@ -204,11 +204,21 @@ const UpdateProduct = () => {
         (brand: { name: any; id: any }) =>
           brand.name === product.brand || brand.id === product.brand || '',
       );
+      const options: Record<string, string> =
+        productUpdateDetails?.option || {};
+      const parsedOptions = Object.entries(options).map(
+        ([key, value], index) => ({
+          parentId: index, // Use the index as the parentId
+          parentName: key, // The key (e.g., "Style Code") as parentName
+          subId: index, // Use the index as subId (if unique ID exists, replace this)
+          subName: value, // The value (e.g., "Woman's Dubai Style...") as subName
+        }),
+      );
 
       const allSize = productFilteredData?.attribute?.filter((attr: any) => {
         return attr?.atgrpname === 'size';
       });
-     
+
       const matchingSize =
         allSize &&
         allSize[0]?.attributeval?.filter((size: any) => {
@@ -228,13 +238,15 @@ const UpdateProduct = () => {
       const matchingSubCategory = categories.find(
         (cat: any) => cat?.name === product?.category,
       );
+      // type Options = Record<string, string>;
 
+      // const options: Options = productUpdateDetails?.option || {};
 
       // Update the state with the fetched data
       setBasicDetails({
         // category: product.main_category_id || '',
         // subCategory: product.sub_category_id || '',
-         category: matchingSubCategory?.parent_id || '',
+        category: matchingSubCategory?.parent_id || '',
         subCategory: matchingSubCategory?.id || '',
         productId: product.id || '',
         productName: product.name || '',
@@ -248,13 +260,14 @@ const UpdateProduct = () => {
         taxValue: product.tax_value || '',
         manufactureInfo: product.manufacture_info || '',
         importerDetails: product.importer_details || '',
-        options: product.option || [],
+        options: productUpdateDetails.option || [],
         selectedImages: product.Image || [],
         stockChecked: product.stock || false,
         statusChecked: product.status === '1',
         doNotDisplay: product.do_not_display || false,
         vendorProductId: product.vendor_product_id || 'RTDG22BDHS00AZTS4',
       });
+      setOptTable(parsedOptions); // Set the parsed options into optTable state
 
       setAdditionalDetails({
         offerName: productUpdateDetails?.offers?.[0] || '',
@@ -282,6 +295,8 @@ const UpdateProduct = () => {
       ]);
     }
   }, [productUpdateDetails, categories]);
+
+  console.log('basicDetails ::::', basicDetails);
 
   const [optTable, setOptTable] = useState<
     { parentId: number; parentName: string; subId: number; subName: string }[]
@@ -467,7 +482,7 @@ const UpdateProduct = () => {
       };
 
       try {
-        // First API call to save the product
+        // First API call to  the product
         const response = await dispatch(createSingleProduct(productDetails));
 
         // Extract the 'id' from the response

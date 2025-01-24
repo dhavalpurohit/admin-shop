@@ -68,6 +68,8 @@ export interface Variant {
   bustSize?: string;
   variantImages: string[];
   attrGrpId: string;
+  colorId?: string;
+  sizeId?: string;
 }
 
 export interface AdditionalDetails {
@@ -227,6 +229,8 @@ const SingleProduct = () => {
   const deleteVariant = (index: number) => {
     setVariants((prevVariants) => prevVariants.filter((_, i) => i !== index));
   };
+
+  console.log('variants :::::::', variants);
 
   const handleStepClick = (index: number) => {
     // If the user is trying to go beyond the first step
@@ -457,26 +461,69 @@ const SingleProduct = () => {
         //   user_id: '-1',
         // };
 
+        // const attributePayload = {
+        //   id: '',
+        //   att_group_id: variants[0]?.attrGrpId,
+        //   // att_group_value: '975781559891967283',
+        //   att_group_value: `${variants[0]?.colorId || ''},${
+        //     variants[0]?.sizeId || ''
+        //   }`,
+
+        //   product_id: productId.toString(),
+        //   original_product_id: productId.toString(),
+        //   product_url: 'https',
+        //   price: basicDetails.salePrice || '',
+        //   status: basicDetails.statusChecked ? '1' : '0',
+        //   stock: basicDetails.stockChecked ? 'true' : 'false',
+        //   user_id: '-1',
+        //   bust_size: variants[0]?.bustSize,
+        //   waist_size: variants[0]?.waistSize,
+        //   hip_size: variants[0]?.hipSize,
+        //   length_size: variants[0]?.lengthSize,
+        // };
+
         const attributePayload = {
           id: '',
-          att_group_id: variants[0]?.attrGrpId,
-          // att_group_value: '975781559891967283',
-          att_group_value: `${variants[0]?.color || ''},${
-            variants[0]?.size || ''
-          }`,
-
+          att_group_id: variants[0]?.attrGrpId || '', // Assuming all variants share the same group ID
+          att_group_value: variants
+            .map((variant) => {
+              // Create an array with only non-empty values (colorId and sizeId)
+              const values = [variant.colorId, variant.sizeId].filter(
+                (value) => value && value.trim() !== '', // Exclude empty or null values
+              );
+              return values.join(','); // Join the remaining values for this variant
+            })
+            .filter((value) => value.trim() !== '') // Remove completely empty entries
+            .join(','), // Combine all variant strings into a single comma-separated string
           product_id: productId.toString(),
           original_product_id: productId.toString(),
-          product_url: 'https',
+          product_url: 'https', // Replace with actual URL if needed
           price: basicDetails.salePrice || '',
           status: basicDetails.statusChecked ? '1' : '0',
           stock: basicDetails.stockChecked ? 'true' : 'false',
           user_id: '-1',
-          bust_size: variants[0]?.bustSize,
-          waist_size: variants[0]?.waistSize,
-          hip_size: variants[0]?.hipSize,
-          length_size: variants[0]?.lengthSize,
+
+          // Add comma-separated values for each size field, filtering out empty values
+          bust_size: variants
+            .map((variant) => variant.bustSize || '')
+            .filter((value) => value.trim() !== '')
+            .join(','),
+          waist_size: variants
+            .map((variant) => variant.waistSize || '')
+            .filter((value) => value.trim() !== '')
+            .join(','),
+          hip_size: variants
+            .map((variant) => variant.hipSize || '')
+            .filter((value) => value.trim() !== '')
+            .join(','),
+          length_size: variants
+            .map((variant) => variant.lengthSize || '')
+            .filter((value) => value.trim() !== '')
+            .join(','),
         };
+
+        console.log(attributePayload);
+
         const attributeResponse = await dispatch(
           productAttributeAddUpdate(attributePayload),
         );
