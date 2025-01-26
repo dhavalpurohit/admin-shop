@@ -256,8 +256,8 @@ const UpdateProduct = () => {
         regularPrice: product.regular_price || '',
         salePrice: product.sale_price || '',
         quantity: product.quantity || '',
-        taxCodeType: product.tax_code || '',
-        taxValue: product.tax_value || '',
+        taxCodeType: product.hsn_code || '',
+        taxValue: product.GST || '',
         manufactureInfo: product.manufacture_info || '',
         importerDetails: product.importer_details || '',
         options: productUpdateDetails.option || [],
@@ -395,21 +395,21 @@ const UpdateProduct = () => {
     setVariants((prevVariants) => prevVariants.filter((_, i) => i !== index));
   };
 
-  const handleStepClick = (index: number) => {
-    // If the user is trying to go beyond the first step
-    if (index > 0 && activeStep === 0) {
-      const { isValid, firstError } = validateBasicDetails(basicDetails);
+  // const handleStepClick = (index: number) => {
+  //   // If the user is trying to go beyond the first step
+  //   if (index > 0 && activeStep === 0) {
+  //     const { isValid, firstError } = validateBasicDetails(basicDetails);
 
-      if (!isValid) {
-        toast.error(firstError); // Display the first error (you can use a better UI for this)
-        return; // Prevent step change
-      }
-    }
+  //     if (!isValid) {
+  //       toast.error(firstError); // Display the first error (you can use a better UI for this)
+  //       return; // Prevent step change
+  //     }
+  //   }
 
-    // Allow navigation to the clicked step
-    setActiveStep(index);
-  };
-  const handleNext = () => {
+  //   // Allow navigation to the clicked step
+  //   setActiveStep(index);
+  // };
+  const handleNext = async () => {
     // If the current step is 0 (Basic Details)
     if (activeStep === 0) {
       const { isValid, firstError } = validateBasicDetails(basicDetails);
@@ -418,12 +418,82 @@ const UpdateProduct = () => {
         alert(firstError); // Display the first error (you can replace this with a better UI)
         return; // Prevent navigation to the next step
       }
+
+      try {
+        setIsSavingProduct(true);
+        const productDetails: any = {
+          user_id: '-1',
+          id: product?.id,
+          name: basicDetails.productName,
+          sale_price: basicDetails.salePrice,
+          regular_price: basicDetails.regularPrice,
+          category_id: basicDetails.subCategory,
+          product_url: 'http',
+          vendor_product_id: basicDetails.vendorProductId,
+          vendor_id: vendor_id,
+          brand_id: basicDetails.brand,
+          status: basicDetails.statusChecked ? '1' : '0',
+          quantity: basicDetails.quantity,
+          description: basicDetails.productDescription,
+          do_not_display: basicDetails.doNotDisplay ? '1' : '0',
+          stock: basicDetails.stockChecked ? 'true' : 'false',
+          keywords: basicDetails.keywords,
+          weight: '',
+          skuid: '',
+          GST: basicDetails.taxValue,
+          HSNCode: basicDetails.taxCodeType,
+          CountryOfOrigin: 'India',
+          StyleID: '',
+          user_allowed: '1',
+        };
+
+        const response = await dispatch(createSingleProduct(productDetails));
+
+        // Check if the product ID is returned successfully
+        const productId = response.payload?.id; // Extract product ID directly from the response
+        if (!productId) {
+          throw new Error('Failed to save the product. Please try again.');
+        }
+
+        // New: Product Option Update API Call
+        const productOptionPayload = {
+          user_id: '-1', // Static value
+          id: '', // ID to be passed dynamically if needed
+          option_group_id: basicDetails?.options?.option_group_id,
+          option_group_value: basicDetails?.options?.option_group_value,
+          product_id: product?.id,
+        };
+
+        const optionResponse = await dispatch(
+          productOptionAddUpdate(productOptionPayload),
+        );
+        if (!optionResponse.payload) {
+          throw new Error('Failed to update product options');
+        }
+
+        // Proceed to the next step
+        toast.success('Product details saved successfully.');
+        setActiveStep((prev) => prev + 1);
+      } catch (error) {
+        console.error(error);
+        toast.error(
+          (error as Error).message ||
+            'An error occurred while saving the product. Please try again.',
+        );
+      } finally {
+        setIsSavingProduct(false); // Hide the loading indicator
+      }
+    } else {
+      // If not the first step, just move to the next step
+      if (activeStep < steps.length - 1) {
+        setActiveStep((prev) => prev + 1);
+      }
     }
 
     // Proceed to the next step
-    if (activeStep < steps.length - 1) {
-      setActiveStep((prev) => prev + 1);
-    }
+    // if (activeStep < steps.length - 1) {
+    //   setActiveStep((prev) => prev + 1);
+    // }
   };
 
   const handlePrevious = () => {
@@ -455,39 +525,39 @@ const UpdateProduct = () => {
     const validation = validateBasicDetails(basicDetails);
     if (validation.isValid) {
       setIsSavingProduct(true); // Set loading to true when starting the API call
-      const productDetails: any = {
-        user_id: '-1',
-        id: product?.id,
-        name: basicDetails.productName,
-        sale_price: basicDetails.salePrice,
-        regular_price: basicDetails.regularPrice,
-        category_id: basicDetails.subCategory,
-        product_url: 'http',
-        vendor_product_id: basicDetails.vendorProductId,
-        vendor_id: vendor_id,
-        brand_id: basicDetails.brand,
-        status: basicDetails.statusChecked ? '1' : '0',
-        quantity: basicDetails.quantity,
-        description: basicDetails.productDescription,
-        do_not_display: basicDetails.doNotDisplay ? '1' : '0',
-        stock: basicDetails.stockChecked ? 'true' : 'false',
-        keywords: basicDetails.keywords,
-        weight: '',
-        skuid: '',
-        GST: basicDetails.taxValue,
-        HSNCode: basicDetails.taxCodeType,
-        CountryOfOrigin: 'India',
-        StyleID: '',
-        user_allowed: '1',
-      };
+      // const productDetails: any = {
+      //   user_id: '-1',
+      //   id: product?.id,
+      //   name: basicDetails.productName,
+      //   sale_price: basicDetails.salePrice,
+      //   regular_price: basicDetails.regularPrice,
+      //   category_id: basicDetails.subCategory,
+      //   product_url: 'http',
+      //   vendor_product_id: basicDetails.vendorProductId,
+      //   vendor_id: vendor_id,
+      //   brand_id: basicDetails.brand,
+      //   status: basicDetails.statusChecked ? '1' : '0',
+      //   quantity: basicDetails.quantity,
+      //   description: basicDetails.productDescription,
+      //   do_not_display: basicDetails.doNotDisplay ? '1' : '0',
+      //   stock: basicDetails.stockChecked ? 'true' : 'false',
+      //   keywords: basicDetails.keywords,
+      //   weight: '',
+      //   skuid: '',
+      //   GST: basicDetails.taxValue,
+      //   HSNCode: basicDetails.taxCodeType,
+      //   CountryOfOrigin: 'India',
+      //   StyleID: '',
+      //   user_allowed: '1',
+      // };
 
       try {
         // First API call to  the product
-        const response = await dispatch(createSingleProduct(productDetails));
+        // const response = await dispatch(createSingleProduct(productDetails));
 
         // Extract the 'id' from the response
-        const productId = response.payload?.id;
-        if (!productId) throw new Error(response.payload?.message);
+        // const productId = response.payload?.id;
+        if (!product?.id) throw new Error('Failed to get product ID');
 
         // Image upload payload
         // if (basicDetails.selectedImages.length > 0) {
@@ -515,8 +585,8 @@ const UpdateProduct = () => {
           att_group_value: `${variants[0]?.color || ''},${
             variants[0]?.size || ''
           }`,
-          product_id: productId.toString(),
-          original_product_id: productId.toString(),
+          product_id: product?.id,
+          original_product_id: product?.id,
           product_url: 'https',
           price: basicDetails.salePrice || '',
           status: basicDetails.statusChecked ? '1' : '0',
@@ -534,27 +604,27 @@ const UpdateProduct = () => {
           throw new Error('Failed to update product attributes');
         }
 
-        // New: Product Option Update API Call
-        const productOptionPayload = {
-          user_id: '-1', // Static value
-          id: '', // ID to be passed dynamically if needed
-          option_group_id: basicDetails?.options?.option_group_id,
-          option_group_value: basicDetails?.options?.option_group_value,
-          product_id: productId.toString(),
-        };
+        // // New: Product Option Update API Call
+        // const productOptionPayload = {
+        //   user_id: '-1', // Static value
+        //   id: '', // ID to be passed dynamically if needed
+        //   option_group_id: basicDetails?.options?.option_group_id,
+        //   option_group_value: basicDetails?.options?.option_group_value,
+        //   product_id: product?.id,
+        // };
 
-        const optionResponse = await dispatch(
-          productOptionAddUpdate(productOptionPayload),
-        );
-        if (!optionResponse.payload) {
-          throw new Error('Failed to update product options');
-        }
+        // const optionResponse = await dispatch(
+        //   productOptionAddUpdate(productOptionPayload),
+        // );
+        // if (!optionResponse.payload) {
+        //   throw new Error('Failed to update product options');
+        // }
 
         const offerUpdateResponse = await dispatch(
           productOfferAddUpdate({
             offer_id: '',
             offer_name: additionalDetails.offerName,
-            product_id: productId.toString(),
+            product_id: product?.id,
             user_id: '-1',
           }),
         );
@@ -701,7 +771,7 @@ const UpdateProduct = () => {
           {steps.map((step, index) => (
             <div key={index} className="relative w-full text-center">
               <div
-                onClick={() => handleStepClick(index)}
+                // onClick={() => handleStepClick(index)}
                 className={`cursor-pointer p-2 border rounded-full transition-all duration-300 
                                     ${
                                       activeStep === index

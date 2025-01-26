@@ -11,6 +11,7 @@ export const urls = {
     productFilterData: 'filter',
     productDetailsView: 'vendor-product-detail',
     productOfferAddUpdate: 'product-offers-add-update',
+    productLookup: 'lookup',
   },
   colour: {
     fetchColorCodeMain:

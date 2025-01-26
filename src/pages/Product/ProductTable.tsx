@@ -177,7 +177,7 @@ const ProductTable: React.FC = () => {
     };
 
     fetchData();
-  }, [dispatch, page, pageSize, selectedSubCategory, selectedStatus, query]);
+  }, [selectedSubCategory, selectedStatus, pageSize, page, query, dispatch]);
 
   useEffect(() => {
     if (activeTab === 'bulk') {

@@ -7,16 +7,16 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../../redux/store';
 import toast from 'react-hot-toast';
 
-const sizes = [
-  {
-    size: 'xl',
-    value: 'xl',
-  },
-  {
-    size: '2xl',
-    value: '2xl',
-  },
-];
+// const sizes = [
+//   {
+//     size: 'xl',
+//     value: 'xl',
+//   },
+//   {
+//     size: '2xl',
+//     value: '2xl',
+//   },
+// ];
 interface VariantsProps {
   variants: Variant[];
   updateVariants: UpdateVariantsFunction;
@@ -38,6 +38,17 @@ const Variants: React.FC<VariantsProps> = ({
   // const colourCodes = useSelector(
   //   (state: RootState) => state.product.ColorCodeMain,
   // );
+  const sizes =
+    productFilteredData?.attribute
+      ?.find(
+        (attr: { atgrpname: string }) =>
+          attr?.atgrpname?.toLowerCase?.() === 'size',
+      ) // Find "size" group
+      ?.attributeval?.map((attrVal: { attvalname: any; attvalid: any }) => ({
+        size: attrVal?.attvalname, // Label for dropdown
+        value: attrVal?.attvalid, // Value for dropdown
+      })) || [];
+
   const colors =
     productFilteredData?.attribute
       ?.find(
@@ -164,7 +175,7 @@ const Variants: React.FC<VariantsProps> = ({
           <button
             onClick={addVariant}
             type="button"
-            className="flex justify-center rounded border border-primary py-1.5 px-6 font-medium hover:bg-opacity-90 text-primary"
+            className="flex hidden justify-center rounded border border-primary py-1.5 px-6 font-medium hover:bg-opacity-90 text-primary"
           >
             Add Variation
           </button>
@@ -214,17 +225,16 @@ const Variants: React.FC<VariantsProps> = ({
                 </label>
                 <div className="relative">
                   <DropDownCommon
-                    lists={sizes}
-                    labelKey="size"
-                    valueKey="value"
-                    selectedOption={variants[selectedVariantIndex]?.size}
-                    // value={variants[selectedVariantIndex]?.size || ''} // Add value prop
-                    // onOptionChange={
-                    //   (value) =>
-                    //     updateVariants(selectedVariantIndex, 'size', value) // Correctly pass value to updateVariants
-                    // }
-                    onOptionChange={handleSizeChange}
-                    defaultOption="size"
+                    lists={sizes} // Dynamically extracted sizes
+                    labelKey="size" // Use "size" as the label key
+                    valueKey="size" // Use "value" as the value key
+                    selectedOption={variants[selectedVariantIndex]?.size} // Currently selected size
+                    // onOptionChange={(value) =>
+                    //   updateVariants(selectedVariantIndex, 'size', value)
+                    // } // Update size
+
+                    onOptionChange={handleSizeChange} // Update size and attrGrpId
+                    defaultOption="Select size"
                   />
                 </div>
               </div>

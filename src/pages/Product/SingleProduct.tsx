@@ -16,6 +16,7 @@ import {
   productOfferAddUpdate,
   productOptionAddUpdate,
   vendorFetchAllCategories,
+  productAllLookup,
 } from '../../redux/slices/ProductSlice';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
@@ -113,6 +114,9 @@ const SingleProduct = () => {
   const productBrands = useSelector(
     (state: RootState) => state.product.productBrands,
   );
+
+  const lookups = useSelector((state: RootState) => state.product.lookups);
+  const [generatedProductId, setgeneratedProductID] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [activeStep, setActiveStep] = useState(0);
   const [isSavingProduct, setIsSavingProduct] = useState(false);
@@ -230,39 +234,125 @@ const SingleProduct = () => {
     setVariants((prevVariants) => prevVariants.filter((_, i) => i !== index));
   };
 
-  console.log('variants :::::::', variants);
+  // const handleStepClick = (index: number) => {
+  //   // If the user is trying to go beyond the first step
+  //   if (index > 0 && activeStep === 0) {
+  //     const { isValid, firstError } = validateBasicDetails(basicDetails);
 
-  const handleStepClick = (index: number) => {
-    // If the user is trying to go beyond the first step
-    if (index > 0 && activeStep === 0) {
-      const { isValid, firstError } = validateBasicDetails(basicDetails);
+  //     if (!isValid) {
+  //       toast.error(firstError); // Display the first error (you can use a better UI for this)
+  //       return; // Prevent step change
+  //     }
+  //   }
 
-      if (!isValid) {
-        toast.error(firstError); // Display the first error (you can use a better UI for this)
-        return; // Prevent step change
-      }
-    }
+  //   // Allow navigation to the clicked step
+  //   setActiveStep(index);
+  // };
 
-    // Allow navigation to the clicked step
-    setActiveStep(index);
-  };
+  // const handleNext = () => {
+  //   // If the current step is 0 (Basic Details)
+  //   if (activeStep === 0) {
+  //     const { isValid, firstError } = validateBasicDetails(basicDetails);
 
-  const handleNext = () => {
+  //     if (!isValid) {
+  //       toast.error(firstError); // Display the first error (you can replace this with a better UI)
+  //       return; // Prevent navigation to the next step
+  //     }
+
+  const handleNext = async () => {
     // If the current step is 0 (Basic Details)
     if (activeStep === 0) {
       const { isValid, firstError } = validateBasicDetails(basicDetails);
 
       if (!isValid) {
-        toast.error(firstError); // Display the first error (you can replace this with a better UI)
+        toast.error(firstError); // Display the first error
         return; // Prevent navigation to the next step
       }
-    }
 
-    // Proceed to the next step
-    if (activeStep < steps.length - 1) {
-      setActiveStep((prev) => prev + 1);
+      try {
+        setIsSavingProduct(true); // Show a loading indicator
+        // Prepare product details
+        const productDetails: any = {
+          user_id: '-1',
+          id: '',
+          name: basicDetails.productName,
+          sale_price: basicDetails.salePrice,
+          regular_price: basicDetails.regularPrice,
+          category_id: basicDetails.subCategory,
+          product_url: 'http',
+          vendor_product_id: 'RTDG22BDHS00AZTS4',
+          vendor_id: vendor_id,
+          brand_id: basicDetails.brand,
+          status: basicDetails.statusChecked ? '1' : '0',
+          quantity: basicDetails.quantity,
+          description: basicDetails.productDescription,
+          do_not_display: basicDetails.doNotDisplay ? '1' : '0',
+          stock: basicDetails.stockChecked ? 'true' : 'false',
+          keywords: basicDetails.keywords,
+          weight: '',
+          skuid: '',
+          GST: basicDetails.taxValue,
+          HSNCode: basicDetails.taxCodeType,
+          CountryOfOrigin: 'India',
+          StyleID: '',
+          user_allowed: '1',
+        };
+
+        // API call to save the product
+        const response = await dispatch(createSingleProduct(productDetails));
+
+        // Check if the product ID is returned successfully
+        const productId = response.payload?.id; // Extract product ID directly from the response
+        if (!productId) {
+          throw new Error('Failed to save the product. Please try again.');
+        }
+
+        // Set the generated product ID for future use
+        setgeneratedProductID(productId);
+
+        // New: Product Option Update API Call
+        const productOptionPayload = {
+          user_id: '-1',
+          id: '',
+          option_group_id: basicDetails?.options?.option_group_id,
+          option_group_value: basicDetails?.options?.option_group_value,
+          product_id: productId.toString(),
+        };
+
+        const optionResponse = await dispatch(
+          productOptionAddUpdate(productOptionPayload),
+        );
+        if (!optionResponse.payload) {
+          throw new Error('Failed to update product options');
+        }
+
+        // Proceed to the next step
+        toast.success('Product details saved successfully.');
+        setActiveStep((prev) => prev + 1);
+      } catch (error) {
+        console.error(error);
+        toast.error(
+          (error as Error).message ||
+            'An error occurred while saving the product. Please try again.',
+        );
+      } finally {
+        setIsSavingProduct(false); // Hide the loading indicator
+      }
+    } else {
+      // If not the first step, just move to the next step
+      if (activeStep < steps.length - 1) {
+        setActiveStep((prev) => prev + 1);
+      }
     }
   };
+
+  //   }
+
+  //   // Proceed to the next step
+  //   if (activeStep < steps.length - 1) {
+  //     setActiveStep((prev) => prev + 1);
+  //   }
+  // };
 
   const handlePrevious = () => {
     if (activeStep > 0) {
@@ -278,6 +368,16 @@ const SingleProduct = () => {
 
   useEffect(() => {
     !categories?.length && dispatch(vendorFetchAllCategories({ id: '0' }));
+  }, []);
+  useEffect(() => {
+    !lookups?.length &&
+      dispatch(
+        productAllLookup({
+          type: '',
+          parent_id: '',
+          search: '',
+        }),
+      );
   }, []);
   useEffect(() => {
     if (!colourCodes) dispatch(fetchColorCodeMain());
@@ -376,52 +476,53 @@ const SingleProduct = () => {
     const validation = validateBasicDetails(basicDetails);
 
     if (validation.isValid) {
-      if (!additionalDetails.offerName || !additionalDetails.offerDescription) {
+      if (!additionalDetails.offerName) {
         toast.error(
-          'Offer name and description are required fields in additional details section',
+          'Offer name are required field in additional details section',
         );
         return;
       }
       setIsSavingProduct(true); // Set loading to true when starting the API call
-      const productDetails: any = {
-        user_id: '-1',
-        id: '',
-        name: basicDetails.productName,
-        sale_price: basicDetails.salePrice,
-        regular_price: basicDetails.regularPrice,
-        category_id: basicDetails.subCategory,
-        product_url: 'http',
-        vendor_product_id: 'RTDG22BDHS00AZTS4',
-        vendor_id: vendor_id,
-        brand_id: basicDetails.brand,
-        status: basicDetails.statusChecked ? '1' : '0',
-        quantity: basicDetails.quantity,
-        description: basicDetails.productDescription,
-        do_not_display: basicDetails.doNotDisplay ? '1' : '0',
-        stock: basicDetails.stockChecked ? 'true' : 'false',
-        keywords: basicDetails.keywords,
-        weight: '',
-        skuid: '',
-        GST: basicDetails.taxValue,
-        HSNCode: basicDetails.taxCodeType,
-        CountryOfOrigin: 'India',
-        StyleID: '',
-        user_allowed: '1',
-      };
+      // const productDetails: any = {
+      //   user_id: '-1',
+      //   id: '',
+      //   name: basicDetails.productName,
+      //   sale_price: basicDetails.salePrice,
+      //   regular_price: basicDetails.regularPrice,
+      //   category_id: basicDetails.subCategory,
+      //   product_url: 'http',
+      //   vendor_product_id: 'RTDG22BDHS00AZTS4',
+      //   vendor_id: vendor_id,
+      //   brand_id: basicDetails.brand,
+      //   status: basicDetails.statusChecked ? '1' : '0',
+      //   quantity: basicDetails.quantity,
+      //   description: basicDetails.productDescription,
+      //   do_not_display: basicDetails.doNotDisplay ? '1' : '0',
+      //   stock: basicDetails.stockChecked ? 'true' : 'false',
+      //   keywords: basicDetails.keywords,
+      //   weight: '',
+      //   skuid: '',
+      //   GST: basicDetails.taxValue,
+      //   HSNCode: basicDetails.taxCodeType,
+      //   CountryOfOrigin: 'India',
+      //   StyleID: '',
+      //   user_allowed: '1',
+      // };
 
       try {
         // First API call to save the product
-        const response = await dispatch(createSingleProduct(productDetails));
+        // const response = await dispatch(createSingleProduct(productDetails));
 
         // Extract the 'id' from the response
-        const productId = response.payload?.id;
-        if (!productId) throw new Error('Failed to get product ID');
+        // const productId = response.payload?.id;
+        console.log('generatedProductId', generatedProductId);
+        if (!generatedProductId) throw new Error('Failed to get product ID');
 
         // Image upload payload
         if (basicDetails.selectedImages.length > 0) {
           const imagePayload = {
             user_id: '-1',
-            product_id: productId.toString(),
+            product_id: generatedProductId.toString(),
             images: basicDetails.selectedImages.map((image) => ({
               image: image.base64.replace(/^data:image\/\w+;base64,/, ''),
               caption: image.caption,
@@ -439,7 +540,7 @@ const SingleProduct = () => {
           productOfferAddUpdate({
             offer_id: '',
             offer_name: additionalDetails.offerName,
-            product_id: productId.toString(),
+            product_id: generatedProductId.toString(),
             user_id: '-1',
           }),
         );
@@ -495,8 +596,8 @@ const SingleProduct = () => {
             })
             .filter((value) => value.trim() !== '') // Remove completely empty entries
             .join(','), // Combine all variant strings into a single comma-separated string
-          product_id: productId.toString(),
-          original_product_id: productId.toString(),
+          product_id: generatedProductId.toString(),
+          original_product_id: generatedProductId.toString(),
           product_url: 'https', // Replace with actual URL if needed
           price: basicDetails.salePrice || '',
           status: basicDetails.statusChecked ? '1' : '0',
@@ -529,22 +630,6 @@ const SingleProduct = () => {
         );
         if (!attributeResponse.payload) {
           throw new Error('Failed to update product attributes');
-        }
-
-        // New: Product Option Update API Call
-        const productOptionPayload = {
-          user_id: '-1',
-          id: '',
-          option_group_id: basicDetails?.options?.option_group_id,
-          option_group_value: basicDetails?.options?.option_group_value,
-          product_id: productId.toString(),
-        };
-
-        const optionResponse = await dispatch(
-          productOptionAddUpdate(productOptionPayload),
-        );
-        if (!optionResponse.payload) {
-          throw new Error('Failed to update product options');
         }
 
         // Success toast after all API calls
@@ -680,7 +765,7 @@ const SingleProduct = () => {
             {steps.map((step, index) => (
               <div key={index} className="relative w-full text-center">
                 <div
-                  onClick={() => handleStepClick(index)}
+                  // onClick={() => handleStepClick(index)}
                   className={`cursor-pointer p-2 border rounded-full transition-all duration-300 
                                     ${
                                       activeStep === index

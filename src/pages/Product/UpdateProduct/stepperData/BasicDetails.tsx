@@ -60,7 +60,7 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const maxImages = 6;
-
+  const [selectTextType, setSelectTextType] = useState(null);
   const [selectOpt, setSelectOpt] = useState(null);
   const [selectSubOpt, setSelectSubOpt] = useState(null);
   const [apiPayload, setApiPayload] = useState({
@@ -120,6 +120,23 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
   const handleSubCategoryChange = (subCategory: string) => {
     updateBasicDetails('subCategory', subCategory);
   };
+
+  const productTextType = useSelector(
+    (state: RootState) => state.product.lookups?.Type,
+  );
+
+  const topLevelTextType = productTextType?.filter((type: any) => {
+    return type.id === 108;
+  });
+
+  const handleTextTypeChange = (type: any) => {
+    setSelectTextType(type);
+    updateBasicDetails('taxCodeType', type);
+  };
+
+  const textTypeValue = productTextType?.filter((val: any) => {
+    return val.parent == selectTextType;
+  });
 
   const handleGroupOptChange = (grpopt: any) => {
     setSelectOpt(grpopt); // Update selected parent option
@@ -633,13 +650,11 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
               </label>
               <div className="relative">
                 <DropDownCommon
-                  lists={codeType}
+                  lists={topLevelTextType}
                   labelKey="name"
-                  valueKey="value"
+                  valueKey="id"
                   selectedOption={basicDetails.taxCodeType} // Pass the selected value
-                  onOptionChange={(value) =>
-                    updateBasicDetails('taxCodeType', value)
-                  } // Pass the handler
+                  onOptionChange={(value) => handleTextTypeChange(value)} // Pass the handler
                 />
               </div>
             </div>
@@ -651,16 +666,14 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
                 Tax Code Value
               </label>
               <div className="relative">
-                <input
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  type="text"
-                  name="taxValue"
-                  id="taxValue"
-                  placeholder="taxValue"
-                  value={basicDetails.taxValue}
-                  onChange={(e) =>
-                    updateBasicDetails('taxValue', e.target.value)
-                  }
+                <DropDownCommon
+                  lists={textTypeValue}
+                  labelKey="name"
+                  valueKey="value"
+                  selectedOption={basicDetails.taxValue} // Pass the selected value
+                  onOptionChange={(value) =>
+                    updateBasicDetails('taxValue', value)
+                  } // Pass the handler
                 />
               </div>
             </div>
