@@ -76,11 +76,12 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
 }) => {
   const maxImages = 6;
   const categories = useSelector(
-  (state: RootState) => state.product.categories,
+    (state: RootState) => state.product.categories,
   );
   const dispatch = useDispatch<AppDispatch>();
   const [selectOpt, setSelectOpt] = useState(null);
   const [selectSubOpt, setSelectSubOpt] = useState(null);
+  const [selectTextType, setSelectTextType] = useState(null);
   const [filteredSubOptions, setFilteredSubOptions] = useState<any[]>([]);
   // const [optTable, setOptTable] = useState<
   //   { parentId: number; parentName: string; subId: number; subName: string }[]
@@ -98,7 +99,6 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
   const productFilteredData = useSelector(
     (state: RootState) => state.product.productFilteredData,
   );
-
 
   // const categories = productFilteredData?.categories?.map?.(
   //   (cat: { name: string; id: number }) => ({
@@ -154,77 +154,22 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
     updateBasicDetails('subCategory', subCategory);
   };
 
-  // const handleRemoveOption = (id: number) => {
-  //   const newTable = optTable.filter((_, i) => i !== id);
-  //   setOptTable(newTable);
-  //   updateApiPayload(newTable);
-  //   updateBasicDetails('options', apiPayload);
-  // };
+  const productTextType = useSelector(
+    (state: RootState) => state.product.lookups?.Type,
+  );
 
-  // const addOption = () => {
-  //   if (!selectOpt || !selectSubOpt) {
-  //     alert('Please select both options.');
-  //     return;
-  //   }
-  //   const parentOption = optionData.find(
-  //     (item: any) => item.optgrpid === selectOpt,
-  //   );
-  //   const subOption = filteredSubOptions.find(
-  //     (item) => item.optvalid === selectSubOpt,
-  //   );
+  const topLevelTextType = productTextType?.filter((type: any) => {
+    return type.id === 108;
+  });
 
-  //   if (parentOption && subOption) {
-  //     const newTable: any = [
-  //       ...optTable,
-  //       {
-  //         parentId: parentOption.optgrpid,
-  //         parentName: parentOption.optgrpname,
-  //         subId: subOption.optvalid,
-  //         subName: subOption.optvalname,
-  //       },
-  //     ];
-  //     setOptTable(newTable);
-  //     updateApiPayload(newTable);
-  //     updateBasicDetails('options', apiPayload);
-  //   }
-  // };
+  const handleTextTypeChange = (type: any) => {
+    setSelectTextType(type);
+    updateBasicDetails('taxCodeType', type);
+  };
 
-  // const addOption = () => {
-  //   if (!selectOpt || !selectSubOpt) {
-  //     alert('Please select both options.');
-  //     return;
-  //   }
-
-  //   // Find the selected parent and sub options
-  //   const parentOption = optionData.find(
-  //     (item: any) => item.optgrpid === selectOpt,
-  //   );
-  //   const subOption = filteredSubOptions.find(
-  //     (item) => item.optvalid === selectSubOpt,
-  //   );
-
-  //   // If both options are found, add the row to the table
-  //   if (parentOption && subOption) {
-  //     const newOptionRow = {
-  //       parentId: parentOption.optgrpid,
-  //       parentName: parentOption.optgrpname,
-  //       subId: subOption.optvalid,
-  //       subName: subOption.optvalname,
-  //     };
-
-  //     // Call addOptionRow to update the optTable in the parent component
-  //     addOptionRow(
-  //       newOptionRow.parentId,
-  //       newOptionRow.parentName,
-  //       newOptionRow.subId,
-  //       newOptionRow.subName,
-  //     );
-
-  //     // Optionally, update the API payload if necessary
-  //     updateApiPayload([...optTable, newOptionRow]);
-  //     updateBasicDetails('options', apiPayload);
-  //   }
-  // };
+  const textTypeValue = productTextType?.filter((val: any) => {
+    return val.parent == selectTextType;
+  });
 
   const addOption = () => {
     if (!selectOpt || !selectSubOpt) {
@@ -728,13 +673,11 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
               </label>
               <div className="relative">
                 <DropDownCommon
-                  lists={codeType}
+                  lists={topLevelTextType}
                   labelKey="name"
-                  valueKey="value"
+                  valueKey="id"
                   selectedOption={basicDetails.taxCodeType} // Pass the selected value
-                  onOptionChange={(value) =>
-                    updateBasicDetails('taxCodeType', value)
-                  } // Pass the handler
+                  onOptionChange={(value) => handleTextTypeChange(value)} // Pass the handler
                 />
               </div>
             </div>
@@ -746,16 +689,14 @@ const BasicDetailsComponent: React.FC<BasicDetailsProps> = ({
                 Tax Code Value
               </label>
               <div className="relative">
-                <input
-                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  type="text"
-                  name="taxValue"
-                  id="taxValue"
-                  placeholder="taxValue"
-                  value={basicDetails.taxValue}
-                  onChange={(e) =>
-                    updateBasicDetails('taxValue', e.target.value)
-                  }
+                <DropDownCommon
+                  lists={textTypeValue}
+                  labelKey="name"
+                  valueKey="value"
+                  selectedOption={basicDetails.taxValue} // Pass the selected value
+                  onOptionChange={(value) =>
+                    updateBasicDetails('taxValue', value)
+                  } // Pass the handler
                 />
               </div>
             </div>

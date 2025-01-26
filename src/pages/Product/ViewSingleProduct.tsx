@@ -80,7 +80,7 @@ const ViewSingleProduct: React.FC<props> = ({
             <CarouselProvider
               visibleSlides={1}
               totalSlides={
-                productDetails?.product_detail[0]?.Image?.length || 0
+                productDetails?.product_detail?.[0]?.Image?.length || 0
               }
               step={1}
               naturalSlideWidth={350}
@@ -89,7 +89,7 @@ const ViewSingleProduct: React.FC<props> = ({
             >
               <div className="relative max-w-2xl mx-auto">
                 <Slider className="overflow-hidden min-w-[500px] min-h-[400px] w-[500px] h-[400px]">
-                  {productDetails?.product_detail[0]?.Image?.map(
+                  {productDetails?.product_detail?.[0]?.Image?.map(
                     (item: any, i: number) => (
                       <Slide index={i}>
                         <img
@@ -153,15 +153,15 @@ const ViewSingleProduct: React.FC<props> = ({
                 <span className="font-medium">Name:</span>
                 <span className="text-sm">
                   {' '}
-                  {productDetails?.product_detail[0]?.name}
+                  {productDetails?.product_detail?.[0]?.name}
                 </span>
               </li>
               <li className="flex flex-col gap-1">
                 <span className="font-medium">Description:</span>
                 <span className="text-sm">
                   {' '}
-                  {productDetails?.product_detail[0]?.description
-                    ? productDetails?.product_detail[0]?.description
+                  {productDetails?.product_detail?.[0]?.description
+                    ? productDetails?.product_detail?.[0]?.description
                     : '-'}
                 </span>
               </li>
@@ -176,8 +176,8 @@ const ViewSingleProduct: React.FC<props> = ({
                 <span className="font-medium">Regular Price:</span>
                 <span className="text-sm">
                   {' '}
-                  {productDetails?.product_detail[0]?.regular_price
-                    ? productDetails?.product_detail[0]?.regular_price
+                  {productDetails?.product_detail?.[0]?.regular_price
+                    ? productDetails?.product_detail?.[0]?.regular_price
                     : '-'}
                 </span>
               </li>
@@ -185,8 +185,8 @@ const ViewSingleProduct: React.FC<props> = ({
                 <span className="font-medium">Sale Price:</span>
                 <span className="text-sm">
                   {' '}
-                  {productDetails?.product_detail[0]?.sale_price
-                    ? productDetails?.product_detail[0]?.sale_price
+                  {productDetails?.product_detail?.[0]?.sale_price
+                    ? productDetails?.product_detail?.[0]?.sale_price
                     : '-'}
                 </span>
               </li>
@@ -194,8 +194,8 @@ const ViewSingleProduct: React.FC<props> = ({
                 <span className="font-medium">Stock:</span>
                 <span className="text-sm">
                   {' '}
-                  {productDetails?.product_detail[0]?.stock
-                    ? productDetails?.product_detail[0]?.stock
+                  {productDetails?.product_detail?.[0]?.stock
+                    ? productDetails?.product_detail?.[0]?.stock
                     : '-'}
                 </span>
               </li>
@@ -203,8 +203,8 @@ const ViewSingleProduct: React.FC<props> = ({
                 <span className="font-medium">Quantity:</span>
                 <span className="text-sm">
                   {' '}
-                  {productDetails?.product_detail[0]?.quantity
-                    ? productDetails?.product_detail[0]?.quantity
+                  {productDetails?.product_detail?.[0]?.quantity
+                    ? productDetails?.product_detail?.[0]?.quantity
                     : '-'}
                 </span>
               </li>
@@ -212,8 +212,8 @@ const ViewSingleProduct: React.FC<props> = ({
                 <span className="font-medium">Wishlist:</span>
                 <span className="text-sm">
                   {' '}
-                  {productDetails?.product_detail[0]?.wishlist
-                    ? productDetails?.product_detail[0]?.wishlist
+                  {productDetails?.product_detail?.[0]?.wishlist
+                    ? productDetails?.product_detail?.[0]?.wishlist
                     : '-'}
                 </span>
               </li>
@@ -227,8 +227,8 @@ const ViewSingleProduct: React.FC<props> = ({
               <span className="font-medium">Category</span>
               <span className="text-sm">
                 {' '}
-                {productDetails?.product_detail[0]?.main_category
-                  ? productDetails?.product_detail[0]?.main_category
+                {productDetails?.product_detail?.[0]?.main_category
+                  ? productDetails?.product_detail?.[0]?.main_category
                   : '-'}
               </span>
             </li>
@@ -236,8 +236,8 @@ const ViewSingleProduct: React.FC<props> = ({
               <span className="font-medium">Sub Category</span>
               <span className="text-sm">
                 {' '}
-                {productDetails?.product_detail[0]?.category
-                  ? productDetails?.product_detail[0]?.category
+                {productDetails?.product_detail?.[0]?.category
+                  ? productDetails?.product_detail?.[0]?.category
                   : '-'}
               </span>
             </li>
@@ -245,8 +245,8 @@ const ViewSingleProduct: React.FC<props> = ({
               <span className="font-medium">Brand</span>
               <span className="text-sm">
                 {' '}
-                {productDetails?.product_detail[0]?.brand
-                  ? productDetails?.product_detail[0]?.brand
+                {productDetails?.product_detail?.[0]?.brand
+                  ? productDetails?.product_detail?.[0]?.brand
                   : '-'}
               </span>
             </li>
@@ -254,8 +254,8 @@ const ViewSingleProduct: React.FC<props> = ({
               <span className="font-medium">GST</span>
               <span className="text-sm">
                 {' '}
-                {productDetails?.product_detail[0]?.GST
-                  ? productDetails?.product_detail[0]?.GST
+                {productDetails?.product_detail?.[0]?.GST
+                  ? productDetails?.product_detail?.[0]?.GST
                   : '-'}
               </span>
             </li>
@@ -263,8 +263,8 @@ const ViewSingleProduct: React.FC<props> = ({
               <span className="font-medium">Do Not Display</span>
               <span className="text-sm">
                 {' '}
-                {productDetails?.product_detail[0]?.do_not_display
-                  ? productDetails?.product_detail[0]?.do_not_display
+                {productDetails?.product_detail?.[0]?.do_not_display
+                  ? productDetails?.product_detail?.[0]?.do_not_display
                   : '-'}
               </span>
             </li>
@@ -272,8 +272,9 @@ const ViewSingleProduct: React.FC<props> = ({
               <span className="font-medium">Expected Date of Delivery</span>
               <span className="text-sm">
                 {' '}
-                {productDetails?.product_detail[0]?.expected_date_of_delivery
-                  ? productDetails?.product_detail[0]?.expected_date_of_delivery
+                {productDetails?.product_detail?.[0]?.expected_date_of_delivery
+                  ? productDetails?.product_detail?.[0]
+                      ?.expected_date_of_delivery
                   : '-'}
               </span>
             </li>
@@ -281,8 +282,8 @@ const ViewSingleProduct: React.FC<props> = ({
               <span className="font-medium">HSN Code</span>
               <span className="text-sm">
                 {' '}
-                {productDetails?.product_detail[0]?.hsn_code
-                  ? productDetails?.product_detail[0]?.hsn_code
+                {productDetails?.product_detail?.[0]?.hsn_code
+                  ? productDetails?.product_detail?.[0]?.hsn_code
                   : '-'}
               </span>
             </li>
@@ -290,8 +291,8 @@ const ViewSingleProduct: React.FC<props> = ({
               <span className="font-medium">Keywords</span>
               <span className="text-sm">
                 {' '}
-                {productDetails?.product_detail[0]?.keywords
-                  ? productDetails?.product_detail[0]?.keywords
+                {productDetails?.product_detail?.[0]?.keywords
+                  ? productDetails?.product_detail?.[0]?.keywords
                   : '-'}
               </span>
             </li>
@@ -299,8 +300,8 @@ const ViewSingleProduct: React.FC<props> = ({
               <span className="font-medium">Country of origin:</span>
               <span className="text-sm">
                 {' '}
-                {productDetails?.product_detail[0]?.country_of_origin
-                  ? productDetails?.product_detail[0]?.country_of_origin
+                {productDetails?.product_detail?.[0]?.country_of_origin
+                  ? productDetails?.product_detail?.[0]?.country_of_origin
                   : '-'}
               </span>
             </li>

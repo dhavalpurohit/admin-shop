@@ -222,7 +222,7 @@ const Variants: React.FC<VariantsProps> = ({
           <button
             onClick={addVariant}
             type="button"
-            className="flex justify-center rounded border border-primary py-1.5 px-6 font-medium hover:bg-opacity-90 text-primary"
+            className="flex hidden justify-center rounded border border-primary py-1.5 px-6 font-medium hover:bg-opacity-90 text-primary"
           >
             Add Variation
           </button>

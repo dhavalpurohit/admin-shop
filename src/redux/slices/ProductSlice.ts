@@ -180,6 +180,18 @@ export const productOfferAddUpdate = createAsyncThunk(
   },
 );
 
+export const productAllLookup = createAsyncThunk(
+  '/productLookup',
+  async (data: object) => {
+    try {
+      const response = await ProductServices.productLookup(data);
+      return response;
+    } catch (error) {
+      return error;
+    }
+  },
+);
+
 export const initialState = {
   isLoading: false,
   error: null as string | null,
@@ -191,6 +203,7 @@ export const initialState = {
   bulkProductXlsList: null,
   productDetails: null,
   productFilteredData: null,
+  lookups: null,
 };
 
 const contactSlice = createSlice({
@@ -255,6 +268,11 @@ const contactSlice = createSlice({
         state.isLoading = false;
         state.error = null;
       })
+      .addCase(productAllLookup.fulfilled, (state, action) => {
+        state.lookups = action.payload;
+        state.isLoading = false;
+        state.error = null;
+      })
       .addMatcher(isPending, (state) => {
         state.isLoading = true;
       })
@@ -265,5 +283,5 @@ const contactSlice = createSlice({
   },
 });
 
-export const {RESET_PRODUCT_DETAILS} = contactSlice.actions;
+export const { RESET_PRODUCT_DETAILS } = contactSlice.actions;
 export default contactSlice.reducer;

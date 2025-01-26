@@ -57,4 +57,7 @@ export class ProductServices {
   static productOfferAddUpdate(data: object) {
     return CommonService.post(urls.product.productOfferAddUpdate, data);
   }
+  static productLookup(data: object) {
+    return CommonService.post(urls.product.productLookup, data);
+  }
 }
