@@ -71,6 +71,12 @@ export interface Variant {
   attrGrpId: string;
   colorId?: string;
   sizeId?: string;
+  sku?: string;
+  extProductId?: string;
+  variant_qty?: string;
+  variant_sale_price?: string;
+  variant_regular_price?: string;
+  variant_item_size?: string;
 }
 
 export interface AdditionalDetails {
@@ -204,19 +210,19 @@ const SingleProduct = () => {
     },
   );
   const [variants, setVariants] = useState<Variant[]>([
-    {
-      color: '',
-      size: '',
-      colormap: '',
-      name: '',
-      stock: '',
-      lengthSize: '',
-      waistSize: '',
-      hipSize: '',
-      bustSize: '',
-      variantImages: [],
-      attrGrpId: '', // New field for attribute group ID
-    },
+    // {
+    //   color: '',
+    //   size: '',
+    //   colormap: '',
+    //   name: '',
+    //   stock: '',
+    //   lengthSize: '',
+    //   waistSize: '',
+    //   hipSize: '',
+    //   bustSize: '',
+    //   variantImages: [],
+    //   attrGrpId: '', // New field for attribute group ID
+    // },
   ]);
   const updateAdditionalDetails: UpdateAdditionalDetails = (field, value) => {
     setAdditionalDetails((prevDetails) => ({ ...prevDetails, [field]: value }));
@@ -476,12 +482,6 @@ const SingleProduct = () => {
     const validation = validateBasicDetails(basicDetails);
 
     if (validation.isValid) {
-      if (!additionalDetails.offerName) {
-        toast.error(
-          'Offer name are required field in additional details section',
-        );
-        return;
-      }
       setIsSavingProduct(true); // Set loading to true when starting the API call
       // const productDetails: any = {
       //   user_id: '-1',
@@ -656,6 +656,12 @@ const SingleProduct = () => {
             bustSize: '',
             variantImages: [],
             attrGrpId: '',
+            sku: '',
+            extProductId: '',
+            variant_qty: '',
+            variant_sale_price: '',
+            variant_regular_price: '',
+            variant_item_size: '',
           },
         ]);
         navigate('/products');
@@ -846,7 +852,7 @@ const SingleProduct = () => {
         </div>
       </div>
       {isSavingProduct && (
-        <div className="absolute inset-0 z-999 h-screen  flex items-center justify-center bg-gray-900/10">
+        <div className="fixed inset-0 z-999 h-screen  flex items-center justify-center bg-gray-900/10">
           <ButtonLoader bgColor="bg-transparent" borderColor="border-primary" />
         </div>
       )}
